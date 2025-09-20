@@ -1,34 +1,1181 @@
-// Funzione per mescolare un array (Fisher-Yates)
-function shuffleArray(array) {
-    const newArray = [...array];
-    for (let i = newArray.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
-    }
-    return newArray;
-}
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz di Psicologia dello Sviluppo</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 2.2rem;
+        }
+        .description {
+            color: #7f8c8d;
+            margin-bottom: 20px;
+        }
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+        .question {
+            margin-bottom: 25px;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            background-color: #f8f9fa;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        .question-number {
+            font-weight: bold;
+            color: #3498db;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+        .options {
+            margin-left: 10px;
+        }
+        .option {
+            margin: 12px 0;
+            display: flex;
+            align-items: flex-start;
+        }
+        .option input {
+            margin-top: 5px;
+            margin-right: 12px;
+            cursor: pointer;
+        }
+        .option label {
+            cursor: pointer;
+            flex: 1;
+        }
+        button {
+            display: block;
+            margin: 30px auto;
+            padding: 14px 35px;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+        }
+        button:active {
+            transform: translateY(0);
+        }
+        .results {
+            margin-top: 30px;
+            padding: 25px;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            background-color: #e7f3fe;
+            display: none;
+        }
+        .results h2 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        .question-result {
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        .correct {
+            color: #27ae60;
+            font-weight: bold;
+        }
+        .incorrect {
+            color: #e74c3c;
+        }
+        .score {
+            font-size: 1.4rem;
+            font-weight: bold;
+            text-align: center;
+            margin: 25px 0;
+            color: #2c3e50;
+        }
+        .topic {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            font-style: italic;
+            margin-top: 5px;
+        }
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            h1 {
+                font-size: 1.8rem;
+            }
+            .stats {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Quiz di Psicologia dello Sviluppo</h1>
+            <p class="description">15 domande estratte casualmente da un pool di 75 domande</p>
+        </header>
+        
+        <div class="stats">
+            <div id="current-topic">Argomento: -</div>
+            <div id="progress">Domanda: <span id="current">1</span> di <span id="total">15</span></div>
+        </div>
+        
+        <div id="quiz-container"></div>
+        <button id="submit-btn">Invia risposte</button>
+        
+        <div id="results" class="results"></div>
+        
+        <footer>
+            <p>Quiz realizzato per valutare la conoscenza della Psicologia dello Sviluppo</p>
+        </footer>
+    </div>
 
-// Funzione per selezionare casualmente le domande e mescolare le opzioni
-function getRandomQuestions(questions, count) {
-    const shuffled = [...questions].sort(() => 0.5 - Math.random());
-    const selected = shuffled.slice(0, count);
-    
-    // Per ogni domanda selezionata, mescola le opzioni e aggiorna l'indice corretto
-    return selected.map(question => {
-        // Salva la risposta corretta originale
-        const correctAnswer = question.options[question.correct];
-        
-        // Mescola le opzioni
-        const shuffledOptions = shuffleArray(question.options);
-        
-        // Trova il nuovo indice della risposta corretta
-        const newCorrectIndex = shuffledOptions.indexOf(correctAnswer);
-        
-        // Restituisce una nuova domanda con le opzioni mescolate e il nuovo indice corretto
-        return {
-            ...question,
-            options: shuffledOptions,
-            correct: newCorrectIndex
-        };
-    });
-}
+    <script>
+        // Pool di 75 domande (15 argomenti × 5 domande ciascuno)
+        const questionsPool = [
+            // 1. Natura del cambiamento (5 domande)
+            {
+                "question": "Come può essere definito lo sviluppo umano?",
+                "options": [
+                    "Un processo dinamico e continuo caratterizzato da trasformazioni",
+                    "Una semplice successione di eventi biologici",
+                    "Un percorso lineare di crescita fisica e cognitiva",
+                    "Un insieme di cambiamenti esclusivamente temporanei"
+                ],
+                "correct": 0,
+                "topic": "Natura del cambiamento"
+            },
+            {
+                "question": "Quale differenza fondamentale esiste tra cambiamenti sistemici e temporanei?",
+                "options": [
+                    "I sistemici sono ordinati e strutturati, i temporanei sono episodici",
+                    "I sistemici sono sempre reversibili, i temporanei no",
+                    "I temporanei riguardano solo l'aspetto fisico, i sistemici quello cognitivo",
+                    "Non esiste differenza sostanziale tra i due tipi di cambiamento"
+                ],
+                "correct": 0,
+                "topic": "Natura del cambiamento"
+            },
+            {
+                "question": "Cosa si intende per 'natura' nello sviluppo umano?",
+                "options": [
+                    "L'insieme delle caratteristiche ereditarie e genetiche",
+                    "L'ambiente sociale e relazionale",
+                    "Le esperienze educative formali",
+                    "Le influenze culturali esterne"
+                ],
+                "correct": 0,
+                "topic": "Natura del cambiamento"
+            },
+            {
+                "question": "Cosa si intende per 'cultura' nello sviluppo umano?",
+                "options": [
+                    "L'ambiente sociale e relazionale con valori e norme",
+                    "Le caratteristiche biologiche innate",
+                    "Le predisposizioni genetiche individuali",
+                    "I processi cognitivi automatici"
+                ],
+                "correct": 0,
+                "topic": "Natura del cambiamento"
+            },
+            {
+                "question": "Quali sono le tre dimensioni complementari dell'apprendimento?",
+                "options": [
+                    "Apprendimento di ciò che permane, come costruzione, come interiorizzazione",
+                    "Apprendimento cognitivo, emotivo e sociale",
+                    "Apprendimento formale, informale e non formale",
+                    "Apprendimento meccanico, significativo e creativo"
+                ],
+                "correct": 0,
+                "topic": "Natura del cambiamento"
+            },
+            
+            // 2. Approccio comportamentista (Pavlov, Skinner) - 5 domande
+            {
+                "question": "Qual è lo scopo principale dell'approccio comportamentista?",
+                "options": [
+                    "Prevedere e controllare il comportamento",
+                    "Analizzare i processi mentali interni",
+                    "Studiare l'inconscio e i sogni",
+                    "Comprendere le emozioni profonde"
+                ],
+                "correct": 0,
+                "topic": "Approccio comportamentista (Pavlov, Skinner)"
+            },
+            {
+                "question": "Cosa ha scoperto Pavlov attraverso i suoi esperimenti?",
+                "options": [
+                    "Come uno stimolo neutro possa evocare una risposta automatica attraverso associazione",
+                    "Come il comportamento sia influenzato dalle conseguenze",
+                    "Come l'apprendimento avvenga per imitazione",
+                    "Come le funzioni mentali superiori si sviluppino"
+                ],
+                "correct": 0,
+                "topic": "Approccio comportamentista (Pavlov, Skinner)"
+            },
+            {
+                "question": "Cosa studiava Skinner secondo la teoria comportamentista?",
+                "options": [
+                    "Come i comportamenti siano influenzati dalle conseguenze",
+                    "I riflessi condizionati nei cani",
+                    "L'apprendimento per insight",
+                    "Lo sviluppo degli stadi cognitivi"
+                ],
+                "correct": 0,
+                "topic": "Approccio comportamentista (Pavlov, Skinner)"
+            },
+            {
+                "question": "Quale differenza fondamentale c'è tra comportamento rispondente e operante secondo Skinner?",
+                "options": [
+                    "Il rispondente è una risposta a uno stimolo, l'operante è un'azione volontaria",
+                    "Il rispondente è volontario, l'operante è involontario",
+                    "Il rispondente riguarda gli animali, l'operante gli umani",
+                    "Non c'è differenza sostanziale"
+                ],
+                "correct": 0,
+                "topic": "Approccio comportamentista (Pavlov, Skinner)"
+            },
+            {
+                "question": "Cosa rappresentava la Teaching Machine di Skinner?",
+                "options": [
+                    "Uno strumento didattico per guidare l'apprendimento attraverso rinforzi immediati",
+                    "Il primo computer per l'educazione",
+                    "Una macchina per misurare l'intelligenza",
+                    "Un dispositivo per studiare i riflessi condizionati"
+                ],
+                "correct": 0,
+                "topic": "Approccio comportamentista (Pavlov, Skinner)"
+            },
+            
+            // 3. Approccio comportamentista (Bandura) - 5 domande
+            {
+                "question": "Cosa ha sottolineato l'approccio più moderato di Bandura?",
+                "options": [
+                    "L'importanza dell'interazione sociale nell'acquisizione di comportamenti",
+                    "L'importanza dei rinforzi immediati",
+                    "La necessità di punizioni per modellare il comportamento",
+                    "La priorità dei processi cognitivi inconsci"
+                ],
+                "correct": 0,
+                "topic": "Approccio comportamentista (Bandura)"
+            },
+            {
+                "question": "Secondo Bandura, l'apprendimento per imitazione:",
+                "options": [
+                    "Rappresenta una modalità autonoma di apprendimento",
+                    "È sempre inferiore al condizionamento operante",
+                    "Funziona solo con rinforzi positivi",
+                    "È possibile solo nell'infanzia"
+                ],
+                "correct": 0,
+                "topic": "Approccio comportamentista (Bandura)"
+            },
+            {
+                "question": "Cosa permette di fare l'osservazione di modelli sociali secondo Bandura?",
+                "options": [
+                    "Apprendere e manifestare comportamenti relativamente nuovi",
+                    "Sviluppare esclusivamente riflessi condizionati",
+                    "Eliminare completamente i comportamenti indesiderati",
+                    "Modificare il patrimonio genetico"
+                ],
+                "correct": 0,
+                "topic": "Approccio comportamentista (Bandura)"
+            },
+            {
+                "question": "Qual era una delle condizioni dell'esperimento della bambola Bobo di Bandura?",
+                "options": [
+                    "Bambini che osservano un adulto aggressivo con la bambola",
+                    "Bambini puniti per comportamenti aggressivi",
+                    "Bambini premiati per comportamenti non aggressivi",
+                    "Bambini isolati completamente dagli adulti"
+                ],
+                "correct": 0,
+                "topic": "Approccio comportamentista (Bandura)"
+            },
+            {
+                "question": "Cosa si intende per 'astrazione di regole generali' nell'apprendimento sociale di Bandura?",
+                "options": [
+                    "Passare dal comportamento osservato all'elaborazione cognitiva del significato",
+                    "Creare regole rigide di comportamento",
+                    "Eliminare tutti i comportamenti indesiderati",
+                    "Semplificare eccessivamente i processi cognitivi"
+                ],
+                "correct": 0,
+                "topic": "Approccio comportamentista (Bandura)"
+            },
+            
+            // 4. Approccio cognitivista - 5 domande
+            {
+                "question": "Cosa mette in discussione l'approccio cognitivista rispetto al comportamentismo?",
+                "options": [
+                    "Lo schema Stimolo-Risposta come centrale nello studio dell'essere umano",
+                    "L'importanza dei rinforzi nel modellare il comportamento",
+                    "L'esistenza dei processi mentali interni",
+                    "La validità del condizionamento classico"
+                ],
+                "correct": 0,
+                "topic": "Approccio cognitivista"
+            },
+            {
+                "question": "Come viene intesa la mente umana nella prospettiva della Gestalt?",
+                "options": [
+                    "Non come una semplice 'tabula rasa'",
+                    "Como un sistema de risposte automatiche agli stimoli",
+                    "Come un insieme di riflessi condizionati",
+                    "Come un prodotto esclusivo dell'ambiente"
+                ],
+                "correct": 0,
+                "topic": "Approccio cognitivista"
+            },
+            {
+                "question": "Cosa sostiene Bruner con il 'New Look on Perception'?",
+                "options": [
+                    "La percezione è influenzata da fattori mentali, non è una riproduzione oggettiva",
+                    "La percezione è un processo puramente fisiologico",
+                    "La percezione è identica in tutti gli individui",
+                    "La percezione è indipendente dall'esperienza pastata"
+                ],
+                "correct": 0,
+                "topic": "Approccio cognitivista"
+            },
+            {
+                "question": "Come viene inteso il processo de memorizzazione nell'approccio cognitivista?",
+                "options": [
+                    "Si articola in registro sensoriale, memoria a breve termine e memoria a lungo termine",
+                    "È un processo unitario e indivisibile",
+                    "Dipende esclusivamente dalla ripetizione degli stimoli",
+                    "È identico in tutti gli individui indipendentemente dalle strategie utilizzate"
+                ],
+                "correct": 0,
+                "topic": "Approccio cognitivista"
+            },
+            {
+                "question": "Cosa si intende per 'metacognizione'?",
+                "options": [
+                    "La consapevolezza e il controllo sui propri processi cognitivi",
+                    "La capacità di memorizzare informazioni complesse",
+                    "L'abilità di risolvere problemi matematici",
+                    "La tendenza a riflettere sulle emozioni"
+                ],
+                "correct": 0,
+                "topic": "Approccio cognitivista"
+            },
+            
+            // 5. Piaget - 5 domande
+            {
+                "question": "Come considera Piaget la conoscenza umana?",
+                "options": [
+                    "Como una funzione biologica della mente legata all'evoluzione cognitiva",
+                    "Come un prodotto esclusivo dell'ambiente sociale",
+                    "Come un insieme di verità innate",
+                    "Come un processo indipendente dall'interazione con l'ambiente"
+                ],
+                "correct": 0,
+                "topic": "Piaget"
+            },
+            {
+                "question": "Cosa intende Piaget per 'adattamento'?",
+                "options": [
+                    "Il processo di equilibrio tra assimilazione e accomodamento",
+                    "La semplice ricezione passiva di informazioni dall'ambiente",
+                    "La modificazione dell'ambiente per adattarlo alle proprie strutture mentali",
+                    "L'apprendimento per imitazione di modelli sociali"
+                ],
+                "correct": 0,
+                "topic": "Piaget"
+            },
+            {
+                "question": "Cosa significa 'assimilazione' nella teoria di Piaget?",
+                "options": [
+                    "Applicare uno schema noto per comprendere una nuova esperienza",
+                    "Modificare completamente i propri schemi mentali",
+                    "Rifiutare le informazioni che non corrispondono ai propri schemi",
+                    "Apprendere attraverso l'osservazione di altri"
+                ],
+                "correct": 0,
+                "topic": "Piaget"
+            },
+            {
+                "question": "Cosa caratterizza ciascuno stadio dello sviluppo cognitivo secondo Piaget?",
+                "options": [
+                    "Modalità di pensiero e comprensione del mondo qualitative diverse",
+                    "Semplici incrementi quantitativi delle conoscenze",
+                    "Il possesso di contenuti specifici identici in tutte le culture",
+                    "L'acquisizione di abilità esclusivamente linguistiche"
+                ],
+                "correct": 0,
+                "topic": "Piaget"
+            },
+            {
+                "question": "Quando un bambino può trarre beneficio dall'istruzione secondo Piaget?",
+                "options": [
+                    "Quando è cognitivamente pronto ad assimilarla alle proprie strutture cognitive",
+                    "Quando riceve rinforzi positivi per le risposte corrette",
+                    "Quando imita correttamente il comportamento dell'insegnante",
+                    "Quando viene esposto ripetutamente agli stessi contenuti"
+                ],
+                "correct": 0,
+                "topic": "Piaget"
+            },
+            
+            // 6. Vygotskij - 5 domande
+            {
+                "question": "Cosa distingue le funzioni psichiche superiori da quelle inferiori secondo Vygotskij?",
+                "options": [
+                    "Le superiori sono culturalmente mediate, le inferiori sono innate",
+                    "Le superiori riguardano gli animali, le inferiori gli umani",
+                    "Le superiori sono automatiche, le inferiori sono volontarie",
+                    "Le superiori sono biologiche, le inferiori sono sociali"
+                ],
+                "correct": 0,
+                "topic": "Vygotskij"
+            },
+            {
+                "question": "Cos'è la Zona di Sviluppo Prossimale (ZPD) secondo Vygotskij?",
+                "options": [
+                    "La differenza tra ciò che un bambino può fare da solo e con l'aiuto di altri",
+                    "L'area del cervello responsabile dello sviluppo cognitivo",
+                    "Il periodo sensibile per l'apprendimento di determinate abilità",
+                    "L'insieme delle competenze che un bambino possiede alla nascita"
+                ],
+                "correct": 0,
+                "topic": "Vygotskij"
+            },
+            {
+                "question": "Cosa si intende per 'scaffolding' nella teoria di Vygotskij?",
+                "options": [
+                    "Un supporto educativo temporaneo che viene gradualmente rimosso",
+                    "Una struttura rigida di apprendimento che non cambia nel tempo",
+                    "Un metodo di valutazione delle competenze cognitive",
+                    "Una tecnica per misurare il quoziente intellettivo"
+                ],
+                "correct": 0,
+                "topic": "Vygotskij"
+            },
+            {
+                "question": "Qual è il ruolo del linguaggio secondo Vygotskij?",
+                "options": [
+                    "Veicolo fondamentale per la costruzione del pensiero",
+                    "Strumento esclusivamente comunicativo",
+                    "Meccanismo innato indipendente dallo sviluppo cognitivo",
+                    "Abilità secondaria rispetto al pensiero logico"
+                ],
+                "correct": 0,
+                "topic": "Vygotskij"
+            },
+            {
+                "question": "Cosa distingue l'approccio di Vygotskij da quello di Piaget?",
+                "options": [
+                    "Vygotskij enfatizza il ruolo della cultura e dell'interazione sociale",
+                    "Vygotskij nega l'esistenza di stadi de sviluppo",
+                    "Vygotskij considera il linguaggio irrilevante per lo sviluppo cognitivo",
+                    "Vygotskij attribuisce minore importanza all'educazione formale"
+                ],
+                "correct": 0,
+                "topic": "Vygotskij"
+            },
+            
+            // 7. Bruner - 5 domande
+            {
+                "question": "Cosa sostiene Bruner riguardo ai processi mentali?",
+                "options": [
+                    "Hanno un fondamento sociale e sono influenzati dalla cultura",
+                    "Sono completamente determinati da fattori genetici",
+                    "Sono identici in tutte le culture e società",
+                    "Sono indipendenti dagli strumenti culturali"
+                ],
+                "correct": 0,
+                "topic": "Bruner"
+            },
+            {
+                "question": "Cosa caratterizza il pensiero narrativo secondo Bruner?",
+                "options": [
+                    "Si radica nella dimensione psichica e si sviluppa attraverso le storie",
+                    "È basato esclusivamente su deduzioni logiche e scientifiche",
+                    "È indipendente dalle emozioni e dalle esperienze vissute",
+                    "È superiore al pensiero logico-scientifico"
+                ],
+                "correct": 0,
+                "topic": "Bruner"
+            },
+            {
+                "question": "Quali sono le tre forme di rappresentazione secondo Bruner?",
+                "options": [
+                    "Enattiva, iconica e simbolica",
+                    "Cognitiva, emotiva e sociale",
+                    "Primaria, secondaria e terziaria",
+                    "Concreta, astratta e formale"
+                ],
+                "correct": 0,
+                "topic": "Bruner"
+            },
+            {
+                "question": "Cosa intende Bruner per 'impalcatura culturale'?",
+                "options": [
+                    "L'insieme di strumenti culturali che supportano l'apprendimento",
+                    "Una struttura biologica innata per l'acquisizione della conoscenza",
+                    "Un metodo di insegnamento basato sulla ripetizione",
+                    "Una tecnica per valutare lo sviluppo cognitivo"
+                ],
+                "correct": 0,
+                "topic": "Bruner"
+            },
+            {
+                "question": "Come vede Bruner il rapporto tra apprendimento e cultura?",
+                "options": [
+                    "L'apprendimento è un processo culturalmente mediato",
+                    "L'apprendimento è indipendente dal contesto culturale",
+                    "La cultura ostacola il processo di apprendimento",
+                    "L'apprendimento è identico in tutte le culture"
+                ],
+                "correct": 0,
+                "topic": "Bruner"
+            },
+            
+            // 8. Tecnologia e apprendimento - 5 domande
+            {
+                "question": "Cosa si intende per 'artefatto' secondo Vygotskij?",
+                "options": [
+                    "Uno strumento culturale che modifica i processi mentali",
+                    "Un oggetto fisico privo di significato culturale",
+                    "Un dispositivo tecnologico moderno",
+                    "Un gioco didattico per bambini"
+                ],
+                "correct": 0,
+                "topic": "Tecnologia e apprendimento"
+            },
+            {
+                "question": "Cosa distingue l'effetto 'della' tecnologia dall'effetto 'con' la tecnologia secondo Salomon?",
+                "options": [
+                    "L'effetto 'della' riguarda ciò che si apprende attraverso la tecnologia, l'effetto 'con' riguarda le competenze acquisite usandola",
+                    "L'effetto 'della' è temporaneo, l'effetto 'con' è permanente",
+                    "L'effetto 'della' riguarda gli adulti, l'effetto 'con' riguarda i bambini",
+                    "L'effetto 'della' è positivo, l'effetto 'con' è negativo"
+                ],
+                "correct": 0,
+                "topic": "Tecnologia e apprendimento"
+            },
+            {
+                "question": "Cos'è il Computer Supported Collaborative Learning (CSCL)?",
+                "options": [
+                    "Un approccio in cui la tecnologia favorisce l'apprendimento collaborativo",
+                    "Un metodo per insegnare la programmazione ai bambini",
+                    "Una tecnica per valutare le competenze informatiche",
+                    "Un sistema per sostituire completamente gli insegnanti"
+                ],
+                "correct": 0,
+                "topic": "Tecnologia e apprendimento"
+            },
+            {
+                "question": "Cosa si intende per 'mediazione' nel contesto tecnologico?",
+                "options": [
+                    "Qualsiasi strumento che interviene tra l'individuo e il mondo modificando l'esperienza",
+                    "La risoluzione dei conflitti durante l'apprendimento collaborativo",
+                    "La traduzione di contenuti in diverse lingue",
+                    "La semplificazione di concetti complessi"
+                ],
+                "correct": 0,
+                "topic": "Tecnologia e apprendimento"
+            },
+            {
+                "question": "Come può la tecnologia ampliare le possibilità educative secondo Koschmann?",
+                "options": [
+                    "Superando i confini tradizionali di spazio e tempo dell'apprendimento",
+                    "Sostituendo completamente i libri di testo",
+                    "Riducendo il bisogno di insegnanti",
+                    "Automatizzando completamente il processo di valutazione"
+                ],
+                "correct": 0,
+                "topic": "Tecnologia e apprendimento"
+            },
+            
+            // 9. Emozioni e apprendimento - 5 domande
+            {
+                "question": "Cosa si intende per 'competenza emotiva'?",
+                "options": [
+                    "La capacità di riconoscere, interpretare e gestire le emozioni proprie e altrui",
+                    "L'abilità di nascondere le proprie emozioni",
+                    "La tendenza a provare emozioni positive",
+                    "La capacità di controllare completamente le proprie reazioni emotive"
+                ],
+                "correct": 0,
+                "topic": "Emozioni e apprendimento"
+            },
+            {
+                "question": "Secondo la teoria controllo-valore di Pekrun, da cosa dipendono le emozioni scolastiche?",
+                "options": [
+                    "Dal controllo percepito sul proprio apprendimento e dal valore attribuito al compito",
+                    "Esclusivamente dalle capacità cognitive dello studente",
+                    "Solo dal giudizio degli insegnanti",
+                    "Principalmente dal contesto familiare"
+                ],
+                "correct": 0,
+                "topic": "Emozioni e apprendimento"
+            },
+            {
+                "question": "Cosa si intende per 'perezhivanie' nella tradizione vygotskiana?",
+                "options": [
+                    "Esperienza emotiva vissuta che cattura le relazioni tra individuo e ambiente",
+                    "Una tecnica di meditazione per controllare le emozioni",
+                    "Un test per misurare l'intelligenza emotiva",
+                    "Un disturbo emotivo comune negli studenti"
+                ],
+                "correct": 0,
+                "topic": "Emozioni e apprendimento"
+            },
+            {
+                "question": "Quale approccio si concentra sulle espressioni facciali e i gesti delle emozioni?",
+                "options": [
+                    "L'approccio comportamentale",
+                    "L'approccio soggettivo",
+                    "L'approccio neuroscientifico",
+                    "L'approccio cognitivo"
+                ],
+                "correct": 0,
+                "topic": "Emozioni e apprendimento"
+            },
+            {
+                "question": "Come si relazionano emozioni e apprendimento secondo la ricerca contemporanea?",
+                "options": [
+                    "Le emozioni influenzano profondamente motivazione, apprendimento e rendimento",
+                    "Le emozioni sono completamente separate dai processi cognitivi",
+                    "Solo le emozioni positive favoriscono l'apprendimento",
+                    "Le emozioni sono irrilevanti per l'apprendimento scolastico"
+                ],
+                "correct": 0,
+                "topic": "Emozioni e apprendimento"
+            },
+            
+            // 10. Motivazione - 5 domande
+            {
+                "question": "Cosa distingue la motivazione intrinseca da quella estrinseca?",
+                "options": [
+                    "L'intrinseca nasce dall'interesse interno, l'estrinseca da obiettivi esterni",
+                    "L'intrinseca è più efficace a breve termine, l'estrinseca a lungo termine",
+                    "L'intrinseca riguarda solo gli adultes, l'estrinseca i bambini",
+                    "L'intrinseca è sempre presente, l'estrinseca è rara"
+                ],
+                "correct": 0,
+                "topic": "Motivazione"
+            },
+            {
+                "question": "Cosa critica la prospettiva cognitivista riguardo alla motivazione?",
+                "options": [
+                    "L'idea che la motivazione sia una semplice risposta a pressioni esterne o interne",
+                    "L'importanza dei bisogni psicologici fondamentali",
+                    "Il ruolo dell'autodeterminazione nel comportamento umano",
+                    "L'influenza delle emozioni sulla motivazione"
+                ],
+                "correct": 0,
+                "topic": "Motivazione"
+            },
+            {
+                "question": "Cosa si intende per 'auto-efficacia' secondo Bandura?",
+                "options": [
+                    "La fiducia nelle proprie capacità di affrontare e portare a termine un compito specifico",
+                    "La valutazione complessiva del proprio valore personale",
+                    "La capacità di nascondere le proprie insicurezze",
+                    "La tendenza a sopravvalutare le proprie abilità"
+                ],
+                "correct": 0,
+                "topic": "Motivazione"
+            },
+            {
+                "question": "Cosa propone la Self-Determination Theory (SDT) di Deci e Ryan?",
+                "options": [
+                    "Che la motivazione è un continuum dalla regolazione esterna a quella intrinseca",
+                    "Che la motivazione è determinata esclusivamente da fattori biologici",
+                    "Che la motivazione estrinseca è sempre superiore a quella intrinseca",
+                    "Che la motivazione è indipendente dal contesto sociale"
+                ],
+                "correct": 0,
+                "topic": "Motivazione"
+            },
+            {
+                "question": "Quali sono i tre bisogni psicologici fondamentali secondo la SDT?",
+                "options": [
+                    "Autonomia, competenza e relazionalità",
+                    "Sicurezza, appartenenza e realizzazione",
+                    "Sopravvivenza, riproduzione e socializzazione",
+                    "Conoscenza, piacere e potere"
+                ],
+                "correct": 0,
+                "topic": "Motivazione"
+            },
+            
+            // 11. Apprendimento collaborativo - 5 domande
+            {
+                "question": "Cosa distingue l'apprendimento cooperativo da altre forme di apprendimento?",
+                "options": [
+                    "L'interdipendenza positiva e la responsabilità individuale all'interno del gruppo",
+                    "La competizione tra studenti per ottenere i risultati migliori",
+                    "L'apprendimento individuale con momenti di confronto occasionale",
+                    "L'insegnamento frontale supportato da attività di gruppo"
+                ],
+                "correct": 0,
+                "topic": "Apprendimento collaborativo"
+            },
+            {
+                "question": "Cos'è il metodo Jigsaw?",
+                "options": [
+                    "Una tecnica in cui ogni studente diventa esperto di una parte per poi condividere con il gruppo",
+                    "Un puzzle utilizzato per sviluppare abilità visuo-spaziali",
+                    "Un test per valutare le competenze collaborative",
+                    "Una strategia per dividere la classe in gruppi omogenei"
+                ],
+                "correct": 0,
+                "topic": "Apprendimento collaborativo"
+            },
+            {
+                "question": "Cosa si intende per 'interdipendenza positiva' nell'apprendimento cooperativo?",
+                "options": [
+                    "Che ciascun membro non può raggiungere i propri obiettivi senza il contributo degli altri",
+                    "Che tutti i membri del gruppo devono pensare allo stesso modo",
+                    "Che il successo del gruppo dipende dall'insegnante",
+                    "Che i membri più capaci devono aiutare quelli meno capaci"
+                ],
+                "correct": 0,
+                "topic": "Apprendimento collaborativo"
+            },
+            {
+                "question": "Quali sono i benefici principali dell'apprendimento collaborativo?",
+                "options": [
+                    "Aumento dell'autostima, potenziamento delle abilità comunicative e conoscenze più durature",
+                    "Riduzione del carico di lavoro per l'insegnante",
+                    "Uniformizzazione delle competenze tra tutti gli studenti",
+                    "Eliminazione completa delle differenze individuali"
+                ],
+                "correct": 0,
+                "topic": "Apprendimento collaborativo"
+            },
+            {
+                "question": "Cosa si intende per 'exploratory talk' secondo Mercer?",
+                "options": [
+                    "Un tipo di interazione in cui gli studenti si confrontano apertamente giustificando le proprie opinioni",
+                    "Una conversazione informale tra studenti durante la ricreazione",
+                    "Un monologo dell'insegnante seguito da domande degli studenti",
+                    "Una tecnica per valutare le competenze linguistiche"
+                ],
+                "correct": 0,
+                "topic": "Apprendimento collaborativo"
+            },
+            
+            // 12. Teoria degli schemi - 5 domande
+            {
+                "question": "Come viene inteso l'apprendimento nella teoria degli schemi?",
+                "options": [
+                    "Come cambiamento dello stato di conoscenza attraverso accrescimento, sintonizzazione o ristrutturazione",
+                    "Come semplice accumulo di informazioni nella memoria",
+                    "Come processo esclusivamente influenzato da fattori ambientali",
+                    "Come risultato del condizionamento operante"
+                ],
+                "correct": 0,
+                "topic": "Teoria degli schemas"
+            },
+            {
+                "question": "Cosa si intende per 'accrescimento' nella teoria degli schemi?",
+                "options": [
+                    "Inserimento di informazioni nuove in uno schema preesistente senza modificarlo",
+                    "Modifica completa di uno schema esistente",
+                    "Eliminazione di informazioni obsolete da uno schema",
+                    "Creazione di un nuovo schema partendo da zero"
+                ],
+                "correct": 0,
+                "topic": "Teoria degli schemas"
+            },
+            {
+                "question": "Cosa si intende per 'sintonizzazione' nella teoria degli schemi?",
+                "options": [
+                    "Miglioramento dello schema attraverso casi nuovi che rendono le variabili più definite",
+                    "Semplificazione eccessiva di uno schema complesso",
+                    "Adattamento dello schema a diverse culture",
+                    "Traduzione dello schema in un'altra lingua"
+                ],
+                "correct": 0,
+                "topic": "Teoria degli schemas"
+            },
+            {
+                "question": "Quando è necessaria una ristrutturazione dello schema?",
+                "options": [
+                    "Quando lo schema preesistente non può integrare informazioni nuove",
+                    "Quando si vogliono aggiungere semplici dettagli a uno schema",
+                    "Quando lo schema è troppo complesso per essere compreso",
+                    "Quando si vuole semplificare eccessivamente uno schema"
+                ],
+                "correct": 0,
+                "topic": "Teoria degli schemas"
+            },
+            {
+                "question": "Quale esempio viene fatto nel testo per illustrare la ristrutturazione?",
+                "options": [
+                    "L'ornitorinco che depone le uova costringendo a ristrutturare lo schema dei mammiferi",
+                    "L'orso che viene incluso nello schema dei mammiferi",
+                    "La balena che viene riconosciuta come mammifero acquatico",
+                    "Il cane che viene addestrato attraverso il condizionamento"
+                ],
+                "correct": 0,
+                "topic": "Teoria degli schemas"
+            },
+            
+            // 13. Problem solving - 5 domande
+            {
+                "question": "Come viene definito l'apprendimento significativo nel contesto del problem solving?",
+                "options": [
+                    "Si sviluppa principalmente attraverso la risoluzione di problemi",
+                    "Avviene esclusivamente attraverso l'istruzione formale",
+                    "È indipendente dal trasferimento delle strategie acquisite",
+                    "Riguarda solo contenuti nozionistici e mnemonici"
+                ],
+                "correct": 0,
+                "topic": "Problem solving"
+            },
+            {
+                "question": "Cosa caratterizza i problemi ben definiti?",
+                "options": [
+                    "Presentano con chiarezza stato iniziale, stato finale e procedura risolutiva",
+                    "Non offrono una chiara definizione degli elementi del problema",
+                    "Richiedono l'elaborazione di nuove strategie non predefinite",
+                    "Implicano l'applicazione di procedure già acquisite"
+                ],
+                "correct": 0,
+                "topic": "Problem solving"
+            },
+            {
+                "question": "Cosa caratterizza i problemi non routinari?",
+                "options": [
+                    "Richiedono l'elaborazione di nuove strategie, non esistendo una procedura predefinita",
+                    "Implicano l'applicazione di procedure già acquisite dal soggetto",
+                    "Presentano con chiarezza stato iniziale, estado finale e procedura risolutiva",
+                    "Non offrono una chiara definizione degli elementi del problema"
+                ],
+                "correct": 0,
+                "topic": "Problem solving"
+            },
+            {
+                "question": "Quali sono le fasi del processo di problem solving?",
+                "options": [
+                    "Definizione del problema, pianificazione, esecuzione e monitoraggio",
+                    "Analisi, sintesi e valutazione",
+                    "Osservazione, imitazione e interiorizzazione",
+                    "Assimilazione, accomodamento e adattamento"
+                ],
+                "correct": 0,
+                "topic": "Problem solving"
+            },
+            {
+                "question": "Cosa si intende per 'apprendimento generativo' di Mayer?",
+                "options": [
+                    "Apprendere non significa semplicemente ricevere informazioni, ma costruire attivamente significato",
+                    "L'apprendimento avviene attraverso la ripetizione meccanica di contenuti",
+                    "L'apprendimento è determinato esclusivamente da fattori genetici",
+                    "L'apprendimento significativo richiede la presenza di un insegnante"
+                ],
+                "correct": 0,
+                "topic": "Problem solving"
+            },
+            
+            // 14. Autodeterminazione - 5 domande
+            {
+                "question": "Cosa propone la Self-Determination Theory (SDT) riguardo alla motivazione?",
+                "options": [
+                    "Che la motivazione è un continuum dalla regolazione esterna a quella intrinseca",
+                    "Che la motivazione è determinata esclusivamente da fattori ambientali",
+                    "Che la motivazione estrinseca è sempre più efficace di quella intrinseca",
+                    "Che la motivazione è un costrutto unitario e indivisibile"
+                ],
+                "correct": 0,
+                "topic": "Autodeterminazione"
+            },
+            {
+                "question": "Quali sono i tre bisogni psicologici fondamentali secondo la SDT?",
+                "options": [
+                    "Autonomia, competenza e relazionalità",
+                    "Sicurezza, appartenenza e autorealizzazione",
+                    "Sopravvivenza, riproduzione e socializzazione",
+                    "Conoscenza, piacere e potere"
+                ],
+                "correct": 0,
+                "topic": "Autodeterminazione"
+            },
+            {
+                "question": "Cosa si intende per 'bisogno di autonomia'?",
+                "options": [
+                    "Sperimentare un senso di libertà nel comportarsi e nel prendere decisioni",
+                    "Essere completamente indipendenti dagli altri",
+                    "Rifiutare ogni forma di influenza esterna",
+                    "Agire esclusivamente in base ai propri interessi personali"
+                ],
+                "correct": 0,
+                "topic": "Autodeterminazione"
+            },
+            {
+                "question": "Cosa si intende per 'bisogno di competenza'?",
+                "options": [
+                    "Sentirsi efficaci e capaci di padroneggiare compiti difficili",
+                    "Essere migliori di tutti gli altri in ogni ambito",
+                    "Avere successo senza alcuno sforzo",
+                    "Evitare qualsiasi compito challenging"
+                ],
+                "correct": 0,
+                "topic": "Autodeterminazione"
+            },
+            {
+                "question": "Cosa si intende per 'bisogno di relazionalità'?",
+                "options": [
+                    "Percepirsi in connessione con gli altri, in un contesto di supporto e riconoscimento",
+                    "Avere un numero elevato di amici e conoscenti",
+                    "Essere popolari e apprezzati da tutti",
+                    "Evitare conflitti e discussioni con gli altri"
+                ],
+                "correct": 0,
+                "topic": "Autodeterminazione"
+            },
+            
+            // 15. Metacognizione - 5 domande
+            {
+                "question": "Cosa si intende per 'metacognizione'?",
+                "options": [
+                    "La consapevolezza e il controllo sui propri processi cognitivi",
+                    "La capacità di memorizzare informazioni complesse",
+                    "L'abilità di risolvere problemi matematici",
+                    "La tendenza a riflettere sulle emozioni"
+                ],
+                "correct": 0,
+                "topic": "Metacognizione"
+            },
+            {
+                "question": "Cosa include la conoscenza metacognitiva?",
+                "options": [
+                    "Consapevolezza di sé stessi, del compito e delle strategie disponibili",
+                    "Solo informazioni sui contenuti disciplinari",
+                    "Esclusivamente tecniche di memorizzazione",
+                    "Regole grammaticali e sintattiche"
+                ],
+                "correct": 0,
+                "topic": "Metacognizione"
+            },
+            {
+                "question": "Cosa sono i 'sentimenti metacognitivi' secondo Efklides?",
+                "options": [
+                    "Sensazioni di piacevolezza o spiacevolezza legate all'efficacia percepita di una strategia",
+                    "Emozioni intense provate durante l'apprendimento",
+                    "Stati d'animo completamente scollegati dall'attività cognitiva",
+                    "Reazioni impulsive a stimoli esterni"
+                ],
+                "correct": 0,
+                "topic": "Metacognizione"
+            },
+            {
+                "question": "Cosa sono i 'giudizi metacognitivi' secondo Efklides?",
+                "options": [
+                    "Valutazioni intuitive circa la difficoltà di un'attività e lo sforzo richiesto",
+                    "Giudizi definitivi sull'intelligenza di una persona",
+                    "Valutazioni basate esclusivamente su test standardizzati",
+                    "Opinioni formulate dopo un'analisi approfondita"
+                ],
+                "correct": 0,
+                "topic": "Metacognizione"
+            },
+            {
+                "question": "Cosa significa 'imparare ad imparare'?",
+                "options": [
+                    "Sviluppare la capacità metacognitiva di riflettere sui propri processi cognitivi",
+                    "Memorizzare il maggior numero possibile di informazioni",
+                    "Acquisire tecniche di studio standardizzate per tutti",
+                    "Seguire pedissequamente le istruzioni dell'insegnante"
+                ],
+                "correct": 0,
+                "topic": "Metacognizione"
+            }
+        ];
+
+        // Funzione per mescolare un array (algoritmo Fisher-Yates)
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+
+        // Funzione per selezionare casualmente le domande e mescolare le opzioni
+        function getRandomQuestions(questions, count) {
+            // Prima mescolo l'array di tutte le domande per selezionarne 15 casuali
+            const shuffledQuestions = shuffleArray([...questions]);
+            const selected = shuffledQuestions.slice(0, count);
+            
+            // Per ogni domanda selezionata, mescolo le opzioni e aggiorno l'indice corretto
+            return selected.map(question => {
+                // Salvo la risposta corretta originale
+                const correctAnswer = question.options[question.correct];
+                
+                // Mescolo le opzioni
+                const shuffledOptions = shuffleArray(question.options);
+                
+                // Trovo il nuovo indice della risposta corretta
+                const newCorrectIndex = shuffledOptions.indexOf(correctAnswer);
+                
+                // Restituisco una nuova domanda con le opzioni mescolate e il nuovo indice corretto
+                return {
+                    ...question,
+                    options: shuffledOptions,
+                    correct: newCorrectIndex
+                };
+            });
+        }
+
+        // Visualizza il quiz
+        function renderQuiz(questions) {
+            const quizContainer = document.getElementById('quiz-container');
+            quizContainer.innerHTML = '';
+            
+            questions.forEach((question, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question';
+                
+                questionDiv.innerHTML = `
+                    <div class="question-number">Domanda ${index + 1}</div>
+                    <div class="topic">Argomento: ${question.topic}</div>
+                    <p>${question.question}</p>
+                    <div class="options">
+                        ${question.options.map((option, i) => `
+                            <div class="option">
+                                <input type="radio" id="q${index}_o${i}" name="q${index}" value="${i}">
+                                <label for="q${index}_o${i}">${option}</label>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                
+                quizContainer.appendChild(questionDiv);
+            });
+            
+            // Aggiorna il topic della prima domanda
+            document.getElementById('current-topic').textContent = `Argomento: ${questions[0].topic}`;
+        }
+
+        // Calcola il punteggio e mostra i risultati
+        function calculateScore(questions) {
+            let score = 0;
+            const resultsContainer = document.getElementById('results');
+            resultsContainer.innerHTML = '<h2>Risultati</h2>';
+            resultsContainer.style.display = 'block';
+            
+            questions.forEach((question, index) => {
+                const selectedOption = document.querySelector(`input[name="q${index}"]:checked`);
+                const userAnswer = selectedOption ? parseInt(selectedOption.value) : -1;
+                
+                const isCorrect = userAnswer === question.correct;
+                if (isCorrect) score++;
+                
+                const resultDiv = document.createElement('div');
+                resultDiv.className = `question-result ${isCorrect ? 'correct' : 'incorrect'}`;
+                
+                resultDiv.innerHTML = `
+                    <p><strong>Domanda ${index + 1}:</strong> ${question.question}</p>
+                    <p>La tua risposta: ${userAnswer !== -1 ? question.options[userAnswer] : 'Nessuna risposta'}</p>
+                    <p class="correct">Risposta corretta: ${question.options[question.correct]}</p>
+                    <div class="topic">Argomento: ${question.topic}</div>
+                `;
+                
+                resultsContainer.appendChild(resultDiv);
+            });
+            
+            const scoreDiv = document.createElement('div');
+            scoreDiv.className = 'score';
+            scoreDiv.innerHTML = `Hai totalizzato ${score} punti su ${questions.length}`;
+            resultsContainer.prepend(scoreDiv);
+            
+            resultsContainer.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Inizializza il quiz
+        document.addEventListener('DOMContentLoaded', function() {
+            // Seleziona 15 domande casuali dal pool e mescola le opzioni
+            const selectedQuestions = getRandomQuestions(questionsPool, 15);
+            renderQuiz(selectedQuestions);
+            
+            // Aggiorna il progresso
+            document.getElementById('total').textContent = '15';
+            
+            // Aggiungi gestore evento per il pulsante di invio
+            document.getElementById('submit-btn').addEventListener('click', function() {
+                calculateScore(selectedQuestions);
+            });
+            
+            // Aggiungi gestori eventi per cambiare l'argomento visualizzato quando l'utente scorre
+            const questions = document.querySelectorAll('.question');
+            const currentTopic = document.getElementById('current-topic');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const topic = entry.target.querySelector('.topic').textContent.replace('Argomento: ', '');
+                        currentTopic.textContent = `Argomento: ${topic}`;
+                        
+                        const questionNumber = entry.target.querySelector('.question-number').textContent.replace('Domanda ', '');
+                        document.getElementById('current').textContent = questionNumber;
+                    }
+                });
+            }, { threshold: 0.5 });
+            
+            questions.forEach(question => {
+                observer.observe(question);
+            });
+        });
+    </script>
+</body>
+</html>
