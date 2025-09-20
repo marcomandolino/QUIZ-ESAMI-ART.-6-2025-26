@@ -1,1 +1,1181 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz di Pedagogia Speciale e Inclusione</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 2.2rem;
+        }
+        .description {
+            color: #7f8c8d;
+            margin-bottom: 20px;
+        }
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+        .question {
+            margin-bottom: 25px;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            background-color: #f8f9fa;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        .question-number {
+            font-weight: bold;
+            color: #3498db;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+        .options {
+            margin-left: 10px;
+        }
+        .option {
+            margin: 12px 0;
+            display: flex;
+            align-items: flex-start;
+        }
+        .option input {
+            margin-top: 5px;
+            margin-right: 12px;
+            cursor: pointer;
+        }
+        .option label {
+            cursor: pointer;
+            flex: 1;
+        }
+        button {
+            display: block;
+            margin: 30px auto;
+            padding: 14px 35px;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+        }
+        button:active {
+            transform: translateY(0);
+        }
+        .results {
+            margin-top: 30px;
+            padding: 25px;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            background-color: #e7f3fe;
+            display: none;
+        }
+        .results h2 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        .question-result {
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        .correct {
+            color: #27ae60;
+            font-weight: bold;
+        }
+        .incorrect {
+            color: #e74c3c;
+        }
+        .score {
+            font-size: 1.4rem;
+            font-weight: bold;
+            text-align: center;
+            margin: 25px 0;
+            color: #2c3e50;
+        }
+        .topic {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            font-style: italic;
+            margin-top: 5px;
+        }
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            h1 {
+                font-size: 1.8rem;
+            }
+            .stats {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Quiz di Pedagogia Speciale e Inclusione</h1>
+            <p class="description">15 domande estratte casualmente da un pool di 75 domande</p>
+        </header>
+        
+        <div class="stats">
+            <div id="current-topic">Argomento: -</div>
+            <div id="progress">Domanda: <span id="current">1</span> di <span id="total">15</span></div>
+        </div>
+        
+        <div id="quiz-container"></div>
+        <button id="submit-btn">Invia risposte</button>
+        
+        <div id="results" class="results"></div>
+        
+        <footer>
+            <p>Quiz realizzato per valutare la conoscenza della Pedagogia Speciale e Inclusione</p>
+        </footer>
+    </div>
 
+    <script>
+        // Pool di 75 domande (15 argomenti × 5 domande ciascuno)
+        const questionsPool = [
+            // 1. Fondamenti della Pedagogia Speciale (5 domande)
+            {
+                "question": "Chi è considerato il fondatore della pedagogia speciale?",
+                "options": [
+                    "Jean Marc Gaspard Itard",
+                    "Maria Montessori",
+                    "Lev Vygotskij",
+                    "Jerome Bruner"
+                ],
+                "correct": 0,
+                "topic": "Fondamenti della Pedagogia Speciale"
+            },
+            {
+                "question": "Cosa studiava Itard attraverso il caso di Victor, il 'ragazzo selvaggio'?",
+                "options": [
+                    "Il passaggio dall'ottica medica a quella educativa sulla disabilità",
+                    "L'apprendimento per imitazione nei bambini",
+                    "Lo sviluppo del linguaggio in condizioni di isolamento",
+                    "L'influenza dell'ambiente sullo sviluppo cognitivo"
+                ],
+                "correct": 0,
+                "topic": "Fondamenti della Pedagogia Speciale"
+            },
+            {
+                "question": "Quale contributo fondamentale ha dato Maria Montessori alla pedagogia speciale?",
+                "options": [
+                    "Ha considerato i bambini 'diversi' come persone che cercano di esprimersi attraverso le funzioni residue",
+                    "Ha sviluppato il primo metodo di insegnamento per non vedenti",
+                    "Ha creato le prime classi differenziali in Italia",
+                    "Ha introdotto il concetto di inclusione nella scuola dell'obbligo"
+                ],
+                "correct": 0,
+                "topic": "Fondamenti della Pedagogia Speciale"
+            },
+            {
+                "question": "Cosa si intende per 'Inclusive Education'?",
+                "options": [
+                    "Un orientamento educativo volto a includere tutti, rispondendo alle specificità di ciascuno",
+                    "Un metodo di insegnamento per soli studenti con disabilità",
+                    "Una strategia didattica basata sulla separazione per abilità",
+                    "Un approccio che privilegia gli studenti normodotati"
+                ],
+                "correct": 0,
+                "topic": "Fondamenti della Pedagogia Speciale"
+            },
+            {
+                "question": "Quale evento internazionale del 1994 ha sottolineato l'importanza cruciale della dimensione inclusiva del sistema scolastico?",
+                "options": [
+                    "La Conferenza di Salamanca organizzata dall'Unesco",
+                    "La Convenzione sui diritti delle persone disabili delle Nazioni Unite",
+                    "La Carta di Lussemburgo",
+                    "Il Summit mondiale sull'educazione di Dakar"
+                ],
+                "correct": 0,
+                "topic": "Fondamenti della Pedagogia Speciale"
+            },
+            
+            // 2. Legislazione per l'Inclusione (5 domande)
+            {
+                "question": "Quale legge riconobbe per la prima volta il diritto all'educazione in classe comune per gli allievi con disabilità?",
+                "options": [
+                    "Legge n. 118/1971",
+                    "Legge n. 517/1977",
+                    "Legge n. 104/1992",
+                    "Legge n. 170/2010"
+                ],
+                "correct": 0,
+                "topic": "Legislazione per l'Inclusione"
+            },
+            {
+                "question": "Cosa stabiliva la legge n. 517/1977?",
+                "options": [
+                    "Il diritto degli allievi con disabilità a insegnanti specializzati (sostegno)",
+                    "L'obbligo di frequenza scolastica per tutti i bambini",
+                    "La creazione di classi differenziali per studenti con disabilità",
+                    "L'introduzione dell'educazione civica nei programmi scolastici"
+                ],
+                "correct": 0,
+                "topic": "Legislazione per l'Inclusione"
+            },
+            {
+                "question": "Quale legge è nota come 'legge-quadro per l'assistenza, l'integrazione sociale e i diritti delle persone con disabilità'?",
+                "options": [
+                    "Legge n. 104/1992",
+                    "Legge n. 170/2010",
+                    "Legge n. 118/1971",
+                    "Legge n. 517/1977"
+                ],
+                "correct": 0,
+                "topic": "Legislazione per l'Inclusione"
+            },
+            {
+                "question": "Cosa prevede il decreto legislativo n. 66/2017 in materia di disabilità?",
+                "options": [
+                    "La redazione di un profilo di funzionamento secondo il modello ICF",
+                    "L'abolizione delle classi differenziali",
+                    "L'introduzione dell'insegnante di sostegno",
+                    "La creazione di scuole speciali per disabili gravi"
+                ],
+                "correct": 0,
+                "topic": "Legislazione per l'Inclusione"
+            },
+            {
+                "question": "Quale documento storico, emanato dalla commissione Falcucci, ribadiva il principio del superamento dell'emarginazione attraverso un nuovo modo di concepire la scuola?",
+                "options": [
+                    "Il documento Falcucci del 1975",
+                    "La Carta di Lussemburgo del 1996",
+                    "La Conferenza di Salamanca del 1994",
+                    "La Convenzione ONU del 2006"
+                ],
+                "correct": 0,
+                "topic": "Legislazione per l'Inclusione"
+            },
+            
+            // 3. Comunicazione Educativa (5 domande)
+            {
+                "question": "Secondo Paparella (2012), come si distinguono desideri, necessità e bisogni?",
+                "options": [
+                    "Desideri: vissuti; Necessità: situazioni oggettive; Bisogni: identità personale/gruppo",
+                    "Desideri: identità; Necessità: vissuti; Bisogni: situazioni oggettive",
+                    "Desideri: situazioni oggettive; Necessità: identità; Bisogni: vissuti",
+                    "Desideri, necessità e bisogni sono sinonimi nella comunicazione educativa"
+                ],
+                "correct": 0,
+                "topic": "Comunicazione Educativa"
+            },
+            {
+                "question": "Cosa si intende per 'comunicazione aumentativa alternativa' (CAA)?",
+                "options": [
+                    "Qualsiasi strumento che compensa le difficoltà di comunicazione espressiva e recettiva",
+                    "Un metodo per insegnare a parlare più velocemente",
+                    "Una tecnica per migliorare la dizione",
+                    "Un sistema di comunicazione esclusivamente basato sulla LIS"
+                ],
+                "correct": 0,
+                "topic": "Comunicazione Educativa"
+            },
+            {
+                "question": "Secondo Carr (1994), i problemi comportamentali rappresentano spesso:",
+                "options": [
+                    "Tentativi di entrare in relazione con l'ambiente",
+                    "Mancanza di disciplina e rispetto delle regole",
+                    "Problemi psicologici irrisolvibili in ambito scolastico",
+                    "Semplici capricci senza significato comunicativo"
+                ],
+                "correct": 0,
+                "topic": "Comunicazione Educativa"
+            },
+            {
+                "question": "Quale approccio è particolarmente utile per allievi con gravi compromissioni comunicative?",
+                "options": [
+                    "Il Verbal Behavior Teaching",
+                    "Il metodo Montessori",
+                    "L'insegnamento frontale tradizionale",
+                    "L'apprendimento competitivo"
+                ],
+                "correct": 0,
+                "topic": "Comunicazione Educativa"
+            },
+            {
+                "question": "Perché è importante analizzare bene le domande, la maniera e il contesto in cui vengono poste?",
+                "options": [
+                    "Perché la domanda verbalizzata è spesso solo manifestazione di un desiderio, mentre il bisogno resta nascosto",
+                    "Perché gli studenti con disabilità spesso mentono sulle loro reali intenzioni",
+                    "Perché è necessario individuare immediatamente le domande inappropriate",
+                    "Perché solo alcune domande meritano risposta nell'ambito didattico"
+                ],
+                "correct": 0,
+                "topic": "Comunicazione Educativa"
+            },
+            
+            // 4. Disabilità Uditiva (5 domande)
+            {
+                "question": "Qual è la principale strategia inclusiva per favorire la partecipazione dell'allievo con sordità?",
+                "options": [
+                    "Sollecitare la sua partecipazione alla vita della classe",
+                    "Isolarlo in un ambiente silenzioso per favorire la concentrazione",
+                    "Assegnargli sempre compiti individuali e scritti",
+                    "Ridurre le aspettative di apprendimento"
+                ],
+                "correct": 0,
+                "topic": "Disabilità Uditiva"
+            },
+            {
+                "question": "Cosa compete all'assistente per l'autonomia e comunicazione?",
+                "options": [
+                    "Funzioni specifiche che differenziano questa figura dall'insegnante di sostegno",
+                    "Sostituire completamente l'insegnante di sostegno",
+                    "Svolgere esclusivamente compiti amministrativi",
+                    "Occuparsi solo dell'insegnamento della LIS"
+                ],
+                "correct": 0,
+                "topic": "Disabilità Uditiva"
+            },
+            {
+                "question": "Quale criterio di progettazione è importante per lezioni per studenti con sordità?",
+                "options": [
+                    "Progettare la lezione in modalità visiva con immagini, foto, simboli e mappe",
+                    "Utilizzare esclusivamente materiali testuali complessi",
+                    "Evitare qualsiasi forma di arricchimento lessicale",
+                    "Affidare tutto l'insegnamento al caso e all'improvvisazione"
+                ],
+                "correct": 0,
+                "topic": "Disabilità Uditiva"
+            },
+            {
+                "question": "Come si può favorire la memorizzazione del lessico per studenti con disabilità uditiva?",
+                "options": [
+                    "Legandolo alla sfera personale e familiare",
+                    "Chiedendo ripetizioni meccaniche senza contesto",
+                    "Utilizzando esclusivamente testi scritti",
+                    "Evitando riferimenti alla vita quotidiana"
+                ],
+                "correct": 0,
+                "topic": "Disabilità Uditiva"
+            },
+            {
+                "question": "Quale vantaggio offrono le tecnologie per la didattica speciale quando utilizzate da tutta la classe?",
+                "options": [
+                    "Diventano strumento di rinforzo dell'apprendimento e di supporto alla relazionalità",
+                    "Permettono di isolare gli studenti con disabilità",
+                    "Riducano il carico di lavoro per gli insegnanti",
+                    "Sostituiscono completamente la relazione educativa"
+                ],
+                "correct": 0,
+                "topic": "Disabilità Uditiva"
+            },
+            
+            // 5. Disabilità Visiva (5 domande)
+            {
+                "question": "A quale prospettiva fanno riferimento le strategie didattiche per alunni con disabilità visiva?",
+                "options": [
+                    "Una prospettiva di tipo esperienziale",
+                    "Un approccio esclusivamente teorico e verbale",
+                    "Un metodo basato sulla ripetizione meccanica",
+                    "Una didattica frontale tradizionale"
+                ],
+                "correct": 0,
+                "topic": "Disabilità Visiva"
+            },
+            {
+                "question": "Perché è sconsigliabile l'utilizzo di testi semplificati o riduzioni di programma per studenti con disabilità visiva?",
+                "options": [
+                    "Perché non si è in presenza di problemi nella sfera cognitiva bensì solo in quella sensoriale",
+                    "Perché questi studenti apprendono più velocemente degli altri",
+                    "Perché i testi semplificati sono più costosi",
+                    "Perché è necessario mantenere alto il livello di difficoltà"
+                ],
+                "correct": 0,
+                "topic": "Disabilità Visiva"
+            },
+            {
+                "question": "Cosa è necessario fare per evitare il rischio di emarginazione o auto-isolamento dell'allievo con disabilità visiva?",
+                "options": [
+                    "Esercitare una buona osservazione educativa sistematica e predisporre un setting didattico adeguato",
+                    "Assegnargli sempre compiti individuali lontano dai compagni",
+                    "Evitare di farlo partecipare alle attività di gruppo",
+                    "Ridurre le occasioni di interazione con i compagni"
+                ],
+                "correct": 0,
+                "topic": "Disabilità Visiva"
+            },
+            {
+                "question": "Quale attenzione è necessaria per non generare sovraccarico cognitivo in studenti con disabilità visiva?",
+                "options": [
+                    "Dare tempo per collocare ciò che ha appena percepito all'interno dei suoi schemi mentali",
+                    "Fornire quante più informazioni possibili in breve tempo",
+                    "Somministrare stimoli continui senza pause",
+                    "Evitare qualsiasi forma di spiegazione aggiuntiva"
+                ],
+                "correct": 0,
+                "topic": "Disabilità Visiva"
+            },
+            {
+                "question": "Quali obiettivi mira a permettere l'intervento didattico per studenti con disabilità visiva?",
+                "options": [
+                    "Potenziamento altre funzioni sensoriali, sviluppo funzione immaginativo-motoria, acquisizione competenza comunicativa",
+                    "Miglioramento esclusivo delle abilità uditive",
+                    "Sviluppo di capacità atletiche superiori",
+                    "Apprendimento mnemonico di contenuti nozionistici"
+                ],
+                "correct": 0,
+                "topic": "Disabilità Visiva"
+            },
+            
+            // 6. Disabilità Intellettiva (5 domande)
+            {
+                "question": "Secondo il DSM-5, quali sono le aree deficitarie nella disabilità intellettiva?",
+                "options": [
+                    "Deficit funzioni intellettive e deficit funzionamento adattivo",
+                    "Solo deficit del funzionamento adattivo",
+                    "Solo deficit delle funzioni intellettive",
+                    "Deficit esclusivamente nel dominio pratico"
+                ],
+                "correct": 0,
+                "topic": "Disabilità Intellettiva"
+            },
+            {
+                "question": "Come vengono definiti i vari gradi di gravità della disabilità intellettiva secondo il DSM-5?",
+                "options": [
+                    "Sulla base del funzionamento adattivo che determina il livello di assistenza richiesto",
+                    "In base al quoziente intellettivo misurato da test standardizzati",
+                    "Secondo il giudizio clinico del medico curante",
+                    "In relazione all'età anagrafica del soggetto"
+                ],
+                "correct": 0,
+                "topic": "Disabilità Intellettiva"
+            },
+            {
+                "question": "Quale sarebbe l'errore da evitare riguardo alle responsabilità della disabilità intellettiva?",
+                "options": [
+                    "Ridurre tutte le responsabilità alla persona, senza considerare il contesto",
+                    "Attribuire tutte le responsabilità all'ambiente familiare",
+                    "Considerare la scuola come unica responsabile del successo formativo",
+                    "Ritenere la disabilità intellettiva completamente superabile con l'istruzione"
+                ],
+                "correct": 0,
+                "topic": "Disabilità Intellettiva"
+            },
+            {
+                "question": "Cosa caratterizza l'intervento educativo e didattico speciale per disabilità intellettiva?",
+                "options": [
+                    "Capacità di adattare ambiente e materiali, sostenere sviluppo abilità, potenziare resa sociale",
+                    "Focus esclusivo sull'apprendimento di contenuti nozionistici",
+                    "Isolamento dagli altri studenti per evitare confronti",
+                    "Riduzione generale degli obiettivi didattici"
+                ],
+                "correct": 0,
+                "topic": "Disabilità Intellettiva"
+            },
+            {
+                "question": "Come può l'insegnante avvicinare l'allievo con disabilità intellettiva al conseguimento di traguardi importanti?",
+                "options": [
+                    "Esercitando empatia, offrendo supporto, strutturando routine e costruendo alleanze educative",
+                    "Assegnando compiti sempre più difficili senza supporto",
+                    "Confrontandolo continuamente con i compagni più abili",
+                    "Limitando al massimo le interazioni sociali"
+                ],
+                "correct": 0,
+                "topic": "Disabilità Intellettiva"
+            },
+            
+            // 7. ADHD (5 domande)
+            {
+                "question": "Cosa mette a dura prova l'insegnante nell'alunno con ADHD?",
+                "options": [
+                    "La sua eccessiva necessità di muoversi, impulsività, disattenzione",
+                    "La sua lentezza nell'esecuzione dei compiti",
+                    "La sua incapacità di relazionarsi con i compagni",
+                    "La sua mancanza di interesse per qualsiasi attività"
+                ],
+                "correct": 0,
+                "topic": "ADHD"
+            },
+            {
+                "question": "Quale strategia è vantaggiosa invece di punire il comportamento-problema nell'ADHD?",
+                "options": [
+                    "Convocare l'energia verso azioni positive e inclusive a vantaggio di tutti",
+                    "Isolare l'alunno fino a quando non si calma",
+                    "Assegnare punizioni sempre più severe",
+                    "Ignorare completamente il comportamento problematico"
+                ],
+                "correct": 0,
+                "topic": "ADHD"
+            },
+            {
+                "question": "Quali attività possono essere assegnate per convogliare positivamente l'energia dello studente con ADHD?",
+                "options": [
+                    "Riordinare l'aula, classificare materiali, sistemare banchi, fare il capofila",
+                    "Compiti ripetitivi e noiosi per calmarlo",
+                    "Esercizi di copywriting senza scopo apparente",
+                    "Attività che lo isolano dal resto della classe"
+                ],
+                "correct": 0,
+                "topic": "ADHD"
+            },
+            {
+                "question": "Cosa può incentivare queste attività positive in studenti con ADHD?",
+                "options": [
+                    "Sviluppare una positiva immagine di sé, autostima e autoefficacia",
+                    "Aumentare il senso di competizione con i compagni",
+                    "Rinforzare l'idea di essere diverso dagli altri",
+                    "Sottolineare continuamente le sue difficoltà"
+                ],
+                "correct": 0,
+                "topic": "ADHD"
+            },
+            {
+                "question": "Quali attività sono sempre da incentivare per studenti con ADHD?",
+                "options": [
+                    "Attività collaborative, mai competitive, lavori in piccolo gruppo o a coppie",
+                    "Attività individuali e competitive",
+                    "Esercizi meccanici ripetitivi",
+                    "Prolungate sessioni di ascolto passivo"
+                ],
+                "correct": 0,
+                "topic": "ADHD"
+            },
+            
+            // 8. Disturbi dello Spettro Autistico (5 domande)
+            {
+                "question": "Qual è la compromissione più evidente e sempre presente nei disturbi dello spettro autistico?",
+                "options": [
+                    "Quella relativa all'interazione sociale",
+                    "Il deficit intellettivo grave",
+                    "La completa assenza di linguaggio",
+                    "L'incapacità di svolgere qualsiasi compito pratico"
+                ],
+                "correct": 0,
+                "topic": "Disturbi dello Spettro Autistico"
+            },
+            {
+                "question": "Quali sono le aree-chiave su cui devono interessare gli obiettivi dell'intervento educativo?",
+                "options": [
+                    "Comunicazione, socializzazione e comportamento adattivo",
+                    "Solo l'apprendimento di contenuti disciplinari",
+                    "Esclusivamente lo sviluppo di abilità motorie",
+                    "Solo il potenziamento delle capacità mnemoniche"
+                ],
+                "correct": 0,
+                "topic": "Disturbi dello Spettro Autistico"
+            },
+            {
+                "question": "Cosa rappresentano i compagni per l'inclusione dell'allievo con disturbo dello spettro autistico?",
+                "options": [
+                    "Una grande risorsa come facilitatori delle interazioni sociali e dell'apprendimento",
+                    "Un ostacolo al processo di apprendimento",
+                    "Una fonte di disturbo e confusione",
+                    "Elementi irrilevanti per il suo percorso formativo"
+                ],
+                "correct": 0,
+                "topic": "Disturbi dello Spettro Autistico"
+            },
+            {
+                "question": "Cos'è il PECS (Picture Exchange Communication System)?",
+                "options": [
+                    "Un sistema di comunicazione mediante scambio di immagini",
+                    "Un metodo per insegnare la lettura veloce",
+                    "Una tecnica di gestione della classe",
+                    "Un programma per lo sviluppo delle abilità motorie"
+                ],
+                "correct": 0,
+                "topic": "Disturbi dello Spettro Autistico"
+            },
+            {
+                "question": "Quali strumenti possono supportare la comunicazione nell'autismo?",
+                "options": [
+                    "Sistema PECS, agende visive, routine, storie sociali",
+                    "Esclusivamente il linguaggio verbale",
+                    "Solo la comunicazione scritta tradizionale",
+                    "Comunicazione non verbale basata esclusivamente sui gesti"
+                ],
+                "correct": 0,
+                "topic": "Disturbi dello Spettro Autistico"
+            },
+            
+            // 9. Gestione Inclusiva della Classe (5 domande)
+            {
+                "question": "Cosa caratterizza la scuola inclusiva?",
+                "options": [
+                    "Propone attività che coinvolgono con naturalità l'allievo con disabilità, facendolo sentire parte del gruppo",
+                    "Separa gli studenti con disabilità in attività specifiche",
+                    "Riduce le aspettative per gli studenti con problemi",
+                    "Considera la diversità come un ostacolo da superare"
+                ],
+                "correct": 0,
+                "topic": "Gestione Inclusiva della Classe"
+            },
+            {
+                "question": "Cosa significa essere membri di un gruppo classe in una scuola inclusiva?",
+                "options": [
+                    "Avere coscienza che i compagni sono una risorsa indispensabile per la propria crescita",
+                    "Competere per ottenere i risultati migliori individualmente",
+                    "Isolarsi per concentrarsi sul proprio apprendimento",
+                    "Considerare i compagni con disabilità come un peso per la classe"
+                ],
+                "correct": 0,
+                "topic": "Gestione Inclusiva della Classe"
+            },
+            {
+                "question": "Cosa è necessario per lavorare bene sul piano inclusivo secondo il testo?",
+                "options": [
+                    "Avere competenze gestionali validate dalla ricerca",
+                    "Avere a disposizione risorse economiche illimitate",
+                    "Lavorare esclusivamente con classi poco numerose",
+                    "Escludere gli studenti con gravi disabilità"
+                ],
+                "correct": 0,
+                "topic": "Gestione Inclusiva della Classe"
+            },
+            {
+                "question": "Cosa fa un team di docenti che opera sul piano inclusivo?",
+                "options": [
+                    "Imposta collegialmente una intenzionalità didattica globale per tutti gli allievi",
+                    "Lascia ogni insegnante libero di seguire il proprio metodo senza coordinamento",
+                    "Affida esclusivamente all'insegnante di sostegno la gestione degli alunni con disabilità",
+                    "Divide la classe in gruppi di livello omogeneo"
+                ],
+                "correct": 0,
+                "topic": "Gestione Inclusiva della Classe"
+            },
+            {
+                "question": "Come programma il suo lavoro un insegnante che agisce sul piano inclusivo?",
+                "options": [
+                    "In modo da raggiungere e soddisfare le necessità di ogni allievo, nessuno escluso",
+                    "Con obiettivi differenziati solo per gli studenti con disabilità",
+                    "Concentrandosi principalmente sugli studenti più bravi",
+                    "Trascurando le specificità individuali per omogeneizzare l'insegnamento"
+                ],
+                "correct": 0,
+                "topic": "Gestione Inclusiva della Classe"
+            },
+            
+            // 10. Peer Tutoring (5 domande)
+            {
+                "question": "Cos'è il peer tutoring?",
+                "options": [
+                    "Una strategia che coinvolge allievi come tutor per favorire l'apprendimento di altri compagni",
+                    "Un metodo di insegnamento esclusivamente frontale",
+                    "Una tecnica per valutare individualmente ogni studente",
+                    "Un sistema di premio per gli studenti più meritevoli"
+                ],
+                "correct": 0,
+                "topic": "Peer Tutoring"
+            },
+            {
+                "question": "Quando si può parlare di effettiva applicazione del peer tutoring secondo Cottini (2017)?",
+                "options": [
+                    "Quando il passaggio di competenze avviene all'interno di un piano didattico ben strutturato",
+                    "Quando gli studenti più bravi aiutano sporadicamente i compagni in difficoltà",
+                    "Quando l'insegnante delega completamente l'insegnamento ai tutor",
+                    "Quando non c'è alcuna programmazione delle attività"
+                ],
+                "correct": 0,
+                "topic": "Peer Tutoring"
+            },
+            {
+                "question": "Il trasferimento di competenze nel peer tutoring è:",
+                "options": [
+                    "Bidirezionale, con benefici sia per chi aiuta che per chi viene aiutato",
+                    "Unidirezionale, solo da tutor a tutee",
+                    "Inefficiente e poco produttivo",
+                    "Utile esclusivamente per gli studenti con disabilità"
+                ],
+                "correct": 0,
+                "topic": "Peer Tutoring"
+            },
+            {
+                "question": "Cosa permette di realizzare il peer tutoring?",
+                "options": [
+                    "Una educazione individualizzata perseguendo obiettivi inclusivi",
+                    "Solo il miglioramento dei risultati degli studenti più deboli",
+                    "L'omogeneizzazione dei livelli di apprendimento",
+                    "La riduzione del carico di lavoro per l'insegnante"
+                ],
+                "correct": 0,
+                "topic": "Peer Tutoring"
+            },
+            {
+                "question": "Quali sono i motivi della validità del peer tutoring?",
+                "options": [
+                    "Approccio individualizzato, forte motivazione, esposizione a prospettive diverse, più feedback",
+                    "Riduzione dei costi dell'istruzione, minimo sforzo per l'insegnante, risultati immediati",
+                    "Uniformità dell'insegnamento, standardizzazione dei contenuti, valutazione oggettiva",
+                    "Isolamento degli studenti con difficoltà, concentrazione sui contenuti nozionistici"
+                ],
+                "correct": 0,
+                "topic": "Peer Tutoring"
+            },
+            
+            // 11. Apprendimento Cooperativo (Cooperative Learning) (5 domande)
+            {
+                "question": "Cos'è il Cooperative Learning?",
+                "options": [
+                    "Una metodologia didattica strutturata in cui gli studenti lavorano insieme in piccoli gruppi",
+                    "Un semplice lavoro di gruppo senza struttura precisa",
+                    "Un metodo competitivo per selezionare i migliori studenti",
+                    "Una tecnica individualistica di apprendimento"
+                ],
+                "correct": 0,
+                "topic": "Apprendimento Cooperativo (Cooperative Learning)"
+            },
+            {
+                "question": "Quali elementi sono essenziali per un autentico apprendimento cooperativo secondo Johnson & Johnson?",
+                "options": [
+                    "Interdipendenza positiva, responsabilità individuale, valutazione di gruppo, abilità sociali",
+                    "Competizione tra gruppi, premi per i vincitori, punizioni per i perdenti",
+                    "Assegnazione casuale dei compiti, assenza di ruoli definiti, valutazione solo individuale",
+                    "Lavoro individuale con momenti di confronto finale"
+                ],
+                "correct": 0,
+                "topic": "Apprendimento Cooperativo (Cooperative Learning)"
+            },
+            {
+                "question": "Cosa si intende per 'interdipendenza positiva' nel cooperative learning?",
+                "options": [
+                    "Gli studenti percepiscono di essere legati ai compagni: il successo di uno è il successo di tutti",
+                    "Ogni studente lavora per sé stesso senza curarsi degli altri",
+                    "I membri del gruppo competono tra loro per emergere",
+                    "L'insegnante decide chi deve collaborare con chi"
+                ],
+                "correct": 0,
+                "topic": "Apprendimento Cooperativo (Cooperative Learning)"
+            },
+            {
+                "question": "Perché il cooperative learning si dimostra efficace per l'inclusione?",
+                "options": [
+                    "Grazie alla sua intrinseca flessibilità e adattabilità",
+                    "Perché isola gli studenti con disabilità in gruppi speciali",
+                    "Perché riduce gli obiettivi di apprendimento per tutti",
+                    "Perché elimina completamente la figura dell'insegnante"
+                ],
+                "correct": 0,
+                "topic": "Apprendimento Cooperativo (Cooperative Learning)"
+            },
+            {
+                "question": "Cosa si intende per 'responsabilità individuale' nel cooperative learning?",
+                "options": [
+                    "Ogni membro del gruppo è responsabile del proprio contributo e dell'apprendimento",
+                    "Il gruppo nel suo insieme è responsabile senza distinzioni",
+                    "Solo il leader del gruppo ha responsabilità",
+                    "L'insegnante assume tutte le responsabilità"
+                ],
+                "correct": 0,
+                "topic": "Apprendimento Cooperativo (Cooperative Learning)"
+            },
+            
+            // 12. Docente di Sostegno (5 domande)
+            {
+                "question": "Qual è il ruolo del docente di sostegno secondo Ianes (2014)?",
+                "options": [
+                    "Promuovere un'azione educativa che riconosca e valorizzi le differenze",
+                    "Sostituire o affiancare passivamente l'alunno con disabilità",
+                    "Occuparsi esclusivamente degli studenti certificati",
+                    "Lavorare in isolamento dagli altri docenti"
+                ],
+                "correct": 0,
+                "topic": "Docente di Sostegno"
+            },
+            {
+                "question": "Cosa ha evidenziato la ricerca di Balestra et al. (2024) sul profilo dei futuri docenti di sostegno?",
+                "options": [
+                    "Prevalenza femminile (76,1%) e fascia d'età 20-30 anni più rappresentata",
+                    "Maggioranza maschile e età avanzata",
+                    "Equa distribuzione di genere e età",
+                    "Prevalenza di docenti over 50 con esperienza pregressa"
+                ],
+                "correct": 0,
+                "topic": "Docente di Sostegno"
+            },
+            {
+                "question": "Quali sono le motivazioni principali che spingono a intraprendere la professione di docente di sostegno?",
+                "options": [
+                    "Passione per l'insegnamento, influenza familiare, stabilità lavorativa",
+                    "Solo la ricerca di uno stipendio elevato",
+                    "Mancanza di alternative professionali",
+                    "Desiderio di lavorare con orari ridotti"
+                ],
+                "correct": 0,
+                "topic": "Docente di Sostegno"
+            },
+            {
+                "question": "Quali competenze sono considerate fondamentali per il docente di sostegno?",
+                "options": [
+                    "Competenze relazionali ed empatiche (90%), osservative (85%), metodologico-didattiche (80%)",
+                    "Solo competenze informatiche avanzate",
+                    "Esclusivamente conoscenze normative specialistiche",
+                    "Competenze atletiche e motorie"
+                ],
+                "correct": 0,
+                "topic": "Docente di Sostegno"
+            },
+            {
+                "question": "Come si configura il docente di sostegno a livello europeo secondo il progetto TE4I?",
+                "options": [
+                    "Come una risorsa strategica per l'intera classe che valorizza la diversità",
+                    "Come un tecnico specializzato per singoli casi di disabilità",
+                    "Come un assistente con funzioni marginali",
+                    "Come un figura separata dal team docente"
+                ],
+                "correct": 0,
+                "topic": "Docente di Sostegno"
+            },
+            
+            // 13. Competenze Digitali (5 domande)
+            {
+                "question": "Cosa sottolinea Bocci (2015) riguardo agli strumenti digitali?",
+                "options": [
+                    "Non sostituiscono la relazione educativa, ma la amplificano",
+                    "Sostituiscono completamente la relazione educativa tradizionale",
+                    "Sono inutili nella didattica speciale",
+                    "Dovrebbero essere evitati perché distraggono gli studenti"
+                ],
+                "correct": 0,
+                "topic": "Competenze Digitali"
+            },
+            {
+                "question": "Secondo Gardner (2013), cosa richiede la pluralità degli stili cognitivi?",
+                "options": [
+                    "Un'attenzione specifica e la tecnologia può essere una risorsa preziosa",
+                    "L'eliminazione di qualsiasi strumento tecnologico",
+                    "L'uniformizzazione dei metodi di insegnamento",
+                    "La standardizzazione degli approcci didattici"
+                ],
+                "correct": 0,
+                "topic": "Competenze Digitali"
+            },
+            {
+                "question": "Cosa favoriscono le tecnologie secondo Murdaca (2019)?",
+                "options": [
+                    "Pratiche cooperative e motivanti, rafforzando competenze sociali e relazionali",
+                    "Isolamento e individualismo nell'apprendimento",
+                    "Dipendenza tecnologica e riduzione delle abilità sociali",
+                    "Appiattimento degli stili cognitivi"
+                ],
+                "correct": 0,
+                "topic": "Competenze Digitali"
+            },
+            {
+                "question": "Quale percentuale di docenti dichiara un uso quotidiano delle tecnologie secondo Balestra et al. (2024)?",
+                "options": [
+                    "Quasi la metà",
+                    "Solo il 10%",
+                    "La quasi totalità (90%)",
+                    "Nessuno"
+                ],
+                "correct": 0,
+                "topic": "Competenze Digitali"
+            },
+            {
+                "question": "Quali strumenti digitali rappresentano un'opportunità per favorire l'accessibilità?",
+                "options": [
+                    "LIM, software di sintesi vocale, mappe concettuali digitali",
+                    "Solo social network e applicazioni ricreative",
+                    "Esclusivamente programmi di videoscrittura base",
+                    "Dispositivi per realtà virtuale costosi"
+                ],
+                "correct": 0,
+                "topic": "Competenze Digitali"
+            },
+            
+            // 14. Adattamenti Didattici (5 domande)
+            {
+                "question": "Cosa significa adattare nella didattica speciale?",
+                "options": [
+                    "Garantire che tutti gli studenti possano partecipare attivamente ai processi di apprendimento",
+                    "Abbassare gli standard e le aspettative per gli studenti con disabilità",
+                    "Eliminare contenuti ritenuti troppo difficili",
+                    "Ridurre il carico di lavoro per l'insegnante"
+                ],
+                "correct": 0,
+                "topic": "Adattamenti Didattici"
+            },
+            {
+                "question": "Quali sono le principali strategie di adattamento didattico?",
+                "options": [
+                    "Sostituzione, facilitazione, semplificazione, scomposizione, partecipazione",
+                    "Solo semplificazione e riduzione dei contenuti",
+                    "Esclusivamente l'uso di tecnologie avanzate",
+                    "Aumento delle ore di lezione frontale"
+                ],
+                "correct": 0,
+                "topic": "Adattamenti Didattici"
+            },
+            {
+                "question": "Cosa si intende per 'sostituzione' come strategia di adattamento?",
+                "options": [
+                    "Presentare un contenuto attraverso un canale comunicativo alternativo",
+                    "Eliminare completamente un contenuto ritenuto troppo difficile",
+                    "Sostituire l'insegnante con un tutor specializzato",
+                    "Cambiare il programma didattico in toto"
+                ],
+                "correct": 0,
+                "topic": "Adattamenti Didattici"
+            },
+            {
+                "question": "Cosa si intende per 'partecipazione alla cultura del compito'?",
+                "options": [
+                    "Consentire la partecipazione anche a studenti con disabilità gravi attraverso coinvolgimento attivo",
+                    "Far osservare passivamente le attività ai studenti con disabilità",
+                    "Escludere gli studenti con disabilità dalle attività complesse",
+                    "Assegnare compiti completamente diversi agli studenti con disabilità"
+                ],
+                "correct": 0,
+                "topic": "Adattamenti Didattici"
+            },
+            {
+                "question": "Secondo Ianes (2014), a chi giovano gli adattamenti didattici?",
+                "options": [
+                    "Non solo agli studenti con BES, ma migliorano l'apprendimento dell'intera classe",
+                    "Solo ed esclusivamente agli studenti con certificazione",
+                    "Principalmente all'insegnante per semplificare il lavoro",
+                    "Solo agli studenti con lievi difficoltà"
+                ],
+                "correct": 0,
+                "topic": "Adattamenti Didattici"
+            },
+            
+            // 15. Universal Design for Learning (UDL) (5 domande)
+            {
+                "question": "Cos'è l'Universal Design for Learning (UDL)?",
+                "options": [
+                    "Un approccio che progetta curricoli inclusivi pensati fin dall'inizio per accogliere la diversità",
+                    "Un metodo per aggiungere misure speciali solo per chi manifesta bisogni speciali",
+                    "Una tecnica di valutazione standardizzata per tutti gli studenti",
+                    "Un modello didattico basato esclusivamente sulle tecnologie"
+                ],
+                "correct": 0,
+                "topic": "Universal Design for Learning (UDL)"
+            },
+            {
+                "question": "Da dove nasce l'ispirazione per l'UDL?",
+                "options": [
+                    "Dall'Universal Design in architettura di Ronald Mace",
+                    "Dalla teoria comportamentista di Skinner",
+                    "Dagli studi neuroscientifici sul cervello",
+                    "Dalla pedagogia tradizionale frontale"
+                ],
+                "correct": 0,
+                "topic": "Universal Design for Learning (UDL)"
+            },
+            {
+                "question": "Qual è l'idea rivoluzionaria alla base dell'UDL?",
+                "options": [
+                    "Ciò che è necessario per alcuni, diventa utile per tutti",
+                    "Bisogna creare percorsi separati per studenti con diverse abilità",
+                    "L'insegnamento deve essere standardizzato per essere equo",
+                    "Le tecnologie sostituiscono completamente i metodi tradizionali"
+                ],
+                "correct": 0,
+                "topic": "Universal Design for Learning (UDL)"
+            },
+            {
+                "question": "Quali sono i tre principi cardine dell'UDL secondo il CAST (2011)?",
+                "options": [
+                    "Molteplici mezzi di rappresentazione, azione/espressione, coinvolgimento",
+                    "Valutazione standardizzata, insegnamento frontale, apprendimento individuale",
+                    "Competizione, selezione, emulazione",
+                    "Uniformità, standardizzazione, semplificazione"
+                ],
+                "correct": 0,
+                "topic": "Universal Design for Learning (UDL)"
+            },
+            {
+                "question": "Cosa significa progettare secondo l'UDL?",
+                "options": [
+                    "Elaborare fin dall'inizio curricoli flessibili, accessibili e stimolanti per tutti",
+                    "Aggiungere accorgimenti speciali dopo aver preparato il curricolo standard",
+                    "Creare percorsi separati per studenti con diverse abilità",
+                    "Limitare le opzioni per non confondere gli studenti"
+                ],
+                "correct": 0,
+                "topic": "Universal Design for Learning (UDL)"
+            }
+        ];
+
+        // Funzione per mescolare un array (algoritmo Fisher-Yates)
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+
+        // Funzione per selezionare casualmente le domande e mescolare le opzioni
+        function getRandomQuestions(questions, count) {
+            // Prima mescolo l'array di tutte le domande per selezionarne 15 casuali
+            const shuffledQuestions = shuffleArray([...questions]);
+            const selected = shuffledQuestions.slice(0, count);
+            
+            // Per ogni domanda selezionata, mescolo le opzioni e aggiorno l'indice corretto
+            return selected.map(question => {
+                // Salvo la risposta corretta originale
+                const correctAnswer = question.options[question.correct];
+                
+                // Mescolo le opzioni
+                const shuffledOptions = shuffleArray(question.options);
+                
+                // Trovo il nuovo indice della risposta corretta
+                const newCorrectIndex = shuffledOptions.indexOf(correctAnswer);
+                
+                // Restituisco una nuova domanda con le opzioni mescolate e il nuovo indice corretto
+                return {
+                    ...question,
+                    options: shuffledOptions,
+                    correct: newCorrectIndex
+                };
+            });
+        }
+
+        // Visualizza il quiz
+        function renderQuiz(questions) {
+            const quizContainer = document.getElementById('quiz-container');
+            quizContainer.innerHTML = '';
+            
+            questions.forEach((question, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question';
+                
+                questionDiv.innerHTML = `
+                    <div class="question-number">Domanda ${index + 1}</div>
+                    <div class="topic">Argomento: ${question.topic}</div>
+                    <p>${question.question}</p>
+                    <div class="options">
+                        ${question.options.map((option, i) => `
+                            <div class="option">
+                                <input type="radio" id="q${index}_o${i}" name="q${index}" value="${i}">
+                                <label for="q${index}_o${i}">${option}</label>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                
+                quizContainer.appendChild(questionDiv);
+            });
+            
+            // Aggiorna el topic della prima domanda
+            document.getElementById('current-topic').textContent = `Argomento: ${questions[0].topic}`;
+        }
+
+        // Calcola il punteggio e mostra i risultati
+        function calculateScore(questions) {
+            let score = 0;
+            const resultsContainer = document.getElementById('results');
+            resultsContainer.innerHTML = '<h2>Risultati</h2>';
+            resultsContainer.style.display = 'block';
+            
+            questions.forEach((question, index) => {
+                const selectedOption = document.querySelector(`input[name="q${index}"]:checked`);
+                const userAnswer = selectedOption ? parseInt(selectedOption.value) : -1;
+                
+                const isCorrect = userAnswer === question.correct;
+                if (isCorrect) score++;
+                
+                const resultDiv = document.createElement('div');
+                resultDiv.className = `question-result ${isCorrect ? 'correct' : 'incorrect'}`;
+                
+                resultDiv.innerHTML = `
+                    <p><strong>Domanda ${index + 1}:</strong> ${question.question}</p>
+                    <p>La tua risposta: ${userAnswer !== -1 ? question.options[userAnswer] : 'Nessuna risposta'}</p>
+                    <p class="correct">Risposta corretta: ${question.options[question.correct]}</p>
+                    <div class="topic">Argomento: ${question.topic}</div>
+                `;
+                
+                resultsContainer.appendChild(resultDiv);
+            });
+            
+            const scoreDiv = document.createElement('div');
+            scoreDiv.className = 'score';
+            scoreDiv.innerHTML = `Hai totalizzato ${score} punti su ${questions.length}`;
+            resultsContainer.prepend(scoreDiv);
+            
+            resultsContainer.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Inizializza il quiz
+        document.addEventListener('DOMContentLoaded', function() {
+            // Seleziona 15 domande casuali dal pool e mescola le opzioni
+            const selectedQuestions = getRandomQuestions(questionsPool, 15);
+            renderQuiz(selectedQuestions);
+            
+            // Aggiorna il progresso
+            document.getElementById('total').textContent = '15';
+            
+            // Aggiungi gestore evento per il pulsante di invio
+            document.getElementById('submit-btn').addEventListener('click', function() {
+                calculateScore(selectedQuestions);
+            });
+            
+            // Aggiungi gestori eventi per cambiare l'argomento visualizzato quando l'utente scorre
+            const questions = document.querySelectorAll('.question');
+            const currentTopic = document.getElementById('current-topic');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const topic = entry.target.querySelector('.topic').textContent.replace('Argomento: ', '');
+                        currentTopic.textContent = `Argomento: ${topic}`;
+                        
+                        const questionNumber = entry.target.querySelector('.question-number').textContent.replace('Domanda ', '');
+                        document.getElementById('current').textContent = questionNumber;
+                    }
+                });
+            }, { threshold: 0.5 });
+            
+            questions.forEach(question => {
+                observer.observe(question);
+            });
+        });
+    </script>
+</body>
+</html>
