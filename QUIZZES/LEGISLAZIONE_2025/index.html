@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Legislazione Inclusione Scolastica</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 2.2rem;
+        }
+        .description {
+            color: #7f8c8d;
+            margin-bottom: 20px;
+        }
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+        .question {
+            margin-bottom: 25px;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            background-color: #f8f9fa;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        .question-number {
+            font-weight: bold;
+            color: #3498db;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+        .options {
+            margin-left: 10px;
+        }
+        .option {
+            margin: 12px 0;
+            display: flex;
+            align-items: flex-start;
+        }
+        .option input {
+            margin-top: 5px;
+            margin-right: 12px;
+            cursor: pointer;
+        }
+        .option label {
+            cursor: pointer;
+            flex: 1;
+        }
+        button {
+            display: block;
+            margin: 30px auto;
+            padding: 14px 35px;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+        }
+        button:active {
+            transform: translateY(0);
+        }
+        .results {
+            margin-top: 30px;
+            padding: 25px;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            background-color: #e7f3fe;
+            display: none;
+        }
+        .results h2 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        .question-result {
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        .correct {
+            color: #27ae60;
+            font-weight: bold;
+        }
+        .incorrect {
+            color: #e74c3c;
+        }
+        .score {
+            font-size: 1.4rem;
+            font-weight: bold;
+            text-align: center;
+            margin: 25px 0;
+            color: #2c3e50;
+        }
+        .topic {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            font-style: italic;
+            margin-top: 5px;
+        }
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            h1 {
+                font-size: 1.8rem;
+            }
+            .stats {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Quiz Legislazione Inclusione Scolastica</h1>
+            <p class="description">15 domande estratte casualmente da un pool di 75 domande</p>
+        </header>
+        
+        <div class="stats">
+            <div id="current-topic">Argomento: -</div>
+            <div id="progress">Domanda: <span id="current">1</span> di <span id="total">15</span></div>
+        </div>
+        
+        <div id="quiz-container"></div>
+        <button id="submit-btn">Invia risposte</button>
+        
+        <div id="results" class="results"></div>
+        
+        <footer>
+            <p>Quiz realizzato per valutare la conoscenza della Legislazione per l'Inclusione Scolastica</p>
+        </footer>
+    </div>
+
+    <script>
+        // Pool di 75 domande (15 argomenti × 5 domande ciascuno)
+        const questionsPool = [
+            // 1. Storia della scuola e delle istituzioni formative (5 domande)
+            {
+                "question": "Quale legge estese per la prima volta l'obbligo scolastico in Italia?",
+                "options": [
+                    "Legge Casati (1859)",
+                    "Legge Coppino (1877)",
+                    "Legge Orlando (1904)",
+                    "Riforma Gentile (1923)"
+                ],
+                "correct": 0,
+                "topic": "Storia della scuola"
+            },
+            {
+                "question": "Quale legge introdusse per la prima volta l'insegnante di sostegno?",
+                "options": [
+                    "Legge 517/1977",
+                    "Legge 118/1971",
+                    "Legge 104/1992",
+                    "Legge 170/2010"
+                ],
+                "correct": 0,
+                "topic": "Storia della scuola"
+            },
+            {
+                "question": "Quale riforma scolastica introdusse la scuola media unica?",
+                "options": [
+                    "Legge 1859/1962",
+                    "Riforma Gentile del 1923",
+                    "Legge Casati del 1859",
+                    "Riforma Moratti del 2003"
+                ],
+                "correct": 0,
+                "topic": "Storia della scuola"
+            },
+            {
+                "question": "Quale legge sancì la statalizzazione dell'istruzione elementare?",
+                "options": [
+                    "Legge Daneo-Credaro (1911)",
+                    "Legge Coppino (1877)",
+                    "Legge Orlando (1904)",
+                    "Riforma Gentile (1923)"
+                ],
+                "correct": 0,
+                "topic": "Storia della scuola"
+            },
+            {
+                "question": "Quale riforma costituzionale modificò il riparto di competenze tra Stato e Regioni in materia di istruzione?",
+                "options": [
+                    "Legge Costituzionale 3/2001",
+                    "Legge 107/2015 (Buona Scuola)",
+                    "Legge 53/2003 (Riforma Moratti)",
+                    "D.P.R. 275/1999"
+                ],
+                "correct": 0,
+                "topic": "Storia della scuola"
+            },
+            
+            // 2. Fonti del diritto (5 domande)
+            {
+                "question": "Qual è la fonte suprema dell'ordinamento giuridico italiano?",
+                "options": [
+                    "La Costituzione",
+                    "Le leggi ordinarie",
+                    "I regolamenti",
+                    "Le consuetudini"
+                ],
+                "correct": 0,
+                "topic": "Fonti del diritto"
+            },
+            {
+                "question": "Quale organo è competente per il controllo di costituzionalità delle leggi?",
+                "options": [
+                    "Corte costituzionale",
+                    "Corte di cassazione",
+                    "Consiglio di Stato",
+                    "Consiglio superiore della magistratura"
+                ],
+                "correct": 0,
+                "topic": "Fonti del diritto"
+            },
+            {
+                "question": "Quale tra queste è una fonte primaria del diritto?",
+                "options": [
+                    "Legge formale del Parlamento",
+                    "Regolamento ministeriale",
+                    "Circolare amministrativa",
+                    "Usi e consuetudini"
+                ],
+                "correct": 0,
+                "topic": "Fonti del diritto"
+            },
+            {
+                "question": "Cosa caratterizza una Costituzione 'rigida'?",
+                "options": [
+                    "Può essere modificata solo con procedimento aggravato",
+                    "Non può essere modificata in nessun caso",
+                    "Può essere modificata con legge ordinaria",
+                    "È superata da leggi successive"
+                ],
+                "correct": 0,
+                "topic": "Fonti del diritto"
+            },
+            {
+                "question": "Quale tra queste è una fonte secondaria del diritto?",
+                "options": [
+                    "Regolamento governativo",
+                    "Legge regionale",
+                    "Decreto-legge",
+                    "Legge costituzionale"
+                ],
+                "correct": 0,
+                "topic": "Fonti del diritto"
+            },
+            
+            // 3. Disciplina costituzionale in materia di istruzione (5 domande)
+            {
+                "question": "Quale articolo della Costituzione stabilisce che 'La scuola è aperta a tutti'?",
+                "options": [
+                    "Art. 34",
+                    "Art. 33",
+                    "Art. 3",
+                    "Art. 9"
+                ],
+                "correct": 0,
+                "topic": "Disciplina costituzionale"
+            },
+            {
+                "question": "Quale articolo della Costituzione sancisce il principio di uguaglianza formale e sostanziale?",
+                "options": [
+                    "Art. 3",
+                    "Art. 33",
+                    "Art. 34",
+                    "Art. 9"
+                ],
+                "correct": 0,
+                "topic": "Disciplina costituzionale"
+            },
+            {
+                "question": "Quale articolo costituzionale afferma che 'L'arte e la scienza sono libere e libero ne è l'insegnamento'?",
+                "options": [
+                    "Art. 33",
+                    "Art. 34",
+                    "Art. 3",
+                    "Art. 9"
+                ],
+                "correct": 0,
+                "topic": "Disciplina costituzionale"
+            },
+            {
+                "question": "Secondo la Costituzione, l'istruzione inferiore impartita per almeno otto anni è:",
+                "options": [
+                    "Obbligatoria e gratuita",
+                    "Facoltativa e a pagamento",
+                    "Obbligatoria ma a pagamento",
+                    "Facoltativa e gratuita"
+                ],
+                "correct": 0,
+                "topic": "Disciplina costituzionale"
+            },
+            {
+                "question": "Quale articolo costituzionale promuove lo sviluppo della cultura e la ricerca scientifica e tecnica?",
+                "options": [
+                    "Art. 9",
+                    "Art. 33",
+                    "Art. 34",
+                    "Art. 3"
+                ],
+                "correct": 0,
+                "topic": "Disciplina costituzionale"
+            },
+            
+            // 4. Competenze Stato e Regioni (5 domande)
+            {
+                "question": "A chi spetta la competenza esclusiva in materia di 'norme generali sull'istruzione'?",
+                "options": [
+                    "Stato",
+                    "Regioni",
+                    "Stato e Regioni insieme",
+                    "Province"
+                ],
+                "correct": 0,
+                "topic": "Competenze Stato-Regioni"
+            },
+            {
+                "question": "A chi spetta la competenza in materia di 'istruzione e formazione professionale'?",
+                "options": [
+                    "Regioni",
+                    "Stato",
+                    "Stato e Regioni insieme",
+                    "Province"
+                ],
+                "correct": 0,
+                "topic": "Competenze Stato-Regioni"
+            },
+            {
+                "question": "Quale articolo della Costituzione disciplina il riparto di competenze legislative tra Stato e Regioni?",
+                "options": [
+                    "Art. 117",
+                    "Art. 118",
+                    "Art. 116",
+                    "Art. 119"
+                ],
+                "correct": 0,
+                "topic": "Competenze Stato-Regioni"
+            },
+            {
+                "question": "In materia di istruzione scolastica, lo Stato ha competenza:",
+                "options": [
+                    "Per la determinazione dei livelli essenziali delle prestazioni",
+                    "Per l'organizzazione dei servizi sul territorio",
+                    "Per la programmazione della rete scolastica",
+                    "Per la gestione diretta delle scuole"
+                ],
+                "correct": 0,
+                "topic": "Competenze Stato-Regioni"
+            },
+            {
+                "question": "Secondo il principio di sussidiarietà, le funzioni amministrative sono attribuite prioritariamente:",
+                "options": [
+                    "Ai Comuni",
+                    "Alle Regioni",
+                    "Allo Stato",
+                    "Alle Province"
+                ],
+                "correct": 0,
+                "topic": "Competenze Stato-Regioni"
+            },
+            
+            // 5. Struttura sistema scolastico e Ministero (5 domande)
+            {
+                "question": "Qual è l'organo centrale del sistema scolastico italiano?",
+                "options": [
+                    "Ministero dell'Istruzione e del Merito (MIM)",
+                    "Uffici Scolastici Regionali",
+                    "Consiglio Nazionale della Pubblica Istruzione",
+                    "INPS"
+                ],
+                "correct": 0,
+                "topic": "Struttura sistema scolastico"
+            },
+            {
+                "question": "Cosa si intende per 'scuole paritarie'?",
+                "options": [
+                    "Scuole private con obblighi analoghi a quelle statali",
+                    "Scuole statali con particolare autonomia",
+                    "Scuole per studenti con disabilità",
+                    "Scuole con programmi didattici speciali"
+                ],
+                "correct": 0,
+                "topic": "Struttura sistema scolastico"
+            },
+            {
+                "question": "Quale ciclo scolastico NON è obbligatorio?",
+                "options": [
+                    "Scuola dell'infanzia",
+                    "Scuola primaria",
+                    "Scuola secondaria di I grado",
+                    "Primi due anni di scuola secondaria di II grado"
+                ],
+                "correct": 0,
+                "topic": "Struttura sistema scolastico"
+            },
+            {
+                "question": "Cosa sono gli Uffici Scolastici Regionali?",
+                "options": [
+                    "Uffici periferici del Ministero",
+                    "Organi di governo regionali della scuola",
+                    "Enti locali per il supporto alle scuole",
+                    "Organismi di valutazione del sistema scolastico"
+                ],
+                "correct": 0,
+                "topic": "Struttura sistema scolastico"
+            },
+            {
+                "question": "Quale tra questi è un percorso di istruzione secondaria di II grado?",
+                "options": [
+                    "Istituto tecnico",
+                    "Scuola primaria",
+                    "Scuola dell'infanzia",
+                    "CPIA (Centri per l'istruzione degli adulti)"
+                ],
+                "correct": 0,
+                "topic": "Struttura sistema scolastico"
+            },
+            
+            // 6. Autonomia scolastica (5 domande)
+            {
+                "question": "Quale decreto ha definito le regole in materia di autonomia delle istituzioni scolastiche?",
+                "options": [
+                    "D.P.R. 275/1999",
+                    "Legge 107/2015",
+                    "D.lgs. 66/2017",
+                    "Legge 59/1997"
+                ],
+                "correct": 0,
+                "topic": "Autonomia scolastica"
+            },
+            {
+                "question": "Qual è lo strumento principale attraverso cui si organizza l'autonomia didattica?",
+                "options": [
+                    "Piano Triennale dell'Offerta Formativa (PTOF)",
+                    "Piano Educativo Individualizzato (PEI)",
+                    "Piano Didattico Personalizzato (PDP)",
+                    "Programmazione annuale del consiglio di classe"
+                ],
+                "correct": 0,
+                "topic": "Autonomia scolastica"
+            },
+            {
+                "question": "Quali sono le tre tipologie di autonomia previste dal D.P.R. 275/1999?",
+                "options": [
+                    "Didattica, organizzativa, di ricerca e sperimentazione",
+                    "Didattica, gestionale, finanziaria",
+                    "Organizzativa, contabile, amministrativa",
+                    "Educativa, formativa, valutativa"
+                ],
+                "correct": 0,
+                "topic": "Autonomia scolastica"
+            },
+            {
+                "question": "Chi è il responsabile dell'elaborazione del PTOF?",
+                "options": [
+                    "Il dirigente scolastico",
+                    "Il collegio dei docenti",
+                    "Il consiglio di istituto",
+                    "Il Ministero dell'Istruzione"
+                ],
+                "correct": 0,
+                "topic": "Autonomia scolastica"
+            },
+            {
+                "question": "Con quale legge è stato introdotto il principio dell'autonomia scolastica?",
+                "options": [
+                    "Legge 59/1997",
+                    "Legge 107/2015",
+                    "D.P.R. 275/1999",
+                    "Legge 53/2003"
+                ],
+                "correct": 0,
+                "topic": "Autonomia scolastica"
+            },
+            
+            // 7. Evoluzione legislazione inclusione (5 domande)
+            {
+                "question": "Quale approccio caratterizzava inizialmente l'educazione delle persone con disabilità?",
+                "options": [
+                    "Esclusione/separazione",
+                    "Inserimento",
+                    "Integrazione",
+                    "Inclusione"
+                ],
+                "correct": 0,
+                "topic": "Evoluzione legislazione inclusione"
+            },
+            {
+                "question": "Quale legge per la prima volta citò l'educazione nella scuola ordinaria degli alunni con disabilità?",
+                "options": [
+                    "Legge 118/1971",
+                    "Legge 517/1977",
+                    "Legge 104/1992",
+                    "Legge 170/2010"
+                ],
+                "correct": 0,
+                "topic": "Evoluzione legislazione inclusione"
+            },
+            {
+                "question": "Quale legge abolì le classi differenziali?",
+                "options": [
+                    "Legge 517/1977",
+                    "Legge 118/1971",
+                    "Legge 104/1992",
+                    "Riforma Gentile del 1923"
+                ],
+                "correct": 0,
+                "topic": "Evoluzione legislazione inclusione"
+            },
+            {
+                "question": "Quale sentenza della Corte costituzionale affermò che la frequenza alle scuole superiori per i ragazzi con disabilità deve essere 'assicurata' e non solo 'facilitata'?",
+                "options": [
+                    "Sentenza 215/1987",
+                    "Sentenza 384/2005",
+                    "Sentenza 80/2010",
+                    "Sentenza 275/2016"
+                ],
+                "correct": 0,
+                "topic": "Evoluzione legislazione inclusione"
+            },
+            {
+                "question": "Quale legge introdusse il 'progetto di vita' delle persone con disabilità?",
+                "options": [
+                    "Legge 328/2000",
+                    "Legge 104/1992",
+                    "Legge 170/2010",
+                    "D.lgs. 66/2017"
+                ],
+                "correct": 0,
+                "topic": "Evoluzione legislazione inclusione"
+            },
+            
+            // 8. Bisogni Educativi Speciali - BES (5 domande)
+            {
+                "question": "Cosa significa l'acronimo BES?",
+                "options": [
+                    "Bisogni Educativi Speciali",
+                    "Bisogni Educativi Specifici",
+                    "Bisogni Elementari Scolastici",
+                    "Bisogni Essenziali Speciali"
+                ],
+                "correct": 0,
+                "topic": "Bisogni Educativi Speciali"
+            },
+            {
+                "question": "Quale direttiva ministeriale ha introdotto ufficialmente il concetto di BES?",
+                "options": [
+                    "Direttiva MIUR 27 dicembre 2012",
+                    "Circolare Ministeriale n. 8/2013",
+                    "Legge 170/2010",
+                    "D.lgs. 66/2017"
+                ],
+                "correct": 0,
+                "topic": "Bisogni Educativi Speciali"
+            },
+            {
+                "question": "Quale tra queste NON è una categoria di BES?",
+                "options": [
+                    "Studenti particolarmente dotati",
+                    "Studenti con disabilità",
+                    "Studenti con DSA",
+                    "Studenti con svantaggio socio-economico"
+                ],
+                "correct": 0,
+                "topic": "Bisogni Educativi Speciali"
+            },
+            {
+                "question": "Quale documento viene redatto per gli studenti con BES non certificati?",
+                "options": [
+                    "Piano Didattico Personalizzato (PDP)",
+                    "Piano Educativo Individualizzato (PEI)",
+                    "Profilo di Funzionamento",
+                    "Diagnosi Funzionale"
+                ],
+                "correct": 0,
+                "topic": "Bisogni Educativi Speciali"
+            },
+            {
+                "question": "Chi decide l'adozione di un PDP per un alunno con BES non certificato?",
+                "options": [
+                    "Il Consiglio di Classe",
+                    "Il Dirigente Scolastico",
+                    "La famiglia dell'alunno",
+                    "L'ASL di riferimento"
+                ],
+                "correct": 0,
+                "topic": "Bisogni Educativi Speciali"
+            },
+            
+            // 9. Studenti con disabilità (5 domande)
+            {
+                "question": "Quale legge è considerata la 'legge quadro' per l'assistenza e l'integrazione delle persone con disabilità?",
+                "options": [
+                    "Legge 104/1992",
+                    "Legge 170/2010",
+                    "Legge 118/1971",
+                    "Legge 517/1977"
+                ],
+                "correct": 0,
+                "topic": "Studenti con disabilità"
+            },
+            {
+                "question": "Quale documento sostituisce la Diagnosi Funzionale e il Profilo Dinamico Funzionale?",
+                "options": [
+                    "Profilo di Funzionamento",
+                    "Piano Educativo Individualizzato",
+                    "Piano Didattico Personalizzato",
+                    "Progetto Individuale"
+                ],
+                "correct": 0,
+                "topic": "Studenti con disabilità"
+            },
+            {
+                "question": "Chi redige il Profilo di Funzionamento?",
+                "options": [
+                    "Un'unità di valutazione multidisciplinare",
+                    "Il solo neuropsichiatra infantile",
+                    "Il consiglio di classe",
+                    "La famiglia dell'alunno"
+                ],
+                "correct": 0,
+                "topic": "Studenti con disabilità"
+            },
+            {
+                "question": "Quale decreto legislativo ha riorganizzato l'inclusione scolastica degli studenti con disabilità?",
+                "options": [
+                    "D.lgs. 66/2017",
+                    "D.lgs. 96/2019",
+                    "D.lgs. 62/2024",
+                    "D.P.R. 275/1999"
+                ],
+                "correct": 0,
+                "topic": "Studenti con disabilità"
+            },
+            {
+                "question": "Quale gruppo di lavoro redige il PEI per ogni singolo alunno con disabilità?",
+                "options": [
+                    "GLO (Gruppo di Lavoro Operativo)",
+                    "GLI (Gruppo di Lavoro per l'Inclusione)",
+                    "GLIR (Gruppo di Lavoro Interistituzionale Regionale)",
+                    "GIT (Gruppo per l'Inclusione Territoriale)"
+                ],
+                "correct": 0,
+                "topic": "Studenti con disabilità"
+            },
+            
+            // 10. Studenti con DSA (5 domande)
+            {
+                "question": "Cosa significa l'acronimo DSA?",
+                "options": [
+                    "Disturbi Specifici di Apprendimento",
+                    "Difficoltà Specifiche di Apprendimento",
+                    "Disabilità Specifiche di Apprendimento",
+                    "Disturbi Scolastici di Apprendimento"
+                ],
+                "correct": 0,
+                "topic": "Studenti con DSA"
+            },
+            {
+                "question": "Quale legge riconosce e tutela i DSA?",
+                "options": [
+                    "Legge 170/2010",
+                    "Legge 104/1992",
+                    "Legge 53/2003",
+                    "Legge 107/2015"
+                ],
+                "correct": 0,
+                "topic": "Studenti con DSA"
+            },
+            {
+                "question": "Quale tra questi NON è un DSA?",
+                "options": [
+                    "ADHD",
+                    "Dislessia",
+                    "Disgrafia",
+                    "Discalculia"
+                ],
+                "correct": 0,
+                "topic": "Studenti con DSA"
+            },
+            {
+                "question": "Quale documento viene redatto per gli studenti con DSA?",
+                "options": [
+                    "Piano Didattico Personalizzato (PDP)",
+                    "Piano Educativo Individualizzato (PEI)",
+                    "Profilo di Funzionamento",
+                    "Diagnosi Funzionale"
+                ],
+                "correct": 0,
+                "topic": "Studenti con DSA"
+            },
+            {
+                "question": "Cosa prevede la Legge 170/2010 per gli studenti con DSA?",
+                "options": [
+                    "Uso di strumenti compensativi e misure dispensative",
+                    "Obbligo di frequenza di scuole speciali",
+                    "Riduzione del programma ministeriale",
+                    "Esenzione dallo studio delle lingue straniere"
+                ],
+                "correct": 0,
+                "topic": "Studenti con DSA"
+            },
+            
+            // 11. Altri disturbi evolutivi specifici (5 domande)
+            {
+                "question": "Cosa significa l'acronimo ADHD?",
+                "options": [
+                    "Disturbo da Deficit di Attenzione/Iperattività",
+                    "Disturbo da Deficit di Apprendimento/Iperattività",
+                    "Disturbo da Disattenzione e Iperattività",
+                    "Disturbo da Deficit di Attenzione e Integrazione"
+                ],
+                "correct": 0,
+                "topic": "Altri disturbi evolutivi"
+            },
+            {
+                "question": "Per quali studenti può essere predisposto un PDP?",
+                "options": [
+                    "Studenti con ADHD, disturbi del linguaggio, funzionamento cognitivo limite",
+                    "Solo per studenti con DSA certificati",
+                    "Solo per studenti con disabilità certificate",
+                    "Solo per studenti stranieri con difficoltà linguistiche"
+                ],
+                "correct": 0,
+                "topic": "Altri disturbi evolutivi"
+            },
+            {
+                "question": "Quale documento fornisce indicazioni operative per gli alunni con BES?",
+                "options": [
+                    "Circolare Ministeriale n. 8/2013",
+                    "Direttiva MIUR 27 dicembre 2012",
+                    "Legge 170/2010",
+                    "D.lgs. 66/2017"
+                ],
+                "correct": 0,
+                "topic": "Altri disturbi evolutivi"
+            },
+            {
+                "question": "Chi ha un ruolo centrale nell'individuazione di BES non certificati?",
+                "options": [
+                    "Il Consiglio di Classe",
+                    "Il Dirigente Scolastico",
+                    "La famiglia dell'alunno",
+                    "L'ASL di riferimento"
+                ],
+                "correct": 0,
+                "topic": "Altri disturbi evolutivi"
+            },
+            {
+                "question": "Cosa contengono le Linee guida ministeriali 2025 per BES?",
+                "options": [
+                    "Estendono il modello d'intervento a DSA e ADHD",
+                    "Aboliscono il PDP per gli studenti con BES",
+                    "Riducono le misure di supporto per gli studenti stranieri",
+                    "Eliminano la figura dell'insegnante di sostegno"
+                ],
+                "correct": 0,
+                "topic": "Altri disturbi evolutivi"
+            },
+            
+            // 12. Svantaggio socio-economico, linguistico e culturale (5 domande)
+            {
+                "question": "Quali azioni sono previste per gli studenti in situazione di svantaggio socio-economico?",
+                "options": [
+                    "Mediazione culturale, alfabetizzazione, PDP mirati",
+                    "Frequenza obbligatoria di scuole speciali",
+                    "Riduzione del programma ministeriale",
+                    "Esenzione dalle verifiche scritte"
+                ],
+                "correct": 0,
+                "topic": "Svantaggio socio-economico"
+            },
+            {
+                "question": "Per gli studenti con background culturale differente, cosa è fondamentale?",
+                "options": [
+                    "La mediazione culturale e linguistica",
+                    "L'inserimento in classi differenziali",
+                    "La frequenza di scuole speciali",
+                    "L'esonero dallo studio della storia italiana"
+                ],
+                "correct": 0,
+                "topic": "Svantaggio socio-economico"
+            },
+            {
+                "question": "Chi è centrale nell'individuazione di situazioni di svantaggio?",
+                "options": [
+                    "L'autonomia scolastica",
+                    "Il Ministero dell'Istruzione",
+                    "Gli Uffici Scolastici Regionali",
+                    "Le ASL di riferimento"
+                ],
+                "correct": 0,
+                "topic": "Svantaggio socio-economico"
+            },
+            {
+                "question": "Cosa prevede la normativa per gli studenti con difficoltà linguistiche?",
+                "options": [
+                    "Attività di alfabetizzazione e potenziamento",
+                    "Frequenza obbligatoria di corsi di lingua",
+                    "Esonero dallo studio dell'italiano",
+                    "Inserimento in classi speciali"
+                ],
+                "correct": 0,
+                "topic": "Svantaggio socio-economico"
+            },
+            {
+                "question": "Quale strumento può essere adottato per studenti con svantaggio socio-economico?",
+                "options": [
+                    "PDP per interventi educativi mirati",
+                    "PEI con obiettivi differenziati",
+                    "Profilo di Funzionamento",
+                    "Diagnosi clinica specialistica"
+                ],
+                "correct": 0,
+                "topic": "Svantaggio socio-economico"
+            },
+            
+            // 13. Governance dell'inclusione (5 domande)
+            {
+                "question": "Cosa significa l'acronimo GLI?",
+                "options": [
+                    "Gruppo di Lavoro per l'Inclusione",
+                    "Gruppo di Lavoro Interistituzionale",
+                    "Gruppo di Lavoro Operativo",
+                    "Gruppo di Lavoro Individuale"
+                ],
+                "correct": 0,
+                "topic": "Governance dell'inclusione"
+            },
+            {
+                "question": "A quale livello opera il GLIR?",
+                "options": [
+                    "Regionale",
+                    "Nazionale",
+                    "Scolastico",
+                    "Territoriale provinciale"
+                ],
+                "correct": 0,
+                "topic": "Governance dell'inclusione"
+            },
+            {
+                "question": "Chi fa parte del GLO?",
+                "options": [
+                    "Docenti, famiglia, specialisti per il singolo alunno",
+                    "Solo i docenti curriculari",
+                    "Solo gli insegnanti di sostegno",
+                    "Rappresentanti del Ministero e delle Regioni"
+                ],
+                "correct": 0,
+                "topic": "Governance dell'inclusione"
+            },
+            {
+                "question": "A quale livello opera il GIT?",
+                "options": [
+                    "Territoriale provinciale",
+                    "Regionale",
+                    "Nazionale",
+                    "Scolastico"
+                ],
+                "correct": 0,
+                "topic": "Governance dell'inclusione"
+            },
+            {
+                "question": "Quale gruppo di lavoro è istituito a livello di singolo istituto scolastico?",
+                "options": [
+                    "GLI",
+                    "GLIR",
+                    "GIT",
+                    "GLO"
+                ],
+                "correct": 0,
+                "topic": "Governance dell'inclusione"
+            },
+            
+            // 14. Documenti per l'inclusione (5 domande)
+            {
+                "question": "Cosa significa l'acronimo PEI?",
+                "options": [
+                    "Piano Educativo Individualizzato",
+                    "Piano Educativo Integrato",
+                    "Piano di Educazione Individuale",
+                    "Programma Educativo Individuale"
+                ],
+                "correct": 0,
+                "topic": "Documenti per l'inclusione"
+            },
+            {
+                "question": "Cosa significa l'acronimo PDP?",
+                "options": [
+                    "Piano Didattico Personalizzato",
+                    "Piano Didattico Programmatico",
+                    "Programma Didattico Personalizzato",
+                    "Piano di Desarrollo Personal"
+                ],
+                "correct": 0,
+                "topic": "Documenti per l'inclusione"
+            },
+            {
+                "question": "Quale documento è obbligatorio per gli studenti con disabilità certificata?",
+                "options": [
+                    "PEI",
+                    "PDP",
+                    "PDF",
+                    "DF"
+                ],
+                "correct": 0,
+                "topic": "Documenti per l'inclusione"
+            },
+            {
+                "question": "Quale documento è basato sul modello ICF dell'OMS?",
+                "options": [
+                    "Profilo di Funzionamento",
+                    "Piano Educativo Individualizzato",
+                    "Piano Didattico Personalizzato",
+                    "Diagnosi Funzionale"
+                ],
+                "correct": 0,
+                "topic": "Documenti per l'inclusione"
+            },
+            {
+                "question": "Quale documento contiene strumenti compensativi e misure dispensative?",
+                "options": [
+                    "PDP",
+                    "PEI",
+                    "Profilo di Funzionamento",
+                    "Diagnosi Funzionale"
+                ],
+                "correct": 0,
+                "topic": "Documenti per l'inclusione"
+            },
+            
+            // 15. Casi concreti e giurisprudenza (5 domande)
+            {
+                "question": "Secondo la giurisprudenza, la valutazione degli alunni con disabilità deve avvenire:",
+                "options": [
+                    "Sulla base del PEI e degli obiettivi individuali",
+                    "Secondo gli stessi standard degli altri alunni",
+                    "Senza considerare le specifiche difficoltà",
+                    "Esclusivamente in forma orale"
+                ],
+                "correct": 0,
+                "topic": "Casi concreti e giurisprudenza"
+            },
+            {
+                "question": "Cosa ha stabilito il Consiglio di Stato nella sentenza n. 7089/2024?",
+                "options": [
+                    "Il PEI non è vincolante per i Comuni nella definizione delle ore di assistenza",
+                    "Il PEI è vincolante per tutti gli enti coinvolti",
+                    "Le ore di assistenza non possono essere ridotte per nessun motivo",
+                    "I Comuni devono garantire tutte le ore di assistenza indicate nel PEI"
+                ],
+                "correct": 0,
+                "topic": "Casi concreti e giurisprudenza"
+            },
+            {
+                "question": "Cosa ha stabilito il Consiglio di Stato nella sentenza n. 9323/2024?",
+                "options": [
+                    "Il diritto al trasporto scolastico gratuito non può essere subordinato a ragioni economiche",
+                    "I Comuni possono negare il trasporto scolastico in caso di debiti dei genitori",
+                    "Il trasporto scolastico è facoltativo per gli enti locali",
+                    "Solo le Regioni devono garantire il trasporto scolastico gratuito"
+                ],
+                "correct": 0,
+                "topic": "Casi concreti e giurisprudenza"
+            },
+            {
+                "question": "Secondo il TAR Lombardia, quando è possibile annullare una decisione di non ammissione?",
+                "options": [
+                    "Per manifesta irragionevolezza, illogicità palese o carenza di motivazione",
+                    "Sempre, se lo studente ha una certificazione",
+                    "Mai, perché la valutazione è discrezionale dei docenti",
+                    "Solo se tutti i voti sono sufficienti"
+                ],
+                "correct": 0,
+                "topic": "Casi concreti e giurisprudenza"
+            },
+            {
+                "question": "Cosa ha stabilito la sentenza n. 215/1987 della Corte costituzionale?",
+                "options": [
+                    "La frequenza alle scuole superiori deve essere 'assicurata' ai disabili",
+                    "Le classi differenziali sono costituzionali",
+                    "L'obbligo scolastico non si applica agli alunni con disabilità",
+                    "L'insegnante di sostegno non è obbligatorio"
+                ],
+                "correct": 0,
+                "topic": "Casi concreti e giurisprudenza"
+            }
+        ];
+
+        // Funzione per mescolare un array (algoritmo Fisher-Yates)
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+
+        // Funzione per selezionare casualmente le domande e mescolare le opzioni
+        function getRandomQuestions(questions, count) {
+            // Prima mescolo l'array di tutte le domande per selezionarne 15 casuali
+            const shuffledQuestions = shuffleArray([...questions]);
+            const selected = shuffledQuestions.slice(0, count);
+            
+            // Per ogni domanda selezionata, mescolo le opzioni e aggiorno l'indice corretto
+            return selected.map(question => {
+                // Salvo la risposta corretta originale
+                const correctAnswer = question.options[question.correct];
+                
+                // Mescolo le opzioni
+                const shuffledOptions = shuffleArray(question.options);
+                
+                // Trovo il nuovo indice della risposta corretta
+                const newCorrectIndex = shuffledOptions.indexOf(correctAnswer);
+                
+                // Restituisco una nuova domanda con le opzioni mescolate e il nuovo indice corretto
+                return {
+                    ...question,
+                    options: shuffledOptions,
+                    correct: newCorrectIndex
+                };
+            });
+        }
+
+        // Visualizza il quiz
+        function renderQuiz(questions) {
+            const quizContainer = document.getElementById('quiz-container');
+            quizContainer.innerHTML = '';
+            
+            questions.forEach((question, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question';
+                
+                questionDiv.innerHTML = `
+                    <div class="question-number">Domanda ${index + 1}</div>
+                    <div class="topic">Argomento: ${question.topic}</div>
+                    <p>${question.question}</p>
+                    <div class="options">
+                        ${question.options.map((option, i) => `
+                            <div class="option">
+                                <input type="radio" id="q${index}_o${i}" name="q${index}" value="${i}">
+                                <label for="q${index}_o${i}">${option}</label>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                
+                quizContainer.appendChild(questionDiv);
+            });
+            
+            // Aggiorna il topic della prima domanda
+            document.getElementById('current-topic').textContent = `Argomento: ${questions[0].topic}`;
+        }
+
+        // Calcola il punteggio e mostra i risultati
+        function calculateScore(questions) {
+            let score = 0;
+            const resultsContainer = document.getElementById('results');
+            resultsContainer.innerHTML = '<h2>Risultati</h2>';
+            resultsContainer.style.display = 'block';
+            
+            questions.forEach((question, index) => {
+                const selectedOption = document.querySelector(`input[name="q${index}"]:checked`);
+                const userAnswer = selectedOption ? parseInt(selectedOption.value) : -1;
+                
+                const isCorrect = userAnswer === question.correct;
+                if (isCorrect) score++;
+                
+                const resultDiv = document.createElement('div');
+                resultDiv.className = `question-result ${isCorrect ? 'correct' : 'incorrect'}`;
+                
+                resultDiv.innerHTML = `
+                    <p><strong>Domanda ${index + 1}:</strong> ${question.question}</p>
+                    <p>La tua risposta: ${userAnswer !== -1 ? question.options[userAnswer] : 'Nessuna risposta'}</p>
+                    <p class="correct">Risposta corretta: ${question.options[question.correct]}</p>
+                    <div class="topic">Argomento: ${question.topic}</div>
+                `;
+                
+                resultsContainer.appendChild(resultDiv);
+            });
+            
+            const scoreDiv = document.createElement('div');
+            scoreDiv.className = 'score';
+            scoreDiv.innerHTML = `Hai totalizzato ${score} punti su ${questions.length}`;
+            resultsContainer.prepend(scoreDiv);
+            
+            resultsContainer.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Inizializza il quiz
+        document.addEventListener('DOMContentLoaded', function() {
+            // Seleziona 15 domande casuali dal pool e mescola le opzioni
+            const selectedQuestions = getRandomQuestions(questionsPool, 15);
+            renderQuiz(selectedQuestions);
+            
+            // Aggiorna il progresso
+            document.getElementById('total').textContent = '15';
+            
+            // Aggiungi gestore evento per il pulsante di invio
+            document.getElementById('submit-btn').addEventListener('click', function() {
+                calculateScore(selectedQuestions);
+            });
+            
+            // Aggiungi gestori eventi per cambiare l'argomento visualizzato quando l'utente scorre
+            const questions = document.querySelectorAll('.question');
+            const currentTopic = document.getElementById('current-topic');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const topic = entry.target.querySelector('.topic').textContent.replace('Argomento: ', '');
+                        currentTopic.textContent = `Argomento: ${topic}`;
+                        
+                        const questionNumber = entry.target.querySelector('.question-number').textContent.replace('Domanda ', '');
+                        document.getElementById('current').textContent = questionNumber;
+                    }
+                });
+            }, { threshold: 0.5 });
+            
+            questions.forEach(question => {
+                observer.observe(question);
+            });
+        });
+    </script>
+</body>
+</html>
