@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz su Modelli Inclusivi e Disabilità Intellettiva</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 2.2rem;
+        }
+        .description {
+            color: #7f8c8d;
+            margin-bottom: 20px;
+        }
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+        .question {
+            margin-bottom: 25px;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            background-color: #f8f9fa;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        .question-number {
+            font-weight: bold;
+            color: #3498db;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+        .options {
+            margin-left: 10px;
+        }
+        .option {
+            margin: 12px 0;
+            display: flex;
+            align-items: flex-start;
+        }
+        .option input {
+            margin-top: 5px;
+            margin-right: 12px;
+            cursor: pointer;
+        }
+        .option label {
+            cursor: pointer;
+            flex: 1;
+        }
+        button {
+            display: block;
+            margin: 30px auto;
+            padding: 14px 35px;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+        }
+        button:active {
+            transform: translateY(0);
+        }
+        .results {
+            margin-top: 30px;
+            padding: 25px;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            background-color: #e7f3fe;
+            display: none;
+        }
+        .results h2 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        .question-result {
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        .correct {
+            color: #27ae60;
+            font-weight: bold;
+        }
+        .incorrect {
+            color: #e74c3c;
+        }
+        .score {
+            font-size: 1.4rem;
+            font-weight: bold;
+            text-align: center;
+            margin: 25px 0;
+            color: #2c3e50;
+        }
+        .topic {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            font-style: italic;
+            margin-top: 5px;
+        }
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            h1 {
+                font-size: 1.8rem;
+            }
+            .stats {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Quiz su Modelli Inclusivi e Disabilità Intellettiva</h1>
+            <p class="description">15 domande estratte casualmente da un pool di 75 domande</p>
+        </header>
+        
+        <div class="stats">
+            <div id="current-topic">Argomento: -</div>
+            <div id="progress">Domanda: <span id="current">1</span> di <span id="total">15</span></div>
+        </div>
+        
+        <div id="quiz-container"></div>
+        <button id="submit-btn">Invia risposte</button>
+        
+        <div id="results" class="results"></div>
+        
+        <footer>
+            <p>Quiz basato sul materiale della prof.ssa Tania Moretta</p>
+        </footer>
+    </div>
+
+    <script>
+        // Pool di 75 domande (15 argomenti × 5 domande ciascuno)
+        const questionsPool = [
+            // 1. Modello medico e paradigma della malattia (5 domande)
+            {
+                "question": "Qual è la caratteristica principale del modello medico della disabilità?",
+                "options": [
+                    "Considera la disabilità come diretta conseguenza di una patologia o menomazione",
+                    "Attribuisce la disabilità esclusivamente a barriere sociali e ambientali",
+                    "Integra fattori biologici, psicologici e sociali",
+                    "Si concentra sulla partecipazione sociale delle persone con disabilità"
+                ],
+                "correct": 0,
+                "topic": "Modello medico e paradigma della malattia"
+            },
+            {
+                "question": "Quale tra questi è un limite del modello medico della disabilità?",
+                "options": [
+                    "Tende a ridurre la persona alla sua malattia, trascurando le risorse e il contesto",
+                    "Non considera sufficientemente gli aspetti biologici delle condizioni di salute",
+                    "Sottovaluta l'importanza degli interventi riabilitativi",
+                    "Attribuisce troppa importanza alle barriere ambientali"
+                ],
+                "correct": 0,
+                "topic": "Modello medico e paradigma della malattia"
+            },
+            {
+                "question": "Quali pratiche educative ha storicamente favorito il modello medico?",
+                "options": [
+                    "Classi speciali, istituti separati, percorsi scolastici ridotti",
+                    "Inclusione completa in classi regolari senza supporti aggiuntivi",
+                    "Approcci basati esclusivamente sull'autodeterminazione",
+                    "Interventi focalizzati solo sulle barriere architettoniche"
+                ],
+                "correct": 0,
+                "topic": "Modello medico e paradigma della malattia"
+            },
+            {
+                "question": "Secondo il modello medico, dove viene collocato il 'problema' della disabilità?",
+                "options": [
+                    "Interamente nella persona, vista come 'portatrice' di deficit",
+                    "Principalmente nelle barriere sociali e culturali",
+                    "Nell'interazione tra persona e ambiente",
+                    "Esclusivamente nel contesto familiare"
+                ],
+                "correct": 0,
+                "topic": "Modello medico e paradigma della malattia"
+            },
+            {
+                "question": "Quale approccio caratterizza gli interventi nel modello medico?",
+                "options": [
+                    "Interventi di tipo riabilitativo, terapeutico o assistenziale",
+                    "Modifiche strutturali all'ambiente sociale e fisico",
+                    "Promozione dell'autodeterminazione e autogestione",
+                    "Rimozione sistematica di tutte le barriere architettoniche"
+                ],
+                "correct": 0,
+                "topic": "Modello medico e paradigma della malattia"
+            },
+            
+            // 2. Modello sociale della disabilità (5 domande)
+            {
+                "question": "Qual è il focus principale del modello sociale della disabilità?",
+                "options": [
+                    "Le barriere ambientali, culturali e sociali che impediscono la partecipazione",
+                    "Le menomazioni fisiche o psichiche delle persone",
+                    "Gli interventi riabilitativi individuali",
+                    "La misurazione del quoziente intellettivo"
+                ],
+                "correct": 0,
+                "topic": "Modello sociale della disabilità"
+            },
+            {
+                "question": "Cosa ha contribuito a promuovere il modello sociale della disabilità?",
+                "options": [
+                    "I movimenti delle persone con disabilità",
+                    "Le scoperte della genetica medica",
+                    "I test psicometrici standardizzati",
+                    "Le teorie comportamentiste dell'apprendimento"
+                ],
+                "correct": 0,
+                "topic": "Modello sociale della disabilità"
+            },
+            {
+                "question": "Quale documento internazionale è stato influenzato dal modello sociale?",
+                "options": [
+                    "La Convenzione ONU sui diritti delle persone con disabilità (2006)",
+                    "La Dichiarazione universale dei diritti umani (1948)",
+                    "La Classificazione statistica internazionale delle malattie (ICD)",
+                    "Il Manuale diagnostico e statistico dei disturbi mentali (DSM)"
+                ],
+                "correct": 0,
+                "topic": "Modello sociale della disabilità"
+            },
+            {
+                "question": "Quale principio della Convenzione ONU riflette l'influenza del modello sociale?",
+                "options": [
+                    "\"Nulla su di noi senza di noi\"",
+                    "\"Prima la diagnosi, poi l'intervento\"",
+                    "\"Uguale trattamento per tutti\"",
+                    "\"La riabilitazione prima di tutto\""
+                ],
+                "correct": 0,
+                "topic": "Modello sociale della disabilità"
+            },
+            {
+                "question": "Quale rischio può presentare il modello sociale nella sua versione più radicale?",
+                "options": [
+                    "Trascurare le effettive difficoltà fisiche o psichiche delle persone",
+                    "Concentrarsi troppo sulle menomazioni individuali",
+                    "Sottovalutare l'importanza delle barriere architettoniche",
+                    "Ignorare il ruolo dei movimenti delle persone con disabilità"
+                ],
+                "correct": 0,
+                "topic": "Modello sociale della disabilità"
+            },
+            
+            // 3. ICIDH (1980) (5 domande)
+            {
+                "question": "Cosa significa l'acronimo ICIDH?",
+                "options": [
+                    "International Classification of Impairments, Disabilities and Handicaps",
+                    "International Committee on Intellectual Disability and Health",
+                    "Integrated Classification of Individual Development and Health",
+                    "International Center for Inclusion and Disability Help"
+                ],
+                "correct": 0,
+                "topic": "ICIDH (1980)"
+            },
+            {
+                "question": "Quali sono i tre livelli concettuali dell'ICIDH?",
+                "options": [
+                    "Menomazione, disabilità, handicap",
+                    "Diagnosi, prognosi, terapia",
+                    "Prevenzione, intervento, riabilitazione",
+                    "Biologico, psicologico, sociale"
+                ],
+                "correct": 0,
+                "topic": "ICIDH (1980)"
+            },
+            {
+                "question": "Come definisce l'ICIDH il termine 'menomazione'?",
+                "options": [
+                    "Perdita o anomalia di una struttura o funzione psicologica, fisiologica o anatomica",
+                    "Limitazione o perdita della capacità di compiere un'attività",
+                    "Condizione di svantaggio sociale che deriva da menomazione o disabilità",
+                    "Barriera ambientale che impedisce la partecipazione sociale"
+                ],
+                "correct": 0,
+                "topic": "ICIDH (1980)"
+            },
+            {
+                "question": "Quale era l'obiettivo principale dell'ICIDH?",
+                "options": [
+                    "Fornire una classificazione universale delle conseguenze delle malattie",
+                    "Sostituire completamente il modello medico della disabilità",
+                    "Promuovere l'inclusione scolastica delle persone con disabilità",
+                    "Classificare esclusivamente i disturbi del neurosviluppo"
+                ],
+                "correct": 0,
+                "topic": "ICIDH (1980)"
+            },
+            {
+                "question": "Quale principale critica è stata mossa all'ICIDH?",
+                "options": [
+                    "Mantiene una visione lineare e gerarchica della disabilità",
+                    "Non considera sufficientemente gli aspetti medici",
+                    "Ignora completamente il ruolo delle barriere sociali",
+                    "Si concentra troppo sull'interazione persona-ambiente"
+                ],
+                "correct": 0,
+                "topic": "ICIDH (1980)"
+            },
+            
+            // 4. ICF e approccio biopsicosociale (5 domande)
+            {
+                "question": "Cosa significa l'acronimo ICF?",
+                "options": [
+                    "International Classification of Functioning, Disability and Health",
+                    "International Committee on Functioning and Disability",
+                    "Integrated Classification of Family Development",
+                    "International Center for Functional Diversity"
+                ],
+                "correct": 0,
+                "topic": "ICF e approccio biopsicosociale"
+            },
+            {
+                "question": "Quale prospettiva adotta l'ICF?",
+                "options": [
+                    "Una prospettiva biopsicosociale che integra modello medico e sociale",
+                    "Una prospettiva esclusivamente medica sulle disabilità",
+                    "Un approccio focalizzato solo sulle barriere ambientali",
+                    "Una visione puramente psicologica del funzionamento umano"
+                ],
+                "correct": 0,
+                "topic": "ICF e approccio biopsicosociale"
+            },
+            {
+                "question": "Come viene concepita la disabilità nell'ICF?",
+                "options": [
+                    "Come risultato dell'interazione tra condizioni di salute e fattori contestuali",
+                    "Come caratteristica esclusivamente individuale della persona",
+                    "Come mero prodotto delle barriere sociali",
+                    "Come conseguenza diretta di una menomazione"
+                ],
+                "correct": 0,
+                "topic": "ICF e approccio biopsicosociale"
+            },
+            {
+                "question": "Quali sono i componenti principali dell'ICF?",
+                "options": [
+                    "Funzioni e strutture corporee, attività e partecipazione, fattori ambientali e personali",
+                    "Menomazione, disabilità, handicap",
+                    "Diagnosi, terapia, riabilitazione",
+                    "Biological, psychological, social factors"
+                ],
+                "correct": 0,
+                "topic": "ICF e approccio biopsicosociale"
+            },
+            {
+                "question": "Cosa si intende per 'fattori ambientali' nell'ICF?",
+                "options": [
+                    "Aspetti fisici, sociali e attitudinali che possono facilitare o ostacolare il funzionamento",
+                    "Esclusivamente le barriere architettoniche",
+                    "Solo gli atteggiamenti e i pregiudizi culturali",
+                    "Elementi genetici e biologici ereditari"
+                ],
+                "correct": 0,
+                "topic": "ICF e approccio biopsicosociale"
+            },
+            
+            // 5. ICF-CY e età evolutiva (5 domande)
+            {
+                "question": "Cosa significa l'acronimo ICF-CY?",
+                "options": [
+                    "International Classification of Functioning, Disability and Health for Children and Youth",
+                    "International Committee on Family and Child Development",
+                    "Integrated Classification of Functional Capabilities in Youth",
+                    "International Center for Childhood and Youth"
+                ],
+                "correct": 0,
+                "topic": "ICF-CY e età evolutiva"
+            },
+            {
+                "question": "Perché è stata sviluppata la versione ICF-CY?",
+                "options": [
+                    "Per tenere conto delle peculiarità dello sviluppo e delle fasi della crescita",
+                    "Per sostituire completamente l'ICF negli ambiti educativi",
+                    "Per focalizzarsi esclusivamente sui disturbi del neurosviluppo",
+                    "Per semplificare la classificazione per uso scolastico"
+                ],
+                "correct": 0,
+                "topic": "ICF-CY e età evolutiva"
+            },
+            {
+                "question": "In quale anno è stata pubblicata l'ICF-CY?",
+                "options": [
+                    "2007",
+                    "2001",
+                    "1992",
+                    "1980"
+                ],
+                "correct": 0,
+                "topic": "ICF-CY e età evolutiva"
+            },
+            {
+                "question": "Quale ambito applicativo è particolarmente appropriato per l'ICF-CY?",
+                "options": [
+                    "Costruzione di Piani Educativi Individualizzati (PEI)",
+                    "Diagnosi medica dei disturbi del neurosviluppo",
+                    "Valutazione esclusivamente psicometrica",
+                    "Classificazione statistica delle malattie infantili"
+                ],
+                "correct": 0,
+                "topic": "ICF-CY e età evolutiva"
+            },
+            {
+                "question": "Cosa introduce l'ICF-CY rispetto all'ICF standard?",
+                "options": [
+                    "Categorie specifiche per la scuola, il gioco, l'apprendimento",
+                    "Una nuova classificazione delle menomazioni fisiche",
+                    "Una diversa definizione di disabilità intellettiva",
+                    "Un approccio esclusivamente medico allo sviluppo infantile"
+                ],
+                "correct": 0,
+                "topic": "ICF-CY e età evolutiva"
+            },
+            
+            // 6. Disabilità intellettiva: definizione e criteri (5 domande)
+            {
+                "question": "Quale termine ha progressivamente sostituito 'ritardo mentale'?",
+                "options": [
+                    "Disabilità intellettiva",
+                    "Difficoltà cognitive",
+                    "Menomazione intellettiva",
+                    "Disturbo neurocognitivo"
+                ],
+                "correct": 0,
+                "topic": "Disabilità intellettiva: definizione e criteri"
+            },
+            {
+                "question": "Secondo il DSM-5, quali sono le dimensioni fondamentali per diagnosticare la disabilità intellettiva?",
+                "options": [
+                    "Funzionamento intellettivo, funzionamento adattivo, esordio in età evolutiva",
+                    "Quoziente intellettivo, abilità accademiche, autonomia personale",
+                    "Capacità cognitive, abilità sociali, competenze pratiche",
+                    "Menomazioni, disabilità, handicap"
+                ],
+                "correct": 0,
+                "topic": "Disabilità intellettiva: definizione e criteri"
+            },
+            {
+                "question": "Cosa valuta il funzionamento adattivo?",
+                "options": [
+                    "Autonomia, responsabilità sociale, comunicazione",
+                    "Esclusivamente il quoziente intellettivo",
+                    "Solo le abilità scolastiche",
+                    "Unicamente le capacità di cura personale"
+                ],
+                "correct": 0,
+                "topic": "Disabilità intellettiva: definizione e criteri"
+            },
+            {
+                "question": "Come viene determinata la gravità della disabilità intellettiva nel DSM-5?",
+                "options": [
+                    "Dal grado di compromissione del funzionamento adattivo",
+                    "Esclusivamente dal livello del quoziente intellettivo",
+                    "Dalla presenza di specifiche menomazioni fisiche",
+                    "Dall'età di esordio del disturbo"
+                ],
+                "correct": 0,
+                "topic": "Disabilità intellettiva: definizione e criteri"
+            },
+            {
+                "question": "Quale approccio ha sostituito la visione basata principalmente sul QI?",
+                "options": [
+                    "Un approccio che considera il supporto necessario per una vita dignitosa e integrata",
+                    "Una prospettiva esclusivamente medica focalizzata sulla menomazione",
+                    "Un modello che considera solo le barriere ambientali",
+                    "Una visione che enfatizza esclusivamente le abilità accademiche"
+                ],
+                "correct": 0,
+                "topic": "Disabilità intellettiva: definizione e criteri"
+            },
+            
+            // 7. Disturbi del neurosviluppo (5 domande)
+            {
+                "question": "Cosa caratterizza i disturbi del neurosviluppo secondo il DSM-5?",
+                "options": [
+                    "Esordio nella prima infanzia e base neurobiologica",
+                    "Insorgenza in adolescenza e cause esclusivamente ambientali",
+                    "Comparsa in età adulta e natura psicosociale",
+                    "Manifestazione nella terza età e origine genetica"
+                ],
+                "correct": 0,
+                "topic": "Disturbi del neurosviluppo"
+            },
+            {
+                "question": "Quali tra questi sono disturbi del neurosviluppo?",
+                "options": [
+                    "Disturbi della comunicazione, disturbo dello spettro autistico, ADHD",
+                    "Solo la disabilità intellettiva e i disturbi dell'apprendimento",
+                    "Esclusivamente i disturbi dello spettro autistico",
+                    "Unicamente i disturbi specifici dell'apprendimento"
+                ],
+                "correct": 0,
+                "topic": "Disturbi del neurosviluppo"
+            },
+            {
+                "question": "Cosa si intende per comorbidità nei disturbi del neurosviluppo?",
+                "options": [
+                    "La frequente presenza contemporanea di più disturbi",
+                    "L'esclusiva manifestazione di un solo disturbo alla volta",
+                    "La progressione da un disturbo lieve a uno grave",
+                    "La scomparsa spontanea del disturbo con l'età"
+                ],
+                "correct": 0,
+                "topic": "Disturbi del neurosviluppo"
+            },
+            {
+                "question": "Quale approccio caratterizza la valutazione dei disturbi del neurosviluppo nel DSM-5?",
+                "options": [
+                    "Approccio dimensionale che considera il grado di compromissione",
+                    "Approccio categoriale basato esclusivamente sulla presenza/assenza",
+                    "Visione esclusivamente medica focalizzata sulla eziologia",
+                    "Prospettiva unicamente educativa centrata sull'apprendimento"
+                ],
+                "correct": 0,
+                "topic": "Disturbi del neurosviluppo"
+            },
+            {
+                "question": "Cosa implica l'approccio dimensionale ai disturbi del neurosviluppo?",
+                "options": [
+                    "Valutare il grado di compromissione, le aree fragili e quelle più sviluppate",
+                    "Classificare esclusivamente in base alla presenza o assenza del disturbo",
+                    "Considerare solo gli aspetti biologici del disturbo",
+                    "Focalizzarsi unicamente sulle menomazioni specifiche"
+                ],
+                "correct": 0,
+                "topic": "Disturbi del neurosviluppo"
+            },
+            
+            // 8. Approccio comportamentale (5 domande)
+            {
+                "question": "Su quali principi si basa l'approccio comportamentale?",
+                "options": [
+                    "Principi del condizionamento operante di B.F. Skinner",
+                    "Teorie dell'apprendimento per insight e scoperta",
+                    "Modelli esclusivamente cognitivi e metacognitivi",
+                    "Approcci psicodinamici e psicoanalitici"
+                ],
+                "correct": 0,
+                "topic": "Approccio comportamentale"
+            },
+            {
+                "question": "Cosa si intende per 'Behavior Modification'?",
+                "options": [
+                    "Modalità strutturata di intervento per modificare comportamenti",
+                    "Tecnica per valutare il quoziente intellettivo",
+                    "Approccio esclusivamente farmacologico ai disturbi comportamentali",
+                    "Metodo per diagnosticare i disturbi del neurosviluppo"
+                ],
+                "correct": 0,
+                "topic": "Approccio comportamentale"
+            },
+            {
+                "question": "Quale tra queste è una tecnica comportamentale?",
+                "options": [
+                    "Shaping: rinforzo progressivo di approssimazioni successive",
+                    "Analisi esclusivamente qualitativa del comportamento",
+                    "Interventi focalizzati solo sulle emozioni profonde",
+                    "Tecniche psicoanalitiche di interpretazione dei sogni"
+                ],
+                "correct": 0,
+                "topic": "Approccio comportamentale"
+            },
+            {
+                "question": "Cosa si intende per 'prompting e fading'?",
+                "options": [
+                    "Uso di aiuti e suggerimenti seguiti da progressivo ritiro dell'aiuto",
+                    "Tecnica per misurare il comportamento adattivo",
+                    "Metodo per valutare esclusivamente le abilità cognitive",
+                    "Approccio che ignora completamente il contesto"
+                ],
+                "correct": 0,
+                "topic": "Approccio comportamentale"
+            },
+            {
+                "question": "Come si è evoluto l'approccio comportamentale nel tempo?",
+                "options": [
+                    "Integrando strategie cognitive e metacognitive",
+                    "Mantenendo esclusivamente i principi del condizionamento classico",
+                    "Concentrandosi solo sul comportamento osservabile",
+                    "Ignorando completamente i processi interni"
+                ],
+                "correct": 0,
+                "topic": "Approccio comportamentale"
+            },
+            
+            // 9. Metacognizione e memoria di lavoro (5 domande)
+            {
+                "question": "Cosa si intende per 'metacognizione'?",
+                "options": [
+                    "Capacità di riflettere e monitorare i propri processi cognitivi",
+                    "Abilità esclusivamente mnemonica a breve termine",
+                    "Capacità di risolvere problemi matematici complessi",
+                    "Competenza sociale e relazionale"
+                ],
+                "correct": 0,
+                "topic": "Metacognizione e memoria di lavoro"
+            },
+            {
+                "question": "Cosa si intende per 'metamemoria'?",
+                "options": [
+                    "Consapevolezza del proprio funzionamento mnemonico e delle strategie per ricordare",
+                    "Capacità di memorizzare grandi quantità di informazioni",
+                    "Tecnica esclusiva per potenziare la memoria a lungo termine",
+                    "Disturbo specifico della memoria di lavoro"
+                ],
+                "correct": 0,
+                "topic": "Metacognizione e memoria di lavoro"
+            },
+            {
+                "question": "Cosa è la 'memoria di lavoro'?",
+                "options": [
+                    "Sistema cognitivo che consente di mantenere e manipolare informazioni temporanee",
+                    "Capacità di ricordare eventi passati della propria vita",
+                    "Memoria esclusivamente a lungo termine per informazioni complesse",
+                    "Tecnica per memorizzare informazioni attraverso la ripetizione"
+                ],
+                "correct": 0,
+                "topic": "Metacognizione e memoria di lavoro"
+            },
+            {
+                "question": "Quale tra queste è una tecnica per potenziare la metamemoria?",
+                "options": [
+                    "Esercizi di autoriflessione e diari di apprendimento",
+                    "Somministrazione esclusiva di test standardizzati",
+                    "Interventi farmacologici specifici",
+                    "Tecniche psicoanalitiche di libera associazione"
+                ],
+                "correct": 0,
+                "topic": "Metacognizione e memoria di lavoro"
+            },
+            {
+                "question": "Cosa si intende per 'chunking' nel contesto della memoria di lavoro?",
+                "options": [
+                    "Raggruppare dati in unità più ampie per facilitare la memorizzazione",
+                    "Tecnica per dimenticare informazioni non necessarie",
+                    "Metodo esclusivo per potenziare la memoria a lungo termine",
+                    "Disturbo della memoria caratterizzato da lacune"
+                ],
+                "correct": 0,
+                "topic": "Metacognizione e memoria di lavoro"
+            },
+            
+            // 10. Disturbi Specifici dell'Apprendimento (DSA) (5 domande)
+            {
+                "question": "Cosa significa l'acronimo DSA?",
+                "options": [
+                    "Disturbi Specifici dell'Apprendimento",
+                    "Difficoltà Scolastiche Associate",
+                    "Disabilità Sensoriali e Auditive",
+                    "Disturbi dell'Apprendimento Sociale"
+                ],
+                "correct": 0,
+                "topic": "Disturbi Specifici dell'Apprendimento (DSA)"
+            },
+            {
+                "question": "Quali abilità specifiche interessano i DSA?",
+                "options": [
+                    "Lettura (dislessia), scrittura (disortografia e disgrafia), calcolo (discalculia)",
+                    "Solo le abilità di lettura e scrittura",
+                    "Esclusivamente le competenze matematiche e di calcolo",
+                    "Unicamente le capacità di coordinamento motorio"
+                ],
+                "correct": 0,
+                "topic": "Disturbi Specifici dell'Apprendimento (DSA)"
+            },
+            {
+                "question": "Quale legge italiana riconosce i DSA?",
+                "options": [
+                    "Legge 170/2010",
+                    "Legge 104/1992",
+                    "Legge 53/2003",
+                    "Legge 107/2015"
+                ],
+                "correct": 0,
+                "topic": "Disturbi Specifici dell'Apprendimento (DSA)"
+            },
+            {
+                "question": "Cosa prevede la Legge 170/2010 per gli studenti con DSA?",
+                "options": [
+                    "Diritto a strumenti compensativi, misure dispensative e percorsi personalizzati",
+                    "Obbligo di frequenza esclusiva di scuole speciali",
+                    "Esenzione completa dalle prove scritte",
+                    "Percorsi educativi separati dagli altri studenti"
+                ],
+                "correct": 0,
+                "topic": "Disturbi Specifici dell'Apprendimento (DSA)"
+            },
+            {
+                "question": "Quando dovrebbe essere formulata la diagnosi di DSA?",
+                "options": [
+                    "Non prima della fine della seconda classe primaria per lettura/scrittura, terza per calcolo",
+                    "All'ingresso della scuola primaria",
+                    "Esclusivamente durante la scuola secondaria",
+                    "Solo in età adulta"
+                ],
+                "correct": 0,
+                "topic": "Disturbi Specifici dell'Apprendimento (DSA)"
+            },
+            
+            // 11. Bisogni Educativi Speciali (BES) (5 domande)
+            {
+                "question": "Cosa significa l'acronimo BES?",
+                "options": [
+                    "Bisogni Educativi Speciali",
+                    "Bambini con Esigenze Specifiche",
+                    "Bisogni Emotivi e Sociali",
+                    "Bambini Extra-Scolari"
+                ],
+                "correct": 0,
+                "topic": "Bisogni Educativi Speciali (BES)"
+            },
+            {
+                "question": "Quali sono le tre macrocategorie dei BES?",
+                "options": [
+                    "Disabilità, disturbi evolutivi specifici, svantaggio sociale/culturale/linguistico",
+                    "Solo disabilità e disturbi specifici dell'apprendimento",
+                    "Esclusivamente svantaggio socioeconomico e culturale",
+                    "Unicamente disturbi del neurosviluppo e disabilità"
+                ],
+                "correct": 0,
+                "topic": "Bisogni Educativi Speciali (BES)"
+            },
+            {
+                "question": "Con quale direttiva ministeriale sono stati introdotti ufficialmente i BES in Italia?",
+                "options": [
+                    "Direttiva Ministeriale del 2012",
+                    "Direttiva Ministeriale del 2000",
+                    "Direttiva Ministeriale del 2015",
+                    "Direttiva Ministeriale del 2005"
+                ],
+                "correct": 0,
+                "topic": "Bisogni Educativi Speciali (BES)"
+            },
+            {
+                "question": "Cosa implica il concetto di BES?",
+                "options": [
+                    "Ampliamento dell'idea di inclusione oltre la distinzione disabilità/normalità",
+                    "Restrizione degli interventi solo agli studenti con certificazione",
+                    "Eliminazione della personalizzazione educativa",
+                    "Creazione di classi speciali per studenti con difficoltà"
+                ],
+                "correct": 0,
+                "topic": "Bisogni Educativi Speciali (BES)"
+            },
+            {
+                "question": "Quale strumento è previsto per studenti con BES non certificati?",
+                "options": [
+                    "Piano Didattico Personalizzato (PDP)",
+                    "Piano Educativo Individualizzato (PEI)",
+                    "Solo interventi occasionali e non formalizzati",
+                    "Programmazione identica a quella della classe"
+                ],
+                "correct": 0,
+                "topic": "Bisogni Educativi Speciali (BES)"
+            },
+            
+            // 12. Inclusione scolastica (5 domande)
+            {
+                "question": "Cosa distingue l'inclusione dall'integrazione scolastica?",
+                "options": [
+                    "L'inclusione implica una trasformazione profonda del sistema educativo",
+                    "L'integrazione richiede più risorse economiche dell'inclusione",
+                    "L'inclusione si rivolge solo a studenti con disabilità certificate",
+                    "L'integrazione è più efficace dell'inclusione per tutti gli studenti"
+                ],
+                "correct": 0,
+                "topic": "Inclusione scolastica"
+            },
+            {
+                "question": "Quale principio caratterizza la didattica inclusiva?",
+                "options": [
+                    "Non è l'alunno che deve adattarsi alla scuola, ma la scuola che deve adattarsi alle esigenze di ogni alunno",
+                    "Gli studenti con difficoltà devono adattarsi al metodo d'insegnamento standard",
+                    "La scuola non deve modificare le proprie strategie didattiche",
+                    "L'insegnamento deve essere uguale per tutti senza eccezioni"
+                ],
+                "correct": 0,
+                "topic": "Inclusione scolastica"
+            },
+            {
+                "question": "Cosa si intende per 'Universal Design for Learning' (UDL)?",
+                "options": [
+                    "Progettazione universale dell'apprendimento per rendere l'istruzione accessibile a tutti",
+                    "Metodo d'insegnamento standardizzato valido per tutti gli studenti",
+                    "Tecnica esclusiva per studenti con disabilità visive",
+                    "Approccio che elimina completamente le differenze individuali"
+                ],
+                "correct": 0,
+                "topic": "Inclusione scolastica"
+            },
+            {
+                "question": "Quale tra questi è un principio fondamentale della didattica inclusiva?",
+                "options": [
+                    "Valorizzazione delle differenze come risorsa che arricchisce l'apprendimento",
+                    "Uniformizzazione degli stili di apprendimento",
+                    "Standardizzazione completa dei percorsi educativi",
+                    "Omogeneizzazione delle capacità degli studenti"
+                ],
+                "correct": 0,
+                "topic": "Inclusione scolastica"
+            },
+            {
+                "question": "Cosa implica il concetto di 'speciale normalità'?",
+                "options": [
+                    "Ogni alunno deve sentirsi unico ma anche parte del gruppo",
+                    "Gli studenti con disabilità devono essere considerati completamente diversi",
+                    "Tutti gli studenti devono essere trattati in modo identico",
+                    "Le differenze individuali devono essere ignorate"
+                ],
+                "correct": 0,
+                "topic": "Inclusione scolastica"
+            },
+            
+            // 13. Piano Educativo Individualizzato (PEI) (5 domande)
+            {
+                "question": "Cosa significa l'acronimo PEI?",
+                "options": [
+                    "Piano Educativo Individualizzato",
+                    "Percorso Educativo Integrato",
+                    "Programma di Educazione Inclusiva",
+                    "Piano di Ensignement Individuale"
+                ],
+                "correct": 0,
+                "topic": "Piano Educativo Individualizzato (PEI)"
+            },
+            {
+                "question": "Per quali studenti è previsto il PEI?",
+                "options": [
+                    "Studenti con disabilità certificata (Legge 104/1992)",
+                    "Tutti gli studenti con Bisogni Educativi Speciali",
+                    "Solo studenti con Disturbi Specifici dell'Apprendimento",
+                    "Esclusivamente studenti con svantaggio socio-culturale"
+                ],
+                "correct": 0,
+                "topic": "Piano Educativo Individualizzato (PEI)"
+            },
+            {
+                "question": "Chi partecipa alla stesura del PEI?",
+                "options": [
+                    "Gruppo di Lavoro Operativo (GLO) con docenti, famiglia e specialisti",
+                    "Solo l'insegnante di sostegno",
+                    "Esclusivamente il consiglio di classe",
+                    "Unicamente i genitori dello studente"
+                ],
+                "correct": 0,
+                "topic": "Piano Educativo Individualizzato (PEI)"
+            },
+            {
+                "question": "Su quale strumento si basa il PEI secondo le recenti normative?",
+                "options": [
+                    "Profilo di funzionamento secondo ICF",
+                    "Esclusivamente sulla diagnosi medica",
+                    "Solo sul giudizio dei docenti curricolari",
+                    "Unicamente sul desiderio della famiglia"
+                ],
+                "correct": 0,
+                "topic": "Piano Educativo Individualizzato (PEI)"
+            },
+            {
+                "question": "Cosa caratterizza un PEI ben strutturato?",
+                "options": [
+                    "Considera obiettivi didattici, educativi, riabilitativi e sociali",
+                    "Si focalizza esclusivamente sugli obiettivi didattici",
+                    "Ignora completamente il contesto extrascolastico",
+                    "Non prevede il coinvolgimento della famiglia"
+                ],
+                "correct": 0,
+                "topic": "Piano Educativo Individualizzato (PEI)"
+            },
+            
+            // 14. Piano Didattico Personalizzato (PDP) (5 domande)
+            {
+                "question": "Cosa significa l'acronimo PDP?",
+                "options": [
+                    "Piano Didattico Personalizzato",
+                    "Percorso Didattico Personalizzato",
+                    "Programma di Desarrollo Personal",
+                    "Piano di Diritto Personalizzato"
+                ],
+                "correct": 0,
+                "topic": "Piano Didattico Personalizzato (PDP)"
+            },
+            {
+                "question": "Per quali studenti è previsto il PDP?",
+                "options": [
+                    "Studenti con DSA o altri Bisogni Educativi Speciali",
+                    "Solo studenti con disabilità certificata",
+                    "Esclusivamente studenti stranieri",
+                    "Unicamente studenti con svantaggio economico"
+                ],
+                "correct": 0,
+                "topic": "Piano Didattico Personalizzato (PDP)"
+            },
+            {
+                "question": "Qual è la differenza principale tra PEI e PDP?",
+                "options": [
+                    "Il PEI è multidimensionale, il PDP è più agile e focalizzato sull'aspetto didattico",
+                    "Il PDP è più complesso e completo del PEI",
+                    "Il PEI è riservato solo a studenti con DSA",
+                    "Non ci sono differenze sostanziali tra i due documenti"
+                ],
+                "correct": 0,
+                "topic": "Piano Didattico Personalizzato (PDP)"
+            },
+            {
+                "question": "Cosa sono gli 'strumenti compensativi' nel PDP?",
+                "options": [
+                    "Mezzi che aiutano lo studente a superare la difficoltà specifica",
+                    "Dispositivi per eliminare completamente il disturbo",
+                    "Strumenti per valutare il quoziente intellettivo",
+                    "Ausili esclusivamente tecnologici e digitali"
+                ],
+                "correct": 0,
+                "topic": "Piano Didattico Personalizzato (PDP)"
+            },
+            {
+                "question": "Cosa sono le 'misure dispensative' nel PDP?",
+                "options": [
+                    "Riduzioni o esoneri da attività particolarmente penalizzanti",
+                    "Esenzioni complete da tutte le verifiche scolastiche",
+                    "Permessi per non frequentare la scuola",
+                    "Dispensa dall'apprendimento di alcune materie"
+                ],
+                "correct": 0,
+                "topic": "Piano Didattico Personalizzato (PDP)"
+            },
+            
+            // 15. Benessere insegnanti e inclusione (5 domande)
+            {
+                "question": "Quale sindrome può colpire gli insegnanti in condizioni di stress cronico?",
+                "options": [
+                    "Sindrome di burnout",
+                    "Sindrome di Down",
+                    "Sindrome dell'X fragile",
+                    "Sindrome di Asperger"
+                ],
+                "correct": 0,
+                "topic": "Benessere insegnanti e inclusione"
+            },
+            {
+                "question": "Cosa caratterizza il burnout negli insegnanti?",
+                "options": [
+                    "Esaurimento emotivo, distacco cinico dal lavoro, senso di inefficacia personale",
+                    "Solo stanchezza fisica temporanea",
+                    "Entusiasmo eccessivo per il lavoro",
+                    "Mancanza di competenze professionali"
+                ],
+                "correct": 0,
+                "topic": "Benessere insegnanti e inclusione"
+            },
+            {
+                "question": "Quali sono le criticità dell'inclusione scolastica in Italia?",
+                "options": [
+                    "Alto turnover degli insegnanti di sostegno, carenza di ausili specifici",
+                    "Eccessiva presenza di insegnanti di sostegno specializzati",
+                    "Sovraccarico di strumenti tecnologici nelle scuole",
+                    "Assenza completa di barriere architettoniche"
+                ],
+                "correct": 0,
+                "topic": "Benessere insegnanti e inclusione"
+            },
+            {
+                "question": "Cosa si intende per 'strategie di coping'?",
+                "options": [
+                    "Insieme di strategie cognitive, emotive e sociali per fronteggiare lo stress",
+                    "Tecniche esclusivamente farmacologiche per ridurre l'ansia",
+                    "Metodi per evitare completamente le situazioni stressanti",
+                    "Strategie per aumentare il carico di lavoro"
+                ],
+                "correct": 0,
+                "topic": "Benessere insegnanti e inclusione"
+            },
+            {
+                "question": "Perché è importante promuovere il benessere degli insegnanti?",
+                "options": [
+                    "Per creare una scuola più sana, motivata e capace di accogliere realmente tutti",
+                    "Solo per aumentare la produttività del sistema scolastico",
+                    "Esclusivamente per ridurre i giorni di assenza per malattia",
+                    "Unicamente per migliorare i risultati nelle valutazioni standardizzate"
+                ],
+                "correct": 0,
+                "topic": "Benessere insegnanti e inclusione"
+            }
+        ];
+
+        // Funzione per mescolare un array (algoritmo Fisher-Yates)
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+
+        // Funzione per selezionare casualmente le domande e mescolare le opzioni
+        function getRandomQuestions(questions, count) {
+            // Prima mescolo l'array di tutte le domande per selezionarne 15 casuali
+            const shuffledQuestions = shuffleArray([...questions]);
+            const selected = shuffledQuestions.slice(0, count);
+            
+            // Per ogni domanda selezionata, mescolo le opzioni e aggiorno l'indice corretto
+            return selected.map(question => {
+                // Salvo la risposta corretta originale
+                const correctAnswer = question.options[question.correct];
+                
+                // Mescolo le opzioni
+                const shuffledOptions = shuffleArray(question.options);
+                
+                // Trovo il nuovo indice della risposta corretta
+                const newCorrectIndex = shuffledOptions.indexOf(correctAnswer);
+                
+                // Restituisco una nuova domanda con le opzioni mescolate e il nuovo indice corretto
+                return {
+                    ...question,
+                    options: shuffledOptions,
+                    correct: newCorrectIndex
+                };
+            });
+        }
+
+        // Visualizza il quiz
+        function renderQuiz(questions) {
+            const quizContainer = document.getElementById('quiz-container');
+            quizContainer.innerHTML = '';
+            
+            questions.forEach((question, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question';
+                
+                questionDiv.innerHTML = `
+                    <div class="question-number">Domanda ${index + 1}</div>
+                    <div class="topic">Argomento: ${question.topic}</div>
+                    <p>${question.question}</p>
+                    <div class="options">
+                        ${question.options.map((option, i) => `
+                            <div class="option">
+                                <input type="radio" id="q${index}_o${i}" name="q${index}" value="${i}">
+                                <label for="q${index}_o${i}">${option}</label>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                
+                quizContainer.appendChild(questionDiv);
+            });
+            
+            // Aggiorna il topic della prima domanda
+            document.getElementById('current-topic').textContent = `Argomento: ${questions[0].topic}`;
+        }
+
+        // Calcola il punteggio e mostra i risultati
+        function calculateScore(questions) {
+            let score = 0;
+            const resultsContainer = document.getElementById('results');
+            resultsContainer.innerHTML = '<h2>Risultati</h2>';
+            resultsContainer.style.display = 'block';
+            
+            questions.forEach((question, index) => {
+                const selectedOption = document.querySelector(`input[name="q${index}"]:checked`);
+                const userAnswer = selectedOption ? parseInt(selectedOption.value) : -1;
+                
+                const isCorrect = userAnswer === question.correct;
+                if (isCorrect) score++;
+                
+                const resultDiv = document.createElement('div');
+                resultDiv.className = `question-result ${isCorrect ? 'correct' : 'incorrect'}`;
+                
+                resultDiv.innerHTML = `
+                    <p><strong>Domanda ${index + 1}:</strong> ${question.question}</p>
+                    <p>La tua risposta: ${userAnswer !== -1 ? question.options[userAnswer] : 'Nessuna risposta'}</p>
+                    <p class="correct">Risposta corretta: ${question.options[question.correct]}</p>
+                    <div class="topic">Argomento: ${question.topic}</div>
+                `;
+                
+                resultsContainer.appendChild(resultDiv);
+            });
+            
+            const scoreDiv = document.createElement('div');
+            scoreDiv.className = 'score';
+            scoreDiv.innerHTML = `Hai totalizzato ${score} punti su ${questions.length}`;
+            resultsContainer.prepend(scoreDiv);
+            
+            resultsContainer.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Inizializza il quiz
+        document.addEventListener('DOMContentLoaded', function() {
+            // Seleziona 15 domande casuali dal pool e mescola le opzioni
+            const selectedQuestions = getRandomQuestions(questionsPool, 15);
+            renderQuiz(selectedQuestions);
+            
+            // Aggiorna il progresso
+            document.getElementById('total').textContent = '15';
+            
+            // Aggiungi gestore evento per il pulsante di invio
+            document.getElementById('submit-btn').addEventListener('click', function() {
+                calculateScore(selectedQuestions);
+            });
+            
+            // Aggiungi gestori eventi per cambiare l'argomento visualizzato quando l'utente scorre
+            const questions = document.querySelectorAll('.question');
+            const currentTopic = document.getElementById('current-topic');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const topic = entry.target.querySelector('.topic').textContent.replace('Argomento: ', '');
+                        currentTopic.textContent = `Argomento: ${topic}`;
+                        
+                        const questionNumber = entry.target.querySelector('.question-number').textContent.replace('Domanda ', '');
+                        document.getElementById('current').textContent = questionNumber;
+                    }
+                });
+            }, { threshold: 0.5 });
+            
+            questions.forEach(question => {
+                observer.observe(question);
+            });
+        });
+    </script>
+</body>
+</html>
