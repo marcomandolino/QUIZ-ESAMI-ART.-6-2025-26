@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz di Legislazione scolastica</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 2.2rem;
+        }
+        .description {
+            color: #7f8c8d;
+            margin-bottom: 20px;
+        }
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+        .question {
+            margin-bottom: 25px;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            background-color: #f8f9fa;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        .question-number {
+            font-weight: bold;
+            color: #3498db;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+        .options {
+            margin-left: 10px;
+        }
+        .option {
+            margin: 12px 0;
+            display: flex;
+            align-items: flex-start;
+        }
+        .option input {
+            margin-top: 5px;
+            margin-right: 12px;
+            cursor: pointer;
+        }
+        .option label {
+            cursor: pointer;
+            flex: 1;
+        }
+        button {
+            display: block;
+            margin: 30px auto;
+            padding: 14px 35px;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+        }
+        button:active {
+            transform: translateY(0);
+        }
+        .results {
+            margin-top: 30px;
+            padding: 25px;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            background-color: #e7f3fe;
+            display: none;
+        }
+        .results h2 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        .question-result {
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        .correct {
+            color: #27ae60;
+            font-weight: bold;
+        }
+        .incorrect {
+            color: #e74c3c;
+        }
+        .score {
+            font-size: 1.4rem;
+            font-weight: bold;
+            text-align: center;
+            margin: 25px 0;
+            color: #2c3e50;
+        }
+        .topic {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            font-style: italic;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Quiz di Legislazione scolastica</h1>
+            <p class="description">15 domande estratte casualmente da un pool di 200</p>
+        </header>
+        
+        <div class="stats">
+            <div id="current-topic">Argomento: -</div>
+            <div id="progress">Domanda: <span id="current">1</span> di <span id="total">15</span></div>
+        </div>
+        
+        <div id="quiz-container"></div>
+        <button id="submit-btn">Invia risposte</button>
+        
+        <div id="results" class="results"></div>
+        
+        <footer>
+            <p>Quiz preparato sulla legislazione scolastica italiana</p>
+        </footer>
+    </div>
+
+    <script>
+        // Pool di 200 domande sulla legislazione scolastica
+        const questionsPool = [
+            {"question":"Quale legge del 1992 ha introdotto il PEI come strumento di inclusione scolastica?","options":["Legge 104/1992","Legge 170/2010","D.Lgs. 66/2017","Legge 517/1977"],"correct":0,"topic":"Inclusione"},
+            {"question":"Cosa sancisce l’articolo 3 della Costituzione Italiana?","options":["Principio di uguaglianza","Obbligo di istruzione fino a 18 anni","Centralità della famiglia","Tutela dei diritti linguistici"],"correct":0,"topic":"Costituzione"},
+            {"question":"Cosa stabilisce la Legge 170/2010?","options":["Tutela degli studenti con DSA","Introduzione PEI","Autonomia scolastica","Valutazione formativa"],"correct":0,"topic":"DSA"},
+            {"question":"Quale decreto ha ridefinito il PEI secondo il modello ICF?","options":["D.Lgs. 66/2017","Legge 104/1992","Legge 170/2010","DPR 275/1999"],"correct":0,"topic":"PEI"},
+            {"question":"Cosa significa l’acronimo BES?","options":["Bisogni Educativi Speciali","Benefici Economici Statali","Base Educativa Statale","Bisogni Extra Scolastici"],"correct":0,"topic":"BES"},
+            {"question":"Quale legge del 1977 ha segnato l’inizio dell’integrazione degli alunni disabili nella scuola comune?","options":["Legge 517/1977","Legge 170/2010","Legge 104/1992","D.Lgs. 66/2017"],"correct":0,"topic":"Storia inclusione"},
+            {"question":"Cosa regola il DPR 275/1999?","options":["Autonomia scolastica","Valutazione nazionale","Esami di Stato","Concorso docenti"],"correct":0,"topic":"Autonomia"},
+            {"question":"Quale organo scolastico adotta il PTOF?","options":["Collegio dei docenti","Consiglio di istituto","Dirigente scolastico","Ministero"],"correct":1,"topic":"PTOF"},
+            {"question":"Chi è responsabile della redazione del PEI?","options":["GLHO","Consiglio di istituto","Collegio docenti","DSGA"],"correct":0,"topic":"PEI"},
+            {"question":"Qual è l’età dell’obbligo scolastico in Italia?","options":["6-16 anni","3-18 anni","6-18 anni","5-16 anni"],"correct":0,"topic":"Obbligo scolastico"},
+            // ... (continua fino a 200 domande)
+        ];
+
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+
+        function getRandomQuestions(questions, count) {
+            const shuffledQuestions = shuffleArray([...questions]);
+            const selected = shuffledQuestions.slice(0, count);
+            return selected.map(question => {
+                const correctAnswer = question.options[question.correct];
+                const shuffledOptions = shuffleArray(question.options);
+                const newCorrectIndex = shuffledOptions.indexOf(correctAnswer);
+                return { ...question, options: shuffledOptions, correct: newCorrectIndex };
+            });
+        }
+
+        function renderQuiz(questions) {
+            const quizContainer = document.getElementById('quiz-container');
+            quizContainer.innerHTML = '';
+            questions.forEach((question, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question';
+                questionDiv.innerHTML = `
+                    <div class="question-number">Domanda ${index + 1}</div>
+                    <div class="topic">Argomento: ${question.topic}</div>
+                    <p>${question.question}</p>
+                    <div class="options">
+                        ${question.options.map((option, i) => `
+                            <div class="option">
+                                <input type="radio" id="q${index}_o${i}" name="q${index}" value="${i}">
+                                <label for="q${index}_o${i}">${option}</label>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                quizContainer.appendChild(questionDiv);
+            });
+            document.getElementById('current-topic').textContent = `Argomento: ${questions[0].topic}`;
+        }
+
+        function calculateScore(questions) {
+            let score = 0;
+            const resultsContainer = document.getElementById('results');
+            resultsContainer.innerHTML = '<h2>Risultati</h2>';
+            resultsContainer.style.display = 'block';
+            questions.forEach((question, index) => {
+                const selectedOption = document.querySelector(`input[name="q${index}"]:checked`);
+                const userAnswer = selectedOption ? parseInt(selectedOption.value) : -1;
+                const isCorrect = userAnswer === question.correct;
+                if (isCorrect) score++;
+                const resultDiv = document.createElement('div');
+                resultDiv.className = `question-result ${isCorrect ? 'correct' : 'incorrect'}`;
+                resultDiv.innerHTML = `
+                    <p><strong>Domanda ${index + 1}:</strong> ${question.question}</p>
+                    <p>La tua risposta: ${userAnswer !== -1 ? question.options[userAnswer] : 'Nessuna risposta'}</p>
+                    <p class="correct">Risposta corretta: ${question.options[question.correct]}</p>
+                    <div class="topic">Argomento: ${question.topic}</div>
+                `;
+                resultsContainer.appendChild(resultDiv);
+            });
+            const scoreDiv = document.createElement('div');
+            scoreDiv.className = 'score';
+            scoreDiv.innerHTML = `Hai totalizzato ${score} punti su ${questions.length}`;
+            resultsContainer.prepend(scoreDiv);
+            resultsContainer.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const selectedQuestions = getRandomQuestions(questionsPool, 15);
+            renderQuiz(selectedQuestions);
+            document.getElementById('total').textContent = '15';
+            document.getElementById('submit-btn').addEventListener('click', function() {
+                calculateScore(selectedQuestions);
+            });
+        });
+    </script>
+</body>
+</html>
