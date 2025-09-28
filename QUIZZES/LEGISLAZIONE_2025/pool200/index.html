@@ -135,6 +135,15 @@
             font-style: italic;
             margin-top: 5px;
         }
+        .retry-btn {
+            text-align: right;
+            margin-top: 20px;
+        }
+        .retry-btn button {
+            margin: 0;
+            padding: 10px 25px;
+            font-size: 1rem;
+        }
     </style>
 </head>
 <body>
@@ -160,7 +169,6 @@
     </div>
 
     <script>
-        // Pool di 200 domande sulla legislazione scolastica
         const questionsPool = [
             {"question":"Quale legge del 1992 ha introdotto il PEI come strumento di inclusione scolastica?","options":["Legge 104/1992","Legge 170/2010","D.Lgs. 66/2017","Legge 517/1977"],"correct":0,"topic":"Inclusione"},
             {"question":"Cosa sancisce l’articolo 3 della Costituzione Italiana?","options":["Principio di uguaglianza","Obbligo di istruzione fino a 18 anni","Centralità della famiglia","Tutela dei diritti linguistici"],"correct":0,"topic":"Costituzione"},
@@ -171,8 +179,8 @@
             {"question":"Cosa regola il DPR 275/1999?","options":["Autonomia scolastica","Valutazione nazionale","Esami di Stato","Concorso docenti"],"correct":0,"topic":"Autonomia"},
             {"question":"Quale organo scolastico adotta il PTOF?","options":["Collegio dei docenti","Consiglio di istituto","Dirigente scolastico","Ministero"],"correct":1,"topic":"PTOF"},
             {"question":"Chi è responsabile della redazione del PEI?","options":["GLHO","Consiglio di istituto","Collegio docenti","DSGA"],"correct":0,"topic":"PEI"},
-            {"question":"Qual è l’età dell’obbligo scolastico in Italia?","options":["6-16 anni","3-18 anni","6-18 anni","5-16 anni"],"correct":0,"topic":"Obbligo scolastico"},
-            // ... (continua fino a 200 domande)
+            {"question":"Qual è l’età dell’obbligo scolastico in Italia?","options":["6-16 anni","3-18 anni","6-18 anni","5-16 anni"],"correct":0,"topic":"Obbligo scolastico"}
+            // ... fino a 200 domande
         ];
 
         function shuffleArray(array) {
@@ -243,6 +251,12 @@
             scoreDiv.className = 'score';
             scoreDiv.innerHTML = `Hai totalizzato ${score} punti su ${questions.length}`;
             resultsContainer.prepend(scoreDiv);
+
+            const retryDiv = document.createElement('div');
+            retryDiv.className = 'retry-btn';
+            retryDiv.innerHTML = '<button onclick="location.reload()">Ripeti il Quiz con altre 15 domande</button>';
+            resultsContainer.appendChild(retryDiv);
+
             resultsContainer.scrollIntoView({ behavior: 'smooth' });
         }
 
