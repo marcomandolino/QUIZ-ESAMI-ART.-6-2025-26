@@ -173,7 +173,7 @@
     </div>
 
     <script>
-        // Pool di 200 domande sulla legislazione scolastica italiana
+        // Pool di 200 domande sulla legislazione scolastica italiana - Versione migliorata
         const questionsPool = [
             // Storia della legislazione scolastica (30 domande)
             {"question":"Quale legge estese l'istruzione elementare obbligatoria e gratuita a 3 anni?","options":["Legge Coppino (1877)","Legge Casati (1859)","Legge Orlando (1904)","Legge Daneo-Credaro (1911)"],"correct":0,"topic":"Storia della scuola"},
@@ -227,7 +227,7 @@
             {"question":"Quale articolo della Costituzione stabilisce che 'Le istituzioni di alta cultura, università ed accademie, hanno il diritto di darsi ordinamenti autonomi'?","options":["Art. 33","Art. 34","Art. 3","Art. 9"],"correct":0,"topic":"Costituzione"},
             {"question":"Quale articolo della Costituzione riconosce il valore educativo dell'attività sportiva?","options":["Art. 33","Art. 34","Art. 3","Art. 9"],"correct":0,"topic":"Costituzione"},
             {"question":"Quale articolo della Costituzione afferma che 'L'istruzione inferiore, impartita per almeno otto anni, è obbligatoria e gratuita'?","options":["Art. 34","Art. 33","Art. 3","Art. 9"],"correct":0,"topic":"Costituzione"},
-            {"question":"Quale articolo della Costituzione stabilisce que 'La Repubblica rende effettivo questo diritto con borse di studio, assegni alle famiglie ed altre provvidenze'?","options":["Art. 34","Art. 33","Art. 3","Art. 9"],"correct":0,"topic":"Costituzione"},
+            {"question":"Quale articolo della Costituzione stabilisce che 'La Repubblica rende effettivo questo diritto con borse di studio, assegni alle famiglie ed altre provvidenze'?","options":["Art. 34","Art. 33","Art. 3","Art. 9"],"correct":0,"topic":"Costituzione"},
             {"question":"Quale articolo della Costituzione afferma che 'La Repubblica riconosce e garantisce i diritti inviolabili dell'uomo'?","options":["Art. 2","Art. 3","Art. 33","Art. 34"],"correct":0,"topic":"Costituzione"},
             {"question":"Quale articolo della Costituzione stabilisce che 'È compito della Repubblica rimuovere gli ostacoli di ordine economico e sociale'?","options":["Art. 3","Art. 2","Art. 33","Art. 34"],"correct":0,"topic":"Costituzione"},
             {"question":"Quale principio costituzionale è alla base dell'inclusione scolastica?","options":["Principio di solidarietà","Principio di autonomia","Principio di sussidiarietà","Principio di decentramento"],"correct":0,"topic":"Costituzione"},
@@ -294,7 +294,6 @@
             {"question":"Cosa significa l'acronimo GLIR?","options":["Gruppo di Lavoro Interistituzionale Regionale","Gruppo Locale Interregionale","Gestione Lavori Istruttori Regionali","Gruppo Lavoro Interdisciplinare Regionale"],"correct":0,"topic":"Inclusione"},
             {"question":"Cosa significa l'acronimo GIT?","options":["Gruppo per l'Inclusione Territoriale","Gruppo Interistituzionale Territoriale","Gestione Istruttoria Territoriale","Gruppo Lavoro Interdisciplinare Territoriale"],"correct":0,"topic":"Inclusione"},
             {"question":"Quale legge ha introdotto per la prima volta l'insegnante di sostegno?","options":["Legge 517/1977","Legge 118/1971","Legge 104/1992","Legge 170/2010"],"correct":0,"topic":"Inclusione"},
-            {"question":"Quale sentenza della Corte costituzionale ha affermato che la frequenza alle scuole superiori per i ragazzi con disabilità deve essere 'assicurata'?","options":["Sentenza 215/1987","Sentenza 482/2020","Sentenza 7089/2024","Sentenza 9323/2024"],"correct":0,"topic":"Inclusione"},
             {"question":"Quale documento viene redatto per un alunno con disabilità certificata?","options":["PEI","PDP","PTOF","RAV"],"correct":0,"topic":"Inclusione"},
             {"question":"Quale documento viene redatto per un alunno con DSA?","options":["PDP","PEI","PTOF","RAV"],"correct":0,"topic":"DSA"},
             {"question":"Quale documento viene redatto per un alunno con altri BES?","options":["PDP","PEI","PTOF","RAV"],"correct":0,"topic":"BES"},
@@ -326,10 +325,7 @@
             {"question":"Quale direttiva MIUR ha introdotto i BES?","options":["Direttiva 27 dicembre 2012","Circolare 8/2013","Legge 170/2010","Legge 104/1992"],"correct":0,"topic":"BES"},
             {"question":"Quale circolare ministeriale ha specificato gli strumenti di intervento per i BES?","options":["Circolare 8/2013","Direttiva 27 dicembre 2012","Legge 170/2010","Legge 104/1992"],"correct":0,"topic":"BES"},
             {"question":"Quali categorie di studenti rientrano nei BES?","options":["Studenti con disabilità, DSA, altri disturbi evolutivi, svantaggio","Solo studenti con disabilità","Solo studenti con DSA","Solo studenti con svantaggio socio-economico"],"correct":0,"topic":"BES"},
-            {"question":"Quale sentenza del Consiglio di Stato ha stabilito che il PEI non è vincolante per i Comuni?","options":["Sentenza 7089/2024","Sentenza 482/2020","Sentenza 9323/2024","Sentenza 452/2025"],"correct":0,"topic":"Inclusione"},
-            {"question":"Quale sentenza del Consiglio di Giustizia Amministrativa per la Regione Siciliana ha affrontato il tema della valutazione degli alunni con disabilità?","options":["Sentenza 482/2020","Sentenza 7089/2024","Sentenza 9323/2024","Sentenza 452/2025"],"correct":0,"topic":"Inclusione"},
-            {"question":"Quale sentenza del Consiglio di Stato ha stabilito che il diritto al trasporto scolastico gratuito non può essere subordinato a ragioni economiche?","options":["Sentenza 9323/2024","Sentenza 482/2020","Sentenza 7089/2024","Sentenza 452/2025"],"correct":0,"topic":"Inclusione"},
-            {"question":"Quale sentenza del TAR Lombardia ha affrontato il tema della non ammissione alla classe successiva di uno studente con BES?","options":["Sentenza 452/2025","Sentenza 482/2020","Sentenza 7089/2024","Sentenza 9323/2024"],"correct":0,"topic":"Inclusione"},
+            {"question":"In quale caso il giudice può annullare la decisione di non ammissione di uno studente con BES?","options":["Quando la scuola non ha rispettato la normativa sull'inclusione","Quando lo studente ha almeno la sufficienza in tutte le materie","Quando i genitori presentano ricorso","Quando il consiglio di classe non è unanime"],"correct":0,"topic":"Inclusione"},
             {"question":"Quale principio giuridico permette al giudice di annullare un atto della P.A. per 'sviamento di potere'?","options":["Eccesso di potere","Violazione di legge","Incompetenza","Difetto di motivazione"],"correct":0,"topic":"Diritto amministrativo"},
             {"question":"Quale principio giuridico permette al giudice di annullare un atto della P.A. per 'disparità di trattamento'?","options":["Eccesso di potere","Violazione di legge","Incompetenza","Difetto di motivazione"],"correct":0,"topic":"Diritto amministrativo"},
             {"question":"Quale principio giuridico permette al giudice di annullare un atto della P.A. per 'violazione del principio di proporzionalità'?","options":["Eccesso di potere","Violazione di legge","Incompetenza","Difetto di motivazione"],"correct":0,"topic":"Diritto amministrativo"},
@@ -384,7 +380,7 @@
             {"question":"Quale documento contiene i crediti scolastici?","options":["Diploma","Certificazione delle competenze","Pagella","RAV"],"correct":0,"topic":"Valutazione"},
             {"question":"Quale documento viene rilasciato al termine del primo ciclo?","options":["Diploma di licenza media","Certificazione delle competenze","PEI","PDP"],"correct":0,"topic":"Valutazione"},
             {"question":"Quale documento viene rilasciato al termine del secondo ciclo?","options":["Diploma di maturità","Certificazione delle competenze","PEI","PDP"],"correct":0,"topic":"Valutazione"},
-            {"question":"Quale organismo valuta il sistema scolastico a livello nazionale?","options":["INVALSI","Ministero dell'Istruzione","Uffici Scolastici Regionali","Scuoles autonome"],"correct":0,"topic":"Valutazione"},
+            {"question":"Quale organismo valuta il sistema scolastico a livello nazionale?","options":["INVALSI","Ministero dell'Istruzione","Uffici Scolastici Regionali","Scuole autonome"],"correct":0,"topic":"Valutazione"},
             {"question":"Quale documento viene compilato dai docenti per la valutazione periodica?","options":["Pagella","RAV","PTOF","PEI"],"correct":0,"topic":"Valutazione"},
             {"question":"Quale documento viene compilato dai docenti per la valutazione finale?","options":["Pagella","RAV","PTOF","PEI"],"correct":0,"topic":"Valutazione"},
             {"question":"Quale documento viene redatto per gli scrutini?","options":["Verbale","RAV","PTOF","PEI"],"correct":0,"topic":"Valutazione"}
