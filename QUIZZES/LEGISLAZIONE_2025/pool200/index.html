@@ -150,7 +150,7 @@
     <div class="container">
         <header>
             <h1>Quiz di Legislazione scolastica</h1>
-            <p class="description">15 domande estratte casualmente da un pool di 200</p>
+            <p class="description">15 domande estratte casualmente da un pool di 50</p>
         </header>
         
         <div class="stats">
@@ -169,6 +169,7 @@
     </div>
 
     <script>
+        // Pool di 50 domande di esempio
         const questionsPool = [
             {"question":"Quale legge del 1992 ha introdotto il PEI come strumento di inclusione scolastica?","options":["Legge 104/1992","Legge 170/2010","D.Lgs. 66/2017","Legge 517/1977"],"correct":0,"topic":"Inclusione"},
             {"question":"Cosa sancisce l’articolo 3 della Costituzione Italiana?","options":["Principio di uguaglianza","Obbligo di istruzione fino a 18 anni","Centralità della famiglia","Tutela dei diritti linguistici"],"correct":0,"topic":"Costituzione"},
@@ -179,95 +180,36 @@
             {"question":"Cosa regola il DPR 275/1999?","options":["Autonomia scolastica","Valutazione nazionale","Esami di Stato","Concorso docenti"],"correct":0,"topic":"Autonomia"},
             {"question":"Quale organo scolastico adotta il PTOF?","options":["Collegio dei docenti","Consiglio di istituto","Dirigente scolastico","Ministero"],"correct":1,"topic":"PTOF"},
             {"question":"Chi è responsabile della redazione del PEI?","options":["GLHO","Consiglio di istituto","Collegio docenti","DSGA"],"correct":0,"topic":"PEI"},
-            {"question":"Qual è l’età dell’obbligo scolastico in Italia?","options":["6-16 anni","3-18 anni","6-18 anni","5-16 anni"],"correct":0,"topic":"Obbligo scolastico"}
-            // ... fino a 200 domande
-        ];
-
-        function shuffleArray(array) {
-            const newArray = [...array];
-            for (let i = newArray.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
-            }
-            return newArray;
-        }
-
-        function getRandomQuestions(questions, count) {
-            const shuffledQuestions = shuffleArray([...questions]);
-            const selected = shuffledQuestions.slice(0, count);
-            return selected.map(question => {
-                const correctAnswer = question.options[question.correct];
-                const shuffledOptions = shuffleArray(question.options);
-                const newCorrectIndex = shuffledOptions.indexOf(correctAnswer);
-                return { ...question, options: shuffledOptions, correct: newCorrectIndex };
-            });
-        }
-
-        function renderQuiz(questions) {
-            const quizContainer = document.getElementById('quiz-container');
-            quizContainer.innerHTML = '';
-            questions.forEach((question, index) => {
-                const questionDiv = document.createElement('div');
-                questionDiv.className = 'question';
-                questionDiv.innerHTML = `
-                    <div class="question-number">Domanda ${index + 1}</div>
-                    <div class="topic">Argomento: ${question.topic}</div>
-                    <p>${question.question}</p>
-                    <div class="options">
-                        ${question.options.map((option, i) => `
-                            <div class="option">
-                                <input type="radio" id="q${index}_o${i}" name="q${index}" value="${i}">
-                                <label for="q${index}_o${i}">${option}</label>
-                            </div>
-                        `).join('')}
-                    </div>
-                `;
-                quizContainer.appendChild(questionDiv);
-            });
-            document.getElementById('current-topic').textContent = `Argomento: ${questions[0].topic}`;
-        }
-
-        function calculateScore(questions) {
-            let score = 0;
-            const resultsContainer = document.getElementById('results');
-            resultsContainer.innerHTML = '<h2>Risultati</h2>';
-            resultsContainer.style.display = 'block';
-            questions.forEach((question, index) => {
-                const selectedOption = document.querySelector(`input[name="q${index}"]:checked`);
-                const userAnswer = selectedOption ? parseInt(selectedOption.value) : -1;
-                const isCorrect = userAnswer === question.correct;
-                if (isCorrect) score++;
-                const resultDiv = document.createElement('div');
-                resultDiv.className = `question-result ${isCorrect ? 'correct' : 'incorrect'}`;
-                resultDiv.innerHTML = `
-                    <p><strong>Domanda ${index + 1}:</strong> ${question.question}</p>
-                    <p>La tua risposta: ${userAnswer !== -1 ? question.options[userAnswer] : 'Nessuna risposta'}</p>
-                    <p class="correct">Risposta corretta: ${question.options[question.correct]}</p>
-                    <div class="topic">Argomento: ${question.topic}</div>
-                `;
-                resultsContainer.appendChild(resultDiv);
-            });
-            const scoreDiv = document.createElement('div');
-            scoreDiv.className = 'score';
-            scoreDiv.innerHTML = `Hai totalizzato ${score} punti su ${questions.length}`;
-            resultsContainer.prepend(scoreDiv);
-
-            const retryDiv = document.createElement('div');
-            retryDiv.className = 'retry-btn';
-            retryDiv.innerHTML = '<button onclick="location.reload()">Ripeti il Quiz con altre 15 domande</button>';
-            resultsContainer.appendChild(retryDiv);
-
-            resultsContainer.scrollIntoView({ behavior: 'smooth' });
-        }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            const selectedQuestions = getRandomQuestions(questionsPool, 15);
-            renderQuiz(selectedQuestions);
-            document.getElementById('total').textContent = '15';
-            document.getElementById('submit-btn').addEventListener('click', function() {
-                calculateScore(selectedQuestions);
-            });
-        });
-    </script>
-</body>
-</html>
+            {"question":"Qual è l’età dell’obbligo scolastico in Italia?","options":["6-16 anni","3-18 anni","6-18 anni","5-16 anni"],"correct":0,"topic":"Obbligo scolastico"},
+            {"question":"Quale organo approva il bilancio della scuola?","options":["Consiglio di istituto","Collegio dei docenti","Dirigente scolastico","Ministero"],"correct":0,"topic":"Organi collegiali"},
+            {"question":"Cosa si intende per PEI?","options":["Piano Educativo Individualizzato","Programma Educativo Italiano","Progetto Educativo Istituzionale","Piano Educativo Integrato"],"correct":0,"topic":"Inclusione"},
+            {"question":"Che cosa stabilisce la Legge 517/1977?","options":["Abolizione classi differenziali","Tutela DSA","Introduzione autonomia scolastica","PEI obbligatorio"],"correct":0,"topic":"Storia inclusione"},
+            {"question":"Cosa regola la Legge 107/2015?","options":["La Buona Scuola","Autonomia scolastica","Legge DSA","Ordinamento università"],"correct":0,"topic":"Riforme"},
+            {"question":"Quale articolo della Costituzione sancisce il diritto all’istruzione?","options":["Art. 34","Art. 1","Art. 12","Art. 117"],"correct":0,"topic":"Costituzione"},
+            {"question":"Chi presiede il Collegio dei docenti?","options":["Dirigente scolastico","Presidente del consiglio di istituto","DSGA","Ministro"],"correct":0,"topic":"Organi collegiali"},
+            {"question":"Chi convoca il GLHO?","options":["Dirigente scolastico","Collegio dei docenti","Consiglio di istituto","Ministero"],"correct":0,"topic":"Inclusione"},
+            {"question":"Quale documento definisce la missione educativa della scuola?","options":["PTOF","Bilancio","Circolare ministeriale","Legge finanziaria"],"correct":0,"topic":"PTOF"},
+            {"question":"Cosa si intende per PDP?","options":["Piano Didattico Personalizzato","Programma Didattico Pubblico","Piano Didattico Provvisorio","Progetto Didattico Permanente"],"correct":0,"topic":"DSA"},
+            {"question":"Chi valuta e approva il PTOF?","options":["Consiglio di istituto","Collegio docenti","Dirigente scolastico","Ministero"],"correct":0,"topic":"PTOF"},
+            {"question":"Quale organo scolastico ha funzioni deliberative?","options":["Consiglio di istituto","Collegio docenti","Dirigente scolastico","DSGA"],"correct":0,"topic":"Organi collegiali"},
+            {"question":"Chi è il responsabile legale della scuola?","options":["Dirigente scolastico","Consiglio di istituto","Collegio docenti","GLHO"],"correct":0,"topic":"Dirigenza"},
+            {"question":"Che cos’è il PTOF?","options":["Piano Triennale dell’Offerta Formativa","Progetto Triennale dell’Organico Funzionamento","Piano Triennale Offerta Finanziaria","Progetto Tecnico Offerta Formativa"],"correct":0,"topic":"PTOF"},
+            {"question":"Quale articolo della Costituzione sancisce la libertà di insegnamento?","options":["Art. 33","Art. 1","Art. 3","Art. 34"],"correct":0,"topic":"Costituzione"},
+            {"question":"Cosa prevede il D.Lgs. 62/2017?","options":["Valutazione e certificazione competenze","Legge sull’autonomia","PEI","PDP"],"correct":0,"topic":"Valutazione"},
+            {"question":"Quale documento è obbligatorio per studenti con DSA?","options":["PDP","PEI","PTOF","Bilancio"],"correct":0,"topic":"DSA"},
+            {"question":"Chi è il DSGA?","options":["Direttore Servizi Generali e Amministrativi","Direttore Scuola Generale Area","Docente Sostegno Gestione Alunni","Delegato Servizi Gestione Amministrativa"],"correct":0,"topic":"Personale"},
+            {"question":"Cosa si intende per GLI?","options":["Gruppo di Lavoro per l’Inclusione","Gruppo di Lavoro Interistituzionale","Gestione Legale Inclusiva","Gruppo Locale Istruzione"],"correct":0,"topic":"Inclusione"},
+            {"question":"Chi presiede il Consiglio di istituto?","options":["Un genitore","Dirigente scolastico","DSGA","Collegio docenti"],"correct":0,"topic":"Organi collegiali"},
+            {"question":"Quale documento definisce le strategie per l’inclusione?","options":["PAI","PTOF","PEI","PDP"],"correct":0,"topic":"Inclusione"},
+            {"question":"Cosa introduce la Legge 53/2003?","options":["Riforma Moratti","Riforma Gentile","Riforma Berlinguer","Riforma Gelmini"],"correct":0,"topic":"Riforme"},
+            {"question":"Quale organo scolastico ha funzione propositiva?","options":["Collegio docenti","Consiglio di istituto","Dirigente scolastico","GLHO"],"correct":0,"topic":"Organi collegiali"},
+            {"question":"Chi convoca il Collegio docenti?","options":["Dirigente scolastico","DSGA","Consiglio di istituto","Ministero"],"correct":0,"topic":"Organi collegiali"},
+            {"question":"Cosa disciplina la Legge 107/2015 (Buona Scuola)?","options":["Organico dell’autonomia","PEI","DSA","Classi differenziali"],"correct":0,"topic":"Riforme"},
+            {"question":"Chi approva il Regolamento d’istituto?","options":["Consiglio di istituto","Collegio docenti","Dirigente scolastico","Ministero"],"correct":0,"topic":"Organi collegiali"},
+            {"question":"Che cos’è l’INVALSI?","options":["Istituto nazionale di valutazione del sistema educativo","Istituto nazionale valutazione studenti italiani","Istituto nuovo valutazione scolastica inclusiva","Indagine nazionale valutazione sistemi istruzione"],"correct":0,"topic":"Valutazione"},
+            {"question":"Cosa significa ICF?","options":["Classificazione Internazionale del Funzionamento","Indice Classificazione Formativa","Istituto Centrale Formazione","Indicatore Curricolo Formativo"],"correct":0,"topic":"Inclusione"},
+            {"question":"Chi approva il Programma annuale?","options":["Consiglio di istituto","Collegio docenti","Dirigente scolastico","DSGA"],"correct":0,"topic":"Bilancio"},
+            {"question":"Cosa sancisce l’articolo 34 della Costituzione?","options":["La scuola è aperta a tutti","La scuola è gratuita solo per i ricchi","La scuola è obbligatoria fino ai 21 anni","La scuola superiore è obbligatoria"],"correct":0,"topic":"Costituzione"},
+            {"question":"Chi elabora il RAV (Rapporto di Autovalutazione)?","options":["Il Nucleo interno di valutazione","Consiglio di istituto","Dirigente scolastico","Ministero"],"correct":0,"topic":"Valutazione"},
+            {"question":"Cosa significa PTOF?","options":["Piano Triennale Offerta Formativa","Programma Triennale Offerta Finanziaria","Progetto Tecnico Offerta Formativa","Piano Triennale Ordinamenti Formativi"],"correct":0,"topic":"PTOF"},
+            {"question":"Chi è il garante dell’unità educativa dell’istituto?","options":["Dirigente scolastico","Consiglio di
