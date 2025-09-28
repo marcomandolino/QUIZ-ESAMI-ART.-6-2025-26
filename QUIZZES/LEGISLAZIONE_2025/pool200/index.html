@@ -1,231 +1,29 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="it">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Quiz di Legislazione scolastica</title>
-    <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height:1.6; background:linear-gradient(135deg,#6a11cb 0%,#2575fc 100%); color:#333; min-height:100vh; padding:20px }
-        .container{ max-width:900px; margin:0 auto; background:#fff; padding:30px; border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,.15)}
-        header{text-align:center;margin-bottom:20px}
-        h1{color:#2c3e50;margin-bottom:6px;font-size:2rem}
-        .description{color:#7f8c8d;margin-bottom:10px}
-        .stats{display:flex;justify-content:space-between;background:#f8f9fa;padding:12px;border-radius:8px;font-weight:600;margin-bottom:14px}
-        .question{margin-bottom:18px;padding:14px;border:1px solid #e6e6e6;border-radius:8px;background:#fbfdff}
-        .question-number{font-weight:700;color:#2d9cdf;margin-bottom:6px}
-        .options{margin-left:6px}
-        .option{margin:10px 0;display:flex;align-items:flex-start}
-        .option input{margin-right:10px;margin-top:4px}
-        button{display:block;margin:22px auto;padding:12px 30px;background:linear-gradient(135deg,#6a11cb 0%,#2575fc 100%);color:#fff;border:none;border-radius:40px;cursor:pointer;font-weight:700}
-        .results{display:none;margin-top:18px;padding:16px;border-radius:8px;background:#eaf6ff;border:1px solid #dceffd}
-        .result-item{background:#fff;padding:10px;border-radius:6px;margin-bottom:10px;border:1px solid #eef6ff}
-        .correct{color:#27ae60;font-weight:700}
-        .incorrect{color:#e74c3c;font-weight:700}
-        .retry{float:right}
-        footer{margin-top:18px;text-align:center;color:#7f8c8d}
-        .error{background:#ffecec;border:1px solid #f5c2c2;padding:10px;border-radius:6px;color:#a33}
-    </style>
-</head>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Test Quiz</title></head>
 <body>
-    <div class="container">
-        <header>
-            <h1>Quiz di Legislazione scolastica</h1>
-            <div class="description">15 domande estratte casualmente da un pool (versione di test)</div>
-        </header>
-
-        <div class="stats">
-            <div id="current-topic">Argomento: -</div>
-            <div>Domanda: <span id="current">1</span> di <span id="total">15</span></div>
-        </div>
-
-        <div id="quiz-container">Caricamento...</div>
-        <button id="submit-btn">Invia risposte</button>
-
-        <div id="results" class="results"></div>
-        <div id="error" style="display:none" class="error"></div>
-
-        <footer>
-            <p>Quiz preparato sulla legislazione scolastica italiana — prova di funzionamento</p>
-        </footer>
-    </div>
-
-    <script>
-    (function(){
-        // ------------------------------------------------------
-        // Pool minimo di test (50 domande) — tutte con 4 opzioni
-        // Puoi sostituire questo array con quello da 200 quando vuoi
-        // ------------------------------------------------------
-        const questionsPool = [
-            {"question":"Quale legge ha introdotto il Piano Educativo Individualizzato (PEI) come strumento per l'integrazione degli alunni con disabilità?","options":["Legge 104/1992","Legge 170/2010","D.Lgs. 66/2017","Legge 517/1977"],"correct":0,"topic":"Inclusione"},
-            {"question":"Quale provvedimento è storicamente associato all'avvio dell'integrazione scolastica?","options":["Legge 517/1977","Legge 104/1992","Legge 107/2015","DPR 275/1999"],"correct":0,"topic":"Storia"},
-            {"question":"Con quale decreto legislativo è stato introdotto l'utilizzo dell'ICF come riferimento per la redazione del PEI?","options":["D.Lgs. 66/2017","D.Lgs. 62/2017","Legge 170/2010","DPR 275/1999"],"correct":0,"topic":"PEI/ICF"},
-            {"question":"Quale legge tutela specificamente gli studenti con Disturbi Specifici dell'Apprendimento (DSA)?","options":["Legge 170/2010","Legge 104/1992","Legge 53/2003","Legge 107/2015"],"correct":0,"topic":"DSA"},
-            {"question":"Cosa significa l'acronimo BES?","options":["Bisogni Educativi Speciali","Buone Educazioni Scolastiche","Bilancio Educativo Statale","Base Educativa Standard"],"correct":0,"topic":"BES"},
-            {"question":"Che cos'è il PEI?","options":["Piano Educativo Individualizzato","Programma Educativo Istituzionale","Piano Triennale Offerta Formativa","Progetto Educativo Integrato"],"correct":0,"topic":"PEI"},
-            {"question":"Che cos'è il PDP?","options":["Piano Didattico Personalizzato","Programma Didattico Provvisorio","Piano Docente Personale","Progetto Didattico Pubblico"],"correct":0,"topic":"DSA"},
-            {"question":"Qual è la finalità principale del PDP per DSA?","options":["Adeguare metodologie e strumenti per consentire la valutazione delle competenze","Ridurre l'orario scolastico","Sostituire il PEI","Aumentare le prove scritte"],"correct":0,"topic":"DSA"},
-            {"question":"Quale documento definisce la missione e l'offerta educativa di un istituto?","options":["PTOF","RAV","Programma Annuale","Regolamento d'istituto"],"correct":0,"topic":"PTOF"},
-            {"question":"Chi approva il PTOF di un'istituzione scolastica?","options":["Il Consiglio di Istituto","Il Collegio dei Docenti","Il Dirigente Scolastico","Il Ministero"],"correct":0,"topic":"PTOF"},
-            {"question":"Quale organo ha funzioni deliberative in una scuola?","options":["Consiglio di Istituto","Collegio dei Docenti","Il Dirigente Scolastico","GLI"],"correct":0,"topic":"Organi"},
-            {"question":"Chi è il responsabile legale dell'istituto scolastico?","options":["Il Dirigente Scolastico","Il Presidente del Consiglio di Istituto","Il DSGA","Il Collegio dei Docenti"],"correct":0,"topic":"Dirigenza"},
-            {"question":"Che cos'è l'INVALSI?","options":["Istituto Nazionale per la Valutazione del Sistema Educativo","Istituto Nazionale Valutazione Studenti Italiani","Ente di Ispezione Scolastica","Organismo Privato di Test"],"correct":0,"topic":"Valutazione"},
-            {"question":"A cosa servono le prove INVALSI?","options":["Monitorare risultati e qualità del sistema educativo","Sostituire la valutazione docente","Premiare gli studenti migliori","Finanziare direttamente le scuole"],"correct":0,"topic":"Valutazione"},
-            {"question":"Cos'è il RAV?","options":["Rapporto di Autovalutazione della scuola","Registro Attività e Valutazioni","Rapporto Annuale Viabilità","Registro Amministrativo Valeri"],"correct":0,"topic":"Valutazione"},
-            {"question":"Quale legge è nota come 'La Buona Scuola'?","options":["Legge 107/2015","Legge 170/2010","Legge 53/2003","D.Lgs. 66/2017"],"correct":0,"topic":"Riforme"},
-            {"question":"Che cosa significa ICF nel contesto del PEI?","options":["Classificazione Internazionale del Funzionamento","Indice di Competenza Formativa","Istituto Centrale Formazione","Indicatori Curriculari Funzionali"],"correct":0,"topic":"ICF"},
-            {"question":"Chi partecipa normalmente alla redazione del PEI?","options":["Equipe multidisciplinare, famiglia e docenti","Solo il Dirigente Scolastico","Solo il Collegio dei Docenti","Solo l'ASL"],"correct":0,"topic":"PEI"},
-            {"question":"Cosa si intende per misure compensative?","options":["Strumenti che consentono di compensare le difficoltà (es. calcolatrice, mappe)","Riduzioni di voti","Sanzioni disciplinari","Prolungamento obbligatorio delle lezioni"],"correct":0,"topic":"DSA"},
-            {"question":"Cosa si intende per misure dispensative?","options":["Semplificazioni di alcune richieste per non compromettere la dimostrazione delle competenze","Aumenti di voti","Esami sostitutivi obbligatori","Eliminazione di verifiche"],"correct":0,"topic":"DSA"},
-            {"question":"Che ruolo ha il docente di sostegno in classe?","options":["Favorire l'inclusione didattica e relazionale dello studente","Sostituire il docente curricolare","Gestire l'organico dell'istituto","Valutare i docenti"],"correct":0,"topic":"Sostegno"},
-            {"question":"Il GLI serve a:","options":["Coordinare le attività di inclusione all'interno dell'istituto","Approvare il bilancio","Redigere le diagnosi cliniche","Gestire le supplenze"],"correct":0,"topic":"GLI"},
-            {"question":"Cosa rappresentano le certificazioni delle competenze?","options":["Strumenti per attestare competenze acquisite dagli studenti","Solo documenti amministrativi","Sanzioni per gli studenti con difficoltà","Regolamenti per gli insegnanti"],"correct":0,"topic":"Valutazione"},
-            {"question":"Qual è lo scopo del RAV?","options":["Individuare punti di forza e debolezza della scuola e pianificare miglioramenti","Valutare singoli insegnanti con punteggi","Sostituire il PTOF","Gestire le supplenze"],"correct":0,"topic":"Valutazione"},
-            {"question":"Cosa indica l'acronimo PTOF?","options":["Piano Triennale dell'Offerta Formativa","Piano Tecnico Operativo Formativo","Programma Triennale Offerte Finanziarie","Progetto Territoriale Offerta Formativa"],"correct":0,"topic":"PTOF"},
-            {"question":"Chi approva il regolamento d'istituto?","options":["Il Consiglio di Istituto","Il Collegio dei Docenti","Il Dirigente Scolastico","L'ASL territoriale"],"correct":0,"topic":"Organi"},
-            {"question":"Che cosa è il Programma Annuale?","options":["Il documento di bilancio della scuola","Il piano didattico del docente","Il registro dei docenti","Una guida per le famiglie"],"correct":0,"topic":"Bilancio"},
-            {"question":"Qual è il ruolo del DSGA?","options":["Gestire i servizi amministrativi e contabili della scuola","Coordinare le attività didattiche","Redigere i PEI in autonomia","Valutare gli studenti"],"correct":0,"topic":"Personale"},
-            {"question":"La documentazione del percorso di inclusione è utile per:","options":["Monitorare interventi e risultati e aggiornare il progetto educativo","Creare burocrazia inutile","Sostituire la diagnosi clinica","Isolare lo studente dal gruppo"],"correct":0,"topic":"Inclusione"},
-            {"question":"Il diritto all'istruzione è sancito dalla Costituzione in quale articolo?","options":["Art. 34","Art. 3","Art. 33","Art. 21"],"correct":0,"topic":"Costituzione"},
-            {"question":"Perché è importante il coinvolgimento della famiglia nel PEI?","options":["Per garantire condivisione e continuità degli interventi","Per delegare tutte le funzioni alla famiglia","Per ridurre la responsabilità della scuola","Per evitare la partecipazione dei servizi sanitari"],"correct":0,"topic":"Inclusione"},
-            {"question":"La progettazione per competenze mira a:","options":["Favorire apprendimento significativo e trasferibilità delle competenze","Aumentare la memorizzazione di nozioni","Ridurre l'autonomia degli studenti","Standardizzare tutte le prove"],"correct":0,"topic":"Didattica"},
-            {"question":"Che funzione ha il Collegio dei Docenti?","options":["Progettare e coordinare l'attività didattica","Approvare il bilancio economico","Gestire contratti del personale ATA","Emanare normative nazionali"],"correct":0,"topic":"Organi"},
-            {"question":"Che cosa significa 'inclusione' nella scuola?","options":["Adattare la didattica e l'ambiente per la partecipazione di tutti gli studenti","Segregare gli alunni con difficoltà","Semplificare gli esami per tutti","Eliminare la valutazione"],"correct":0,"topic":"Inclusione"},
-            {"question":"Una rete territoriale per l'inclusione serve a:","options":["Coordinare servizi e risorse tra scuola e territorio","Solo scambiare documenti amministrativi","Sostituire la famiglia","Creare nuove normative"],"correct":0,"topic":"Reti"},
-            {"question":"La formazione in servizio degli insegnanti è importante per:","options":["Migliorare competenze metodologiche e inclusive","Ridurre il carico di lavoro senza impatto","Aumentare esclusivamente la teoria"],"correct":0,"topic":"Formazione"},
-            {"question":"Che cosa misura la certificazione delle competenze?","options":["Competenze raggiunte dallo studente in ambito disciplinare e trasversale","La presenza in classe","La quota di assenze"],"correct":0,"topic":"Valutazione"},
-            {"question":"Qual è il compito principale del Dirigente Scolastico?","options":["Garantire la direzione e l'organizzazione dell'istituto e l'attuazione del PTOF","Redigere diagnosi cliniche","Gestire esclusivamente il bilancio"],"correct":0,"topic":"Dirigenza"},
-            {"question":"L'accessibilità nell'istituto scolastico riguarda:","options":["Barriere architettoniche, materiali e metodologie didattiche adeguate","Solo rampe esterne","Solo calcolo delle spese"],"correct":0,"topic":"Inclusione"},
-            {"question":"La valutazione formativa ha lo scopo di:","options":["Sostenere il processo di apprendimento e migliorare pratiche didattiche","Selezionare gli studenti per l'accesso a scuole d'élite","Sostituire la valutazione sommativa"],"correct":0,"topic":"Valutazione"},
-            {"question":"Il monitoraggio dei PEI serve a:","options":["Verificare risultati e aggiornare gli obiettivi","Sostituire la valutazione finale","Limitare l'accesso ai servizi"],"correct":0,"topic":"PEI"},
-            {"question":"Gli strumenti compensativi includono:","options":["Software, mappe, tabelle e strumenti tecnologici","Sanzioni disciplinari","Aumenti di voti automatici"],"correct":0,"topic":"DSA"},
-            {"question":"La personalizzazione dei percorsi richiede:","options":["Valutazione iniziale, obiettivi personalizzati e verifica continua","Solo limiti amministrativi","Solo prove finali standardizzate"],"correct":0,"topic":"Inclusione"}
-        ];
-
-        // Utility: shuffle (Fisher-Yates)
-        function shuffle(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-            return array;
-        }
-
-        // Build global distractor pool from existing option strings
-        function buildDistractorPool(questions) {
-            const set = new Set();
-            questions.forEach(q => {
-                (q.options || []).forEach(opt => set.add(opt));
-            });
-            return Array.from(set);
-        }
-
-        function getRandomQuestions(questions, count) {
-            try {
-                const pool = shuffle([...questions]);
-                const selected = pool.slice(0, Math.min(count, pool.length));
-                const distractorPool = buildDistractorPool(questions);
-                return selected.map(q => {
-                    const correctAnswer = (q.options && q.options[q.correct]) ? q.options[q.correct] : (q.options ? q.options[0] : 'Risposta corretta');
-                    // take distractors not equal to correct
-                    const candidates = distractorPool.filter(x => x !== correctAnswer);
-                    shuffle(candidates);
-                    const picks = candidates.slice(0, 3);
-                    const options = shuffle([correctAnswer, ...picks]);
-                    const newCorrect = options.indexOf(correctAnswer);
-                    return { question: q.question, options, correct: newCorrect, topic: q.topic };
-                });
-            } catch (err) {
-                console.error('Errore getRandomQuestions:', err);
-                throw err;
-            }
-        }
-
-        function renderQuiz(questions) {
-            const container = document.getElementById('quiz-container');
-            container.innerHTML = '';
-            if (!questions || questions.length === 0) {
-                container.innerHTML = '<div class="error">Errore: nessuna domanda disponibile.</div>';
-                return;
-            }
-            questions.forEach((q, idx) => {
-                const div = document.createElement('div');
-                div.className = 'question';
-                div.innerHTML = `
-                    <div class="question-number">Domanda ${idx + 1}</div>
-                    <div class="topic">Argomento: ${q.topic || '-'}<\/div>
-                    <p>${q.question}<\/p>
-                    <div class="options">
-                        ${q.options.map((opt, i) => `
-                            <div class="option">
-                                <input type="radio" id="q${idx}_o${i}" name="q${idx}" value="${i}">
-                                <label for="q${idx}_o${i}">${opt}</label>
-                            <\/div>`).join('')}
-                    <\/div>`;
-                container.appendChild(div);
-            });
-        }
-
-        function calculateScore(questions) {
-            let score = 0;
-            const results = document.getElementById('results');
-            results.innerHTML = '<h2>Risultati</h2>';
-            results.style.display = 'block';
-            questions.forEach((q, idx) => {
-                const sel = document.querySelector(`input[name="q${idx}"]:checked`);
-                const answer = sel ? parseInt(sel.value) : -1;
-                const isCorrect = answer === q.correct;
-                if (isCorrect) score++;
-                const item = document.createElement('div');
-                item.className = 'result-item';
-                item.innerHTML = `
-                    <p><strong>Domanda ${idx+1}:</strong> ${q.question}</p>
-                    <p>La tua risposta: ${answer !== -1 ? q.options[answer] : '<em>Nessuna risposta</em>'}</p>
-                    <p class="correct">Risposta corretta: ${q.options[q.correct]}</p>
-                    <div class="topic">Argomento: ${q.topic || '-'}</div>
-                `;
-                results.appendChild(item);
-            });
-            const scoreDiv = document.createElement('div');
-            scoreDiv.className = 'score';
-            scoreDiv.textContent = `Hai totalizzato ${score} punti su ${questions.length}`;
-            results.prepend(scoreDiv);
-
-            const retry = document.createElement('div');
-            retry.className = 'retry';
-            retry.innerHTML = '<button onclick="location.reload()">Ripeti il Quiz con altre 15 domande</button>';
-            results.appendChild(retry);
-            results.scrollIntoView({ behavior: 'smooth' });
-        }
-
-        // Inizializzazione
-        try {
-            const selected = getRandomQuestions(questionsPool, 15);
-            renderQuiz(selected);
-            document.getElementById('total').textContent = '15';
-            document.getElementById('submit-btn').addEventListener('click', function(){ calculateScore(selected); });
-            // update progress/topic when scrolling
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        const topic = entry.target.querySelector('.topic').textContent.replace('Argomento: ', '');
-                        document.getElementById('current-topic').textContent = `Argomento: ${topic}`;
-                        const qnum = entry.target.querySelector('.question-number').textContent.replace('Domanda ', '');
-                        document.getElementById('current').textContent = qnum;
-                    }
-                });
-            }, { threshold: 0.6 });
-            // observe created question nodes
-            setTimeout(()=>{
-                document.querySelectorAll('.question').forEach(n => observer.observe(n));
-            }, 100);
-        } catch (err) {
-            console.error('Errore inizializzazione quiz:', err);
-            const errBox = document.getElementById('error');
-            errBox.style.display = 'block';
-            errBox.textContent = 'Si è verificato un errore durante il caricamento del quiz. Apri la Console (F12) e incolla qui l'errore: lo correggo subito.';
-            document.getElementById('quiz-container').innerHTML = '';
-        }
-    })();
-    </script>
+  <div id="quiz">Caricamento test...</div>
+  <script>
+  (function(){
+    const pool = [
+      {question:"Q1: Che cos'è il PEI?", options:["Piano Educativo Individualizzato","Altro A","Altro B","Altro C"], correct:0, topic:"Inclusione"},
+      {question:"Q2: Che cos'è il PDP?", options:["Piano Didattico Personalizzato","Altro A","Altro B","Altro C"], correct:0, topic:"DSA"}
+    ];
+    function render(qs){
+      const c = document.getElementById('quiz');
+      c.innerHTML = '';
+      qs.forEach((q,i)=>{
+        const box = document.createElement('div');
+        box.innerHTML = '<h3>Domanda '+(i+1)+'</h3><p>'+q.question+'</p>';
+        q.options.forEach((opt,j)=>{
+          const id='t_'+i+'_'+j;
+          box.innerHTML += '<div><input type="radio" id="'+id+'" name="q'+i+'" value="'+j+'"><label for="'+id+'">'+opt+'</label></div>';
+        });
+        c.appendChild(box);
+      });
+    }
+    document.addEventListener('DOMContentLoaded', ()=> render(pool));
+  })();
+  </script>
 </body>
 </html>
