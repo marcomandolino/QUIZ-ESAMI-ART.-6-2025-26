@@ -1,347 +1,231 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Quiz di Legislazione scolastica</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%); color: #333; min-height: 100vh; padding: 20px; }
-        .container { max-width: 900px; margin: 0 auto; background-color: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); }
-        header { text-align: center; margin-bottom: 30px; }
-        h1 { color: #2c3e50; margin-bottom: 10px; font-size: 2.2rem; }
-        .description { color: #7f8c8d; margin-bottom: 20px; }
-        .stats { display:flex; justify-content:space-between; margin-bottom:20px; background:#f8f9fa; padding:15px; border-radius:10px; font-weight:bold; }
-        .question { margin-bottom:25px; padding:20px; border:1px solid #e0e0e0; border-radius:10px; background:#f8f9fa; box-shadow:0 4px 6px rgba(0,0,0,0.05); }
-        .question-number { font-weight:bold; color:#3498db; margin-bottom:10px; font-size:1.1rem; }
-        .options { margin-left:10px; }
-        .option { margin:12px 0; display:flex; align-items:flex-start; }
-        .option input { margin-top:5px; margin-right:12px; cursor:pointer; }
-        .option label { cursor:pointer; flex:1; }
-        button { display:block; margin:30px auto; padding:14px 35px; background:linear-gradient(135deg,#6a11cb 0%,#2575fc 100%); color:white; border:none; border-radius:50px; cursor:pointer; font-size:1.1rem; font-weight:bold; box-shadow:0 4px 15px rgba(0,0,0,0.2); transition:all .3s ease; }
-        button:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(0,0,0,0.25); }
-        .results { margin-top:30px; padding:25px; border:1px solid #e0e0e0; border-radius:10px; background:#e7f3fe; display:none; }
-        .results h2 { text-align:center; color:#2c3e50; margin-bottom:20px; }
-        .question-result { margin-bottom:20px; padding:15px; border-radius:8px; background:white; box-shadow:0 2px 4px rgba(0,0,0,0.05); }
-        .correct { color:#27ae60; font-weight:bold; }
-        .incorrect { color:#e74c3c; }
-        .score { font-size:1.4rem; font-weight:bold; text-align:center; margin:25px 0; color:#2c3e50; }
-        .topic { font-size:0.9rem; color:#7f8c8d; font-style:italic; margin-top:5px; }
-        .retry-btn { text-align:right; margin-top:20px; }
-        .retry-btn button { margin:0; padding:10px 25px; font-size:1rem; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height:1.6; background:linear-gradient(135deg,#6a11cb 0%,#2575fc 100%); color:#333; min-height:100vh; padding:20px }
+        .container{ max-width:900px; margin:0 auto; background:#fff; padding:30px; border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,.15)}
+        header{text-align:center;margin-bottom:20px}
+        h1{color:#2c3e50;margin-bottom:6px;font-size:2rem}
+        .description{color:#7f8c8d;margin-bottom:10px}
+        .stats{display:flex;justify-content:space-between;background:#f8f9fa;padding:12px;border-radius:8px;font-weight:600;margin-bottom:14px}
+        .question{margin-bottom:18px;padding:14px;border:1px solid #e6e6e6;border-radius:8px;background:#fbfdff}
+        .question-number{font-weight:700;color:#2d9cdf;margin-bottom:6px}
+        .options{margin-left:6px}
+        .option{margin:10px 0;display:flex;align-items:flex-start}
+        .option input{margin-right:10px;margin-top:4px}
+        button{display:block;margin:22px auto;padding:12px 30px;background:linear-gradient(135deg,#6a11cb 0%,#2575fc 100%);color:#fff;border:none;border-radius:40px;cursor:pointer;font-weight:700}
+        .results{display:none;margin-top:18px;padding:16px;border-radius:8px;background:#eaf6ff;border:1px solid #dceffd}
+        .result-item{background:#fff;padding:10px;border-radius:6px;margin-bottom:10px;border:1px solid #eef6ff}
+        .correct{color:#27ae60;font-weight:700}
+        .incorrect{color:#e74c3c;font-weight:700}
+        .retry{float:right}
+        footer{margin-top:18px;text-align:center;color:#7f8c8d}
+        .error{background:#ffecec;border:1px solid #f5c2c2;padding:10px;border-radius:6px;color:#a33}
     </style>
 </head>
 <body>
     <div class="container">
         <header>
             <h1>Quiz di Legislazione scolastica</h1>
-            <p class="description">15 domande estratte casualmente da un pool di 200</p>
+            <div class="description">15 domande estratte casualmente da un pool (versione di test)</div>
         </header>
-        
+
         <div class="stats">
             <div id="current-topic">Argomento: -</div>
-            <div id="progress">Domanda: <span id="current">1</span> di <span id="total">15</span></div>
+            <div>Domanda: <span id="current">1</span> di <span id="total">15</span></div>
         </div>
-        
-        <div id="quiz-container"></div>
+
+        <div id="quiz-container">Caricamento...</div>
         <button id="submit-btn">Invia risposte</button>
-        
+
         <div id="results" class="results"></div>
-        
+        <div id="error" style="display:none" class="error"></div>
+
         <footer>
-            <p>Quiz preparato sulla legislazione scolastica italiana</p>
+            <p>Quiz preparato sulla legislazione scolastica italiana — prova di funzionamento</p>
         </footer>
     </div>
 
     <script>
-        // Pool di 200 domande proporzionate ai contenuti della dispensa
+    (function(){
+        // ------------------------------------------------------
+        // Pool minimo di test (50 domande) — tutte con 4 opzioni
+        // Puoi sostituire questo array con quello da 200 quando vuoi
+        // ------------------------------------------------------
         const questionsPool = [
-            // COSTITUZIONE E PRINCIPI (15)
-            {"question":"Qual è il principio fondamentale sancito dall'articolo 3 della Costituzione?","options":["Uguaglianza formale e sostanziale","Libertà di stampa","Autonomia scolastica","Tutela della proprietà"],"correct":0,"topic":"Costituzione"},
-            {"question":"Quale articolo riconosce il diritto all'istruzione?","options":["Art. 34","Art. 33","Art. 3","Art. 21"],"correct":0,"topic":"Costituzione"},
-            {"question":"Quale principio costituzionale è rilevante per l'inclusione scolastica?","options":["Uguaglianza e pari dignità sociale","Separazione dei poteri","Libertà economica","Tutela militare"],"correct":0,"topic":"Costituzione"},
-            {"question":"La libertà di insegnamento è riconosciuta dalla Costituzione: quale valore esprime?","options":["Pluralismo educativo","Uniformità didattica","Controllo centrale della didattica","Esclusione di professionalità esterne"],"correct":0,"topic":"Costituzione"},
-            {"question":"La tutela dei diritti delle persone con disabilità si collega a quale principio costituzionale?","options":["Uguaglianza sostanziale","Supremazia legislativa","Competenza esclusiva dello Stato","Neutralità educativa"],"correct":0,"topic":"Costituzione"},
-            {"question":"Quale finalità pubblica è centrale nella normativa scolastica?","options":["Promuovere l'inclusione e la partecipazione","Incrementare profitti delle scuole","Favorire l'istruzione privata","Ridurre l'offerta formativa"],"correct":0,"topic":"Costituzione"},
-            {"question":"L'istruzione obbligatoria mira principalmente a:","options":["Fornire conoscenze di base e cittadinanza","Creare istituzioni separate","Gestire il personale ATA","Finanziare gli enti locali"],"correct":0,"topic":"Costituzione"},
-            {"question":"La Costituzione afferma che l'arte e la scienza sono libere: quale ruolo ha questo nella scuola?","options":["Favorire autonomia culturale nella didattica","Imporre programmi nazionali rigidi","Escludere innovazione didattica","Centralizzare l'offerta formativa"],"correct":0,"topic":"Costituzione"},
-            {"question":"Il principio di pari opportunità in ambito scolastico si traduce in:","options":["Misure di sostegno e rimozione delle barriere","Privilegio per alcune famiglie","Selezione precoce degli studenti","Classi differenziali obbligatorie"],"correct":0,"topic":"Costituzione"},
-            {"question":"Quale compito ha la scuola secondo i principi costituzionali?","options":["Formare cittadini consapevoli","Massimizzare i profitti delle aziende","Isolare studenti con difficoltà","Limitare l'accesso alla cultura"],"correct":0,"topic":"Costituzione"},
-            {"question":"La tutela dell'infanzia e della gioventù è rilevante per la normativa scolastica perché:","options":["Garantisce protezione e diritto all'istruzione","Stabilisce gli orari delle lezioni","Determinare il curriculum universitario","Regola le tasse scolastiche"],"correct":0,"topic":"Costituzione"},
-            {"question":"La nozione di 'servizio pubblico' applicata alla scuola implica:","options":["Accessibilità e tutela dell'interesse generale","Gestione privatistica esclusiva","Profitto a fini distribuitivi","Esclusione di certe categorie"],"correct":0,"topic":"Costituzione"},
-            {"question":"Il principio di sussidiarietà nel campo dell'istruzione favorisce:","options":["Iniziative locali e responsabilità degli enti locali","Controllo esclusivo dello Stato","Privatizzazione totale","Esclusione del territorio"],"correct":0,"topic":"Costituzione"},
-            {"question":"La tutela della lingua e della cultura in ambito scolastico risponde a quale esigenza?","options":["Promuovere identità culturali e pluralismo","Uniformare tutte le discipline","Limitare l'ingresso di insegnanti stranieri","Ridurre l'offerta formativa"],"correct":0,"topic":"Costituzione"},
-            {"question":"La promozione dell'inclusione scolastica è una espressione di quale principio?","options":["Diritti fondamentali della persona","Competitività economica","Elitarismo educativo","Selezione sociale"],"correct":0,"topic":"Costituzione"},
-
-            // STORIA DELL'INCLUSIONE (15)
-            {"question":"Quale provvedimento è storicamente associato all'avvio dell'integrazione scolastica?","options":["Legge 517","Normativa sulle classi differenziali","Legge DSA","D.Lgs. recente"],"correct":0,"topic":"Storia"},
-            {"question":"L'abolizione delle classi differenziali ha avuto quale effetto principale?","options":["Integrazione degli alunni disabili nelle classi comuni","Istituzione di nuove scuole speciali","Separazione per abilità","Riduzione della didattica inclusiva"],"correct":0,"topic":"Storia"},
-            {"question":"L'evoluzione normativa sull'inclusione ha progressivamente posto l'accento su:","options":["Diritti, strumenti individualizzati e partecipazione","Esclusione e separazione","Aumento di strutture custodiali","Riduzione delle responsabilità scolastiche"],"correct":0,"topic":"Storia"},
-            {"question":"Gli interventi storici per l'inclusione hanno favorito:","options":["Equità nell'accesso all'istruzione","Aumento delle classi differenziali","Riduzione dell'obbligo scolastico","Centralizzazione amministrativa"],"correct":0,"topic":"Storia"},
-            {"question":"La normativa storica ha progressivamente introdotto strumenti come:","options":["PEI e PDP","Esami separati per studenti con disabilità","Scuole totalmente dedicate","Limitazioni all'accesso"],"correct":0,"topic":"Storia"},
-            {"question":"L'inclusione scolastica ha implicato la collaborazione tra scuola e quale altro soggetto?","options":["Famiglia e servizi sanitari/sociali","Solo il Ministero","Esclusivamente le associazioni private","Solo gli insegnanti"],"correct":0,"topic":"Storia"},
-            {"question":"L'integrazione scolastica ha richiesto lo sviluppo di competenze in quali figure?","options":["Docenti di sostegno e equipe multidisciplinari","Solo dirigenti","Esclusivamente personale ATA","Solo consulenti esterni"],"correct":0,"topic":"Storia"},
-            {"question":"Una caratteristica dell'evoluzione normativa è stata:","options":["Passare da modelli separatisti a modelli inclusivi","Uniformità totale delle risposte","Aumento delle scuole speciali","Rinuncia a strumenti personalizzati"],"correct":0,"topic":"Storia"},
-            {"question":"Le prime riforme dell'inclusione miravano a:","options":["Garantire pari opportunità educative","Escludere studenti con bisogni speciali","Ridurre il numero di insegnanti","Centralizzare i programmi"],"correct":0,"topic":"Storia"},
-            {"question":"La centralità del PEI nasce dalla necessità di:","options":["Pianificare interventi individualizzati per l'inclusione","Standardizzare valutazioni nazionali","Ridurre la documentazione scolastica","Selezionare studenti meritevoli"],"correct":0,"topic":"Storia"},
-            {"question":"L'attenzione alle evidenze e alla funzionalità dell'intervento è rafforzata dall'uso di quale strumento internazionale?","options":["ICF","Test nazionali","Riforme amministrative","Indicatori finanziari"],"correct":0,"topic":"Storia"},
-            {"question":"L'inclusione ha richiesto cambiamenti anche in termini di:","options":["Organizzazione scolastica e formazione docenti","Solo strutture edilizie","Spostamento delle responsabilità allo Stato","Riduzione del tempo scuola"],"correct":0,"topic":"Storia"},
-            {"question":"La sensibilizzazione verso l'inclusione ha coinvolto principalmente:","options":["Scuola, famiglie e società civile","Solo il Ministero","Solo le università","Solo gli organi giudiziari"],"correct":0,"topic":"Storia"},
-            {"question":"L'evoluzione normativa si è focalizzata anche su:","options":["Valutazione delle competenze e certificazioni personalizzate","Un sistema unico di esami per tutti","Sistemi di esclusione","Eliminazione di docenti di sostegno"],"correct":0,"topic":"Storia"},
-
-            // STRUMENTI PER L'INCLUSIONE: PEI, PDP, BES, ICF, GLHO, GLI (90)
-            {"question":"Cosa indica l'acronimo PEI nel contesto scolastico?","options":["Piano Educativo Individualizzato","Piano Europeo di Integrazione","Programma Educativo Istituzionale","Progetto Educativo Integrato"],"correct":0,"topic":"PEI/PDP"},
-            {"question":"Qual è la finalità principale del PEI?","options":["Progettare interventi individualizzati per l'alunno con disabilità","Determinare il bilancio della scuola","Valutare i dirigenti","Organizzare il trasporto scolastico"],"correct":0,"topic":"PEI/PDP"},
-            {"question":"Che cosa è il PDP?","options":["Documento che definisce strategie didattiche per studenti con DSA","Documento per il personale ATA","Regolamento interno della scuola","Programma annuale finanziario"],"correct":0,"topic":"PEI/PDP"},
-            {"question":"Qual è la differenza principale tra PEI e PDP?","options":["Il PEI è per alunni con disabilità e il PDP per DSA e bisogni specifici","Il PEI riguarda l'intero ordine scolastico e il PDP solo la scuola primaria","Il PEI è amministrativo e il PDP è clinico","Non ci sono differenze"],"correct":0,"topic":"PEI/PDP"},
-            {"question":"Cosa significa ICF?","options":["Classificazione Internazionale del Funzionamento","Indice di Competenza Formativa","Istituto Centrale Formazione","Indicatore Curriculare Funzionale"],"correct":0,"topic":"ICF"},
-            {"question":"A cosa serve l'ICF nella redazione del PEI?","options":["Fornire una descrizione funzionale delle difficoltà e delle risorse dell'alunno","Sostituire completamente le diagnosi cliniche","Creare una graduatoria nazionale","Calcolare finanziamenti"],"correct":0,"topic":"ICF"},
-            {"question":"Cosa si intende per BES?","options":["Bisogni Educativi Speciali","Buone Educazioni Scolastiche","Bilancio Educativo Statale","Basi Educative Standard"],"correct":0,"topic":"BES"},
-            {"question":"Chi è coinvolto nella stesura del PEI?","options":["Equipe multidisciplinare, famiglia e docenti","Solo il dirigente scolastico","Solo il genitore presente","Solo l'ASL senza la scuola"],"correct":0,"topic":"PEI/PDP"},
-            {"question":"Il GLHO è uno strumento operativo per:","options":["Coordinare l'intervento per l'alunno con disabilità in ambito territoriale e scolastico","Redigere il bilancio della scuola","Organizzare il personale ATA","Gestire le supplenze"],"correct":0,"topic":"GLHO/GLI"},
-            {"question":"Cosa indica GLI?","options":["Gruppo di Lavoro per l'Inclusione","Gestione Locale delle Infrastrutture","Gruppo Legale Interno","Gestione Linee Istituzionali"],"correct":0,"topic":"GLHO/GLI"},
-            {"question":"Le misure compensative per DSA comprendono:","options":["Strumenti che facilitano l'apprendimento (es. calcolatrice, sintetizzatore vocale)","Sanzioni disciplinari","Aumenti di voti automatici","Esami sostitutivi"],"correct":0,"topic":"DSA"},
-            {"question":"Le misure dispensative per DSA mirano a:","options":["Alleggerire alcuni adempimenti non essenziali alla dimostrazione delle competenze","Escludere dallo studio alcune materie","Obbligare a ripetere l'anno","Rimuovere ogni verifica"],"correct":0,"topic":"DSA"},
-            {"question":"Quale documento certifica le esigenze educative di uno studente con disabilità?","options":["PEI","PTOF","RAV","Programma annuale"],"correct":0,"topic":"PEI"},
-            {"question":"In che modo il PDP viene formalizzato?","options":["Sulla base della diagnosi funzionale e in accordo con la famiglia e la scuola","Da un atto ministeriale senza coinvolgimento della famiglia","Solo su richiesta degli insegnanti senza documentazione clinica","Da parte del collegio docenti senza confronto"],"correct":0,"topic":"DSA/PDP"},
-            {"question":"Chi può proporre l'attivazione di un PDP?","options":["Famiglia, docenti o servizi sanitari","Solo il Ministero","Solo il dirigente scolastico","Solo l'ASL"],"correct":0,"topic":"DSA/PDP"},
-            {"question":"L'approccio funzionale nella valutazione si concentra su:","options":["Cosa l'alunno può fare e come intervenire per potenziare funzioni","Solo sulla diagnosi medica","Sul confronto degli alunni tra loro","Sul numero di ore di sostegno"],"correct":0,"topic":"ICF"},
-            {"question":"Il PEI include obiettivi didattici personalizzati e:","options":["Modalità di verifica e strategie di intervento","Solo una diagnosi clinica","Programmi ministeriali standard","Bilancio della scuola"],"correct":0,"topic":"PEI"},
-            {"question":"Il PDP è tipicamente associato a quali difficoltà?","options":["Disturbi specifici dell'apprendimento (DSA)","Disabilità motorie gravi","Questioni amministrative","Gestione del personale ATA"],"correct":0,"topic":"DSA/PDP"},
-            {"question":"Qual è il ruolo della famiglia nel processo di inclusione?","options":["Partecipare alla pianificazione degli interventi e al PEI/PDP","Non è prevista alcuna partecipazione","Sostituire il lavoro degli insegnanti","Gestire il bilancio scolastico"],"correct":0,"topic":"Inclusione"},
-            {"question":"La diagnosi funzionale è redatta da:","options":["Equipe specialistica sanitaria/ASL in collaborazione con la scuola","Il solo dirigente scolastico","Il genitore senza supporto tecnico","Il Ministero senza esami clinici"],"correct":0,"topic":"Diagnosi"},
-            {"question":"Gli strumenti di osservazione e valutazione utili per il PEI includono:","options":["Schede funzionali, osservazioni e valutazioni interdisciplinari","Solo prove INVALSI","Esami universitari","Sondaggi online"],"correct":0,"topic":"PEI"},
-            {"question":"Il monitoraggio del PEI serve a:","options":["Verificare efficacia degli interventi e aggiornare gli obiettivi","Redigere il bilancio annuale","Sostituire la valutazione finale","Ridurre la documentazione"],"correct":0,"topic":"PEI"},
-            {"question":"Le equipe per l'inclusione funzionano meglio se:","options":["Sono multidisciplinari e coinvolgono scuola, famiglia e servizi","Sono costituite da un unico professionista","Operano senza il coinvolgimento della famiglia","Sono gestite esclusivamente dal Ministero"],"correct":0,"topic":"Inclusione"},
-            {"question":"I piani di transizione per l'autonomia futura dello studente sono generalmente inclusi in:","options":["PEI per la transizione al lavoro e alla vita indipendente","RAV","PTOF","Programma annuale"],"correct":0,"topic":"PEI"},
-            {"question":"Gli strumenti compensativi possono includere:","options":["Software, mappe, tabelle, strumenti tecnologici","Sanzioni","Riduzioni di voti","Esami scritti obbligatori"],"correct":0,"topic":"DSA"},
-            {"question":"Il concetto di inclusione implica:","options":["Adattare l'ambiente e la didattica alle differenze degli studenti","Isolare gli alunni con difficoltà","Standardizzare tutto l'insegnamento","Ridurre tempo in classe"],"correct":0,"topic":"Inclusione"},
-            {"question":"La presa in carico educativa si basa su:","options":["Progettazione condivisa e responsabilità educativa","Solo attività compensative","Esclusività sanitaria","Solo interventi esterni alla scuola"],"correct":0,"topic":"Inclusione"},
-            {"question":"Le relazioni tra scuola e servizi territoriali sono importanti perché:","options":["Consentono interventi integrati e continuità di cura","Permettono l'eliminazione del PEI","Sostituiscono la famiglia","Sono formali senza impatto pedagogico"],"correct":0,"topic":"Inclusione"},
-            {"question":"Nella definizione degli obiettivi del PEI è fondamentale:","options":["Formulare obiettivi misurabili e trasferibili","Inserire obiettivi generici e non verificabili","Redigere documenti solo amministrativi","Limiterli al solo recupero"],"correct":0,"topic":"PEI"},
-            {"question":"Il GLI è uno strumento istituzionale che serve a:","options":["Coordinare la strategia di inclusione nell'istituto","Gestire i laboratori tecnici","Pianificare le supplenze","Raccogliere le preferenze dei docenti"],"correct":0,"topic":"GLHO/GLI"},
-            {"question":"La presenza del docente di sostegno nelle classi serve a:","options":["Favorire l'inclusione didattica e relazionale dello studente","Sostituire completamente il docente curricolare","Isolare l'alunno in contesti separati","Ridurre l'offerta formativa"],"correct":0,"topic":"Sostegno"},
-            {"question":"Gli indicatori funzionali dell'ICF consentono di:","options":["Descrivere le attività e la partecipazione in modo standardizzato","Sostituire la valutazione clinica","Determinare il punteggio INVALSI","Stabilire una graduatoria nazionale"],"correct":0,"topic":"ICF"},
-            {"question":"La diagnosi clinica per DSA è necessaria per:","options":["Attivare il PDP e le misure compensative/dispensative","Ottenere automaticamente il PEI","Sostituire il lavoro dei docenti","Avere accesso a classi differenziali"],"correct":0,"topic":"DSA"},
-            {"question":"Le azioni educative personalizzate devono essere:","options":["Documentate, condivise e monitorate","Segrete e non comunicate","Svolte solo dall'ASL","Formalizzate solo a livello ministeriale senza monitoraggio"],"correct":0,"topic":"PEI"},
-            {"question":"Il piano di inclusione dell'istituto dovrebbe essere coerente con:","options":["Il PTOF e le risorse disponibili","Solo normative esterne","Programmi regionali senza applicazione locale","Solo iniziative di singoli docenti"],"correct":0,"topic":"Inclusione"},
-            {"question":"Le certificazioni delle competenze personalizzate per gli studenti con disabilità sono utilizzate per:","options":["Rilevare progressi e adeguare percorsi formativi","Escludere dallo studio","Aumentare i voti automaticamente","Sostituire il PEI"],"correct":0,"topic":"Valutazione"},
-            {"question":"Il ruolo del docente referente per l'inclusione comprende:","options":["Coordinare iniziative, monitorare e raccordare servizi","Gestire il bilancio della scuola","Svolgere compiti amministrativi del DSGA","Sostituire il dirigente scolastico"],"correct":0,"topic":"Personale"},
-            {"question":"Le azioni di prevenzione e individuazione precoce mirano a:","options":["Intervenire tempestivamente per ridurre l'impatto delle difficoltà","Ritardare gli interventi specialistici","Isolare gli studenti con difficoltà","Ridurre il lavoro di equipe"],"correct":0,"topic":"Inclusione"},
-            {"question":"La progettazione inclusiva richiede che le attività siano:","options":["Accessibili, differenziate e valutabili","Identiche per tutti senza differenze","Solo rivolte a studenti con disabilità","Non valutate"],"correct":0,"topic":"Inclusione"},
-            {"question":"Il consenso informato della famiglia è importante per:","options":["Condividere piani educativi e interventi specifici","Evitare qualsiasi documentazione","Sostituire la diagnosi clinica","Decidere autonomamente senza la scuola"],"correct":0,"topic":"Inclusione"},
-            {"question":"La rete territoriale per l'inclusione serve a:","options":["Coordinare risorse e servizi per il supporto allo studente","Gestire solo i fondi regionali","Sostituire le funzioni della scuola","Produrre normativa nazionale"],"correct":0,"topic":"Inclusione"},
-            {"question":"L'aggiornamento professionale dei docenti sull'inclusione è finalizzato a:","options":["Migliorare competenze metodologiche e valutative","Ridurre il carico di lavoro senza impatto","Sostituire il curriculum nazionale","Creare classifiche tra gli insegnanti"],"correct":0,"topic":"Formazione"},
-            {"question":"Gli strumenti di osservazione per BES devono essere:","options":["Flessibili, ripetibili e condivisi","Standardizzati senza adattamento","Utilizzati solo dai dirigenti","Esclusivi per gli specialisti"],"correct":0,"topic":"BES"},
-            {"question":"La qualità del PEI si misura anche attraverso:","options":["Il grado di partecipazione e progresso dell'alunno","La quantità di pagine documentali","Il numero di allegati amministrativi","La durata del colloquio genitori-docente"],"correct":0,"topic":"PEI"},
-            {"question":"Le strategie inclusive possono comprendere:","options":["Modifiche organizzative, metodologiche e strumenti compensativi","Solo interventi individuali esterni","Costruzione di nuove sedi scolastiche","Riduzione delle ore di lezione"],"correct":0,"topic":"Inclusione"},
-            {"question":"La personalizzazione dei percorsi didattici richiede:","options":["Valutazione iniziale, obiettivi personalizzati e verifica continua","Provisioni amministrative isolate","Solo prova finale"],"correct":0,"topic":"Inclusione"},
-            {"question":"Il coinvolgimento degli studenti nel processo educativo promuove:","options":["Autonomia e responsabilità nell'apprendimento","Solo competizione tra pari","Riduzione delle attività laboratoriali","Esclusione della famiglia"],"correct":0,"topic":"Didattica"},
-            {"question":"La documentazione del percorso inclusivo serve a:","options":["Tracciare interventi e monitorare l'efficacia","Sostituire la valutazione finale","Aumentare la burocrazia senza scopo","Rimuovere responsabilità"],"correct":0,"topic":"PEI"},
-            {"question":"Le azioni di accompagnamento all'inclusione comprendono:","options":["Tutoraggio, laboratori e supporto specialistico","Solo prove INVALSI","Solo interventi estivi","Esclusione dalla classe"],"correct":0,"topic":"Inclusione"},
-
-            // ORGANI, PTOF, AUTONOMIA (40)
-            {"question":"Che cos'è il PTOF in una scuola?","options":["Piano Triennale dell'Offerta Formativa","Piano Tecnico Operativo Fascia","Programma Triennale Ordinamenti Formativi","Progetto Territoriale Offerta Formativa"],"correct":0,"topic":"PTOF"},
-            {"question":"Chi elabora il PTOF?","options":["Collegio dei docenti con il dirigente","Solo il Presidente del Consiglio di istituto","Il Ministero senza consultazione","Il DSGA"],"correct":0,"topic":"PTOF"},
-            {"question":"Qual è la durata tipica del PTOF?","options":["Tre anni","Un anno","Cinque anni","Sei mesi"],"correct":0,"topic":"PTOF"},
-            {"question":"Il Consiglio di istituto ha quale funzione principale?","options":["Gestione e indirizzo dell'istituto","Organizzare le prove INVALSI","Gestire le relazioni internazionali","Predisporre diagnosi cliniche"],"correct":0,"topic":"Organi"},
-            {"question":"Il Collegio docenti ha competenze su:","options":["Progettazione didattica e organizzazione didattica","Bilancio finanziario della scuola","Nomina del dirigente scolastico","Approvazione leggi nazionali"],"correct":0,"topic":"Organi"},
-            {"question":"Chi approva il programma annuale (bilancio) della scuola?","options":["Il Consiglio di istituto","Il Collegio docenti","Il Dirigente regionale","Il Ministero"],"correct":0,"topic":"Bilancio"},
-            {"question":"Il dirigente scolastico è responsabile di:","options":["Direzione, gestione e valorizzazione dell'offerta formativa","Redazione delle diagnosi cliniche","Nomina dei membri del Ministero","Gestione esclusiva delle supplenze"],"correct":0,"topic":"Dirigenza"},
-            {"question":"Il DSGA svolge principalmente:","options":["Funzioni amministrative e contabili","Docenza specialistica","Funzioni ispettive ministeriali","Ruoli legislativi"],"correct":0,"topic":"Personale"},
-            {"question":"L'autonomia scolastica consente alle scuole di:","options":["Adattare curricoli e modalità didattiche nel quadro delle indicazioni nazionali","Determinare norme costituzionali","Emanare leggi","Eliminare gli organi collegiali"],"correct":0,"topic":"Autonomia"},
-            {"question":"Il regolamento d'istituto è approvato da:","options":["Consiglio di istituto","Collegio docenti","Dirigente scolastico","Ministero"],"correct":0,"topic":"Organi"},
-            {"question":"La progettazione dell'offerta formativa locale deve rispettare:","options":["Indicazioni nazionali e obiettivi formativi","Solo le richieste dei genitori","Solo le esigenze dell'ente locale","Solo i vincoli finanziari"],"correct":0,"topic":"Autonomia"},
-            {"question":"Chi rappresenta le famiglie nel Consiglio di istituto?","options":["Rappresentanti dei genitori eletti","Il dirigente scolastico","Il DSGA","Personale ATA"],"correct":0,"topic":"Organi"},
-            {"question":"Il piano annuale delle attività è predisposto da:","options":["Il Collegio dei docenti","Il Consiglio di istituto","Il Ministero","Il DSGA"],"correct":0,"topic":"PTOF"},
-            {"question":"Le funzioni deliberative del Consiglio di istituto comprendono:","options":["Approvazione del PTOF e del programma annuale","Nomina dei docenti","Emanazione di normative statali","Gestione della sanità territoriale"],"correct":0,"topic":"Organi"},
-            {"question":"La partecipazione degli studenti agli organi scolastici riguarda:","options":["Istituti che prevedono rappresentanti studenti nel Consiglio" ,"Solo le università","Solo le scuole paritarie","Non è prevista mai"],"correct":0,"topic":"Organi"},
-            {"question":"L'autonomia organizzativa riguarda:","options":["Orari, laboratori e organizzazione interna","Questioni di politica nazionale","Gestione della previdenza","Definizione del diritto civile"],"correct":0,"topic":"Autonomia"},
-            {"question":"Il Dirigente scolastico risponde a chi in sede amministrativa?","options":["Al MIUR e agli organi di controllo competenti","Al Presidente del Consiglio dei Ministri","Alle famiglie","Al Collegio docenti"],"correct":0,"topic":"Dirigenza"},
-            {"question":"Il regolamento di istituto disciplina:","options":["Orario, disciplina, organi e funzioni interne","Il curriculum nazionale","La normativa costituzionale","Le norme regionali"],"correct":0,"topic":"Organi"},
-            {"question":"La programmazione dell'offerta formativa territoriale dovrebbe essere coerente con:","options":["Bisogni del territorio e risorse dell'istituto","Solo con le direttive ministeriali senza adattamento","Solo con le esigenze commerciali","Esclusivamente con le richieste politiche"],"correct":0,"topic":"PTOF"},
-            {"question":"La gestione dell'organico dell'autonomia compete a:","options":["La scuola in raccordo con le norme nazionali","Solo alle regioni","Solo al Comune","Solo al Ministero"],"correct":0,"topic":"Autonomia"},
-            {"question":"Quale ruolo ha il Collegio dei docenti nella valutazione interna?","options":["Definire criteri didattici e modalità di verifica","Approvare bilanci economici","Gestire contratti del personale ATA","Emanare leggi"],"correct":0,"topic":"Organi"},
-            {"question":"La trasparenza nelle istituzioni scolastiche riguarda:","options":["Pubblicazione di atti e documenti e uso corretto delle risorse","Segretezza dei processi decisionali","Esclusione delle famiglie dalle informazioni","Gestione privata dei dati senza controllo"],"correct":0,"topic":"Organi"},
-            {"question":"Il sistema delle autonomie scolastiche mira a:","options":["Adattare l'offerta formativa alle esigenze locali","Centralizzare ogni decisione","Eliminare la responsabilità degli istituti","Uniformare completamente i curricula"],"correct":0,"topic":"Autonomia"},
-            {"question":"Il piano dell'offerta formativa deve essere coerente con:","options":["Principi costituzionali e bisogni formativi locali","Solo vincoli economici","Solo normative regionali","Solo richieste dei docenti"],"correct":0,"topic":"PTOF"},
-            {"question":"La delega di funzioni ai docenti può riguardare:","options":["Progetti educativi e attività laboratoriali","Emanazione di leggi","Gestione degli enti locali","Nomina dei dirigenti"],"correct":0,"topic":"Organi"},
-            {"question":"Le autonomie scolastiche favoriscono innovazione didattica se:","options":["C'è responsabilità e trasparenza nella progettazione","Sono delegate totalmente senza controllo","Si limitano alla gestione finanziaria","Si eliminano i collegi docenti"],"correct":0,"topic":"Autonomia"},
-
-            // VALUTAZIONE, INVALSI, CERTIFICAZIONI (20)
-            {"question":"Che cosa è l'INVALSI?","options":["Istituto nazionale per la valutazione del sistema educativo","Istituto nazionale valutazione studenti italiani","Ente di finanziamento scolastico","Organismo sindacale"],"correct":0,"topic":"Valutazione"},
-            {"question":"Le prove standardizzate nazionali hanno lo scopo di:","options":["Monitorare l'efficacia dei percorsi formativi a livello nazionale","Sostituire completamente la valutazione docente","Selezionare gli studenti per scuole d'élite","Finanziare le scuole private"],"correct":0,"topic":"Valutazione"},
-            {"question":"Il D.Lgs. che disciplina valutazione e certificazione del primo ciclo ha quale funzione?","options":["Stabilire procedure di valutazione e certificazione delle competenze","Gestire il personale ATA","Emanare provvedimenti disciplinari","Regolare il reclutamento universitario"],"correct":0,"topic":"Valutazione"},
-            {"question":"La certificazione delle competenze serve a:","options":["Documentare le competenze raggiunte dagli studenti","Sostituire il PEI","Aumentare i voti senza prove","Escludere studenti con difficoltà"],"correct":0,"topic":"Valutazione"},
-            {"question":"La valutazione formativa è finalizzata a:","options":["Supportare il processo di apprendimento e migliorare pratiche didattiche","Punire gli studenti con difficoltà","Classificare gli insegnanti secondo punteggi nazionali","Sostituire la valutazione sommativa"],"correct":0,"topic":"Valutazione"},
-            {"question":"Il RAV è lo strumento per:","options":["Autovalutazione della scuola e individuazione di azioni di miglioramento","Nomina dei docenti","Gestione del personale ATA","Attribuzione di finanziamenti automatici"],"correct":0,"topic":"Valutazione"},
-            {"question":"La relazione tra valutazione interna e strumenti nazionali deve servire a:","options":["Migliorare la qualità dell'offerta formativa","Punire gli istituti in difficoltà","Escludere gli studenti stranieri","Sostituire il PTOF"],"correct":0,"topic":"Valutazione"},
-            {"question":"Le certificazioni per studenti con bisogni educativi particolari devono essere:","options":["Personalizzate e funzionali al percorso educativo","Uniformi senza adattamenti","Basate solo su prove standard","Sostituite da punteggi amministrativi"],"correct":0,"topic":"Valutazione"},
-            {"question":"Le prove INVALSI sono somministrate in quali gradi?","options":["Diversi ordini in base alle disposizioni nazionali","Solo nelle scuole secondarie di secondo grado","Solo alle scuole primarie","Solo agli istituti tecnici"],"correct":0,"topic":"Valutazione"},
-            {"question":"La valutazione delle competenze richiede strumenti che siano:","options":["Validi, affidabili e coerenti con gli obiettivi formativi","Solo soggettivi","Basati su memoria mnemonica","Inapplicabili a contesti inclusivi"],"correct":0,"topic":"Valutazione"},
-            {"question":"L'analisi dei risultati INVALSI viene utilizzata per:","options":["Orientare politiche di miglioramento e interventi didattici","Premiare alcuni docenti con bonus automatici","Chiudere scuole con risultati bassi senza intervento","Creare graduatorie punitive"],"correct":0,"topic":"Valutazione"},
-            {"question":"La certificazione delle competenze dovrebbe essere congruente con:","options":["Gli obiettivi del curricolo e le esperienze reali degli studenti","Solo con le prove standardizzate","Solo con la valutazione finale"],"correct":0,"topic":"Valutazione"},
-            {"question":"La valutazione esterna ha finalità di:","options":["Monitorare il sistema e fornire dati comparativi","Sostituire la valutazione formativa","Premiare o punire individualmente gli studenti"],"correct":0,"topic":"Valutazione"},
-            {"question":"Il monitoraggio dei piani di miglioramento nasce dall'analisi del:","options":["RAV e dati INVALSI","Solo istanze sindacali","Solo risorse finanziarie","Solo organi politici"],"correct":0,"topic":"Valutazione"},
-            {"question":"La certificazione delle competenze al termine del primo ciclo attesta:","options":["Competenze disciplinari e trasversali raggiunte","Solo presenza in classe","Percentuale di assenze","Livello amministrativo"],"correct":0,"topic":"Valutazione"},
-            {"question":"La professionalità docente nella valutazione implica:","options":["Uso di strumenti diversificati e documentazione delle scelte","Solo affidarsi a prove standard"],"correct":0,"topic":"Valutazione"},
-            {"question":"L'utilizzo dei dati di sistema per migliorare è responsabilità di:","options":["Istituti, reti e policy locali","Solo il Ministero","Solo le scuole private"],"correct":0,"topic":"Valutazione"},
-
-            // RIFORME E NORMATIVE RECENTI (20)
-            {"question":"Una riforma che ha inciso sull'organizzazione scolastica è nota come:","options":["La Buona Scuola","Riforma non applicata","Codice civile","Legge economica"],"correct":0,"topic":"Riforme"},
-            {"question":"Le riforme scolastiche di norma intervengono su:","options":["Organizzazione, reclutamento e offerta formativa","Gestione delle infrastrutture stradali","Politiche agricole","Sistema sanitario"],"correct":0,"topic":"Riforme"},
-            {"question":"Le normative recenti sull'inclusione tendono a:","options":["Rafforzare strumenti individualizzati e integrazione","Ridurre le responsabilità delle scuole","Privatizzare l'istruzione"],"correct":0,"topic":"Riforme"},
-            {"question":"Le misure di supporto previste dalle riforme includono:","options":["Formazione docenti e risorse specifiche","Solo sanzioni disciplinari","Riduzione delle ore scolastiche"],"correct":0,"topic":"Riforme"},
-            {"question":"La Buona Scuola ha introdotto interventi soprattutto su:","options":["Organico e autonomia progettuale","Norme sanitarie","Politiche estere","Sistema pensionistico"],"correct":0,"topic":"Riforme"},
-            {"question":"Le riforme spesso prevedono valutazioni di impatto su:","options":["Qualità didattica e risultati degli studenti","Solo costi amministrativi","Solo calendarizzazione delle vacanze"],"correct":0,"topic":"Riforme"},
-            {"question":"Gli interventi normativi recenti mirano a rafforzare:","options":["Inclusione, supporto e formazione continua","Esclusione e selezione precoce","Riduzione delle competenze dei docenti"],"correct":0,"topic":"Riforme"},
-            {"question":"La semplificazione amministrativa nelle scuole mira a:","options":["Alleggerire procedure e aumentare efficienza gestionale","Aumentare burocrazia","Ridurre il coinvolgimento delle famiglie"],"correct":0,"topic":"Riforme"},
-            {"question":"Le risorse finanziarie allocate alle scuole con bisogni specifici servono a:","options":["Sostenere interventi personalizzati e servizi","Finanziare attività non correlate","Premiare docenti singoli"],"correct":0,"topic":"Riforme"},
-            {"question":"Le riforme sul reclutamento docenti cercano di garantire:","options":["Qualità e continuità didattica","Solo turnover rapido","Sostituzione del personale ATA"],"correct":0,"topic":"Riforme"},
-            {"question":"L'attenzione alle competenze trasversali nelle riforme risponde a:","options":["Esigenze del mercato e della cittadinanza attiva","Solo richiesta ministeriale","Aumentare le ore di lezione"],"correct":0,"topic":"Riforme"},
-            {"question":"La governance scolastica nelle riforme è orientata a:","options":["Maggiore autonomia e responsabilità delle scuole","Standardizzazione centralizzata","Eliminazione dei collegi docenti"],"correct":0,"topic":"Riforme"},
-            {"question":"Gli interventi di sistema per l'inclusione prevedono:","options":["Azioni su formazione, risorse e coordinamento territoriale","Solo norme punitive","Sostituzione della scuola pubblica"],"correct":0,"topic":"Riforme"},
-            {"question":"La valutazione delle riforme si basa su:","options":["Indicatori di risultato e processi di autovalutazione","Solo opinioni politiche","Evidenze aneddotiche"],"correct":0,"topic":"Riforme"},
-            {"question":"Le riforme perseguono spesso l'obiettivo di:","options":["Migliorare equità e qualità dell'istruzione","Aumentare disuguaglianze","Ridurre l'offerta formativa"],"correct":0,"topic":"Riforme"},
-            {"question":"Le politiche di inclusione nelle riforme considerano:","options":["Integrazione scolastica e servizi territoriali","Solo risorse finanziarie senza servizi","Solo misure punitive"],"correct":0,"topic":"Riforme"},
-            {"question":"Le modifiche normative devono essere accompagnate da:","options":["Formazione docente e adeguamento delle risorse","Nessuna azione implementativa","Solo decreti senza monitoraggio"],"correct":0,"topic":"Riforme"},
-            {"question":"La diffusione di buone pratiche nelle riforme avviene tramite:","options":["Reti territoriali e condivisione tra istituti","Segregazione delle esperienze"],"correct":0,"topic":"Riforme"},
-
-            // CASI CONCRETi, GIURISPRUDENZA E DIRITTO AMMINISTRATIVO (20)
-            {"question":"Le sentenze sulla scuola spesso riguardano:","options":["Diritti degli studenti e doveri delle istituzioni","Temi esclusivamente fiscali","Questioni di diritto penale"],"correct":0,"topic":"Giurisprudenza"},
-            {"question":"Un ricorso amministrativo in ambito scolastico può riguardare:","options":["Organi collegiali, reclutamento o misure disciplinari","Solo materie edilizie","Solo temi sanitari"],"correct":0,"topic":"Giurisprudenza"},
-            {"question":"Il contenzioso con le famiglie riguarda spesso:","options":["Inclusione, trasferimenti e misure educative individuali","Solo il trasporto scolastico","Solo la mensa"],"correct":0,"topic":"Giurisprudenza"},
-            {"question":"Il principio di legalità amministrativa impone che le scelte scolastiche siano:","options":["Coerenti con norme e procedure","Arbitrarie e senza motivazione","Decise esclusivamente da soggetti esterni"],"correct":0,"topic":"Diritto amministrativo"},
-            {"question":"La motivazione degli atti amministrativi in ambito scolastico è importante perché:","options":["Garantisce trasparenza e tutela dei diritti","Non è necessaria","Serve solo per questioni finanziarie"],"correct":0,"topic":"Diritto amministrativo"},
-            {"question":"Il ricorso gerarchico o giurisdizionale è uno strumento per:","options":["Impugnare provvedimenti amministrativi della scuola","Gestire materie didattiche interne","Sostituire il collegio docenti"],"correct":0,"topic":"Diritto amministrativo"},
-            {"question":"La tutela del diritto all'istruzione può essere richiesta nelle sedi:","options":["Amministrative e giurisdizionali competenti","Solo nelle aule scolastiche","Solo in sede sindacale"],"correct":0,"topic":"Giurisprudenza"},
-            {"question":"I provvedimenti amministrativi devono rispettare:","options":["Principi di imparzialità, legalità e proporzionalità","Solo esigenze organizzative interne","Solo direttive politiche"],"correct":0,"topic":"Diritto amministrativo"},
-            {"question":"Le controversie relative al PEI possono portare a:","options":["Richieste di riesame e interventi di conciliazione","Esclusione automatica dallo studio","Sanzioni penali automatiche"],"correct":0,"topic":"Giurisprudenza"},
-            {"question":"La giurisprudenza tende a valorizzare:","options":["Il diritto all'inclusione e la personalizzazione degli interventi","La rigidità organizzativa senza margini"],"correct":0,"topic":"Giurisprudenza"},
-            {"question":"Nelle decisioni amministrative è essenziale la valutazione delle risorse disponibili per:","options":["Motivare scelte e individuare soluzioni praticabili","Evitare qualsiasi controllo"],"correct":0,"topic":"Diritto amministrativo"},
-            {"question":"Il ricorso relativo all'organico può essere mosso da:","options":["Docenti e sindacati in caso di irregolarità di assegnazione","Solo enti locali"],"correct":0,"topic":"Giurisprudenza"},
-            {"question":"La legittimità di un provvedimento scolastico si valuta anche in base a:","options":["Corretta istruttoria e rispetto dei diritti dei destinatari","Solo efficacia pedagogica"],"correct":0,"topic":"Diritto amministrativo"},
-            {"question":"Le decisioni giudiziarie possono influire su:","options":["Prassi scolastiche e linee guida operative","Solo i singoli casi senza impatto generale"],"correct":0,"topic":"Giurisprudenza"},
-            {"question":"Le controversie su inclusione e sostegno spesso richiedono:","options":["Valutazioni tecniche e interventi multidisciplinari","Solo decisioni politiche"],"correct":0,"topic":"Giurisprudenza"},
-            {"question":"La tutela preventiva dei diritti in ambito scolastico passa anche per:","options":["Procedure chiare e dialogo con la famiglia","Solo contenziosi giudiziari"],"correct":0,"topic":"Diritto amministrativo"},
-            {"question":"La pubblicità degli atti scolastici contribuisce a:","options":["Trasparenza e controllo democratico","Secretazione delle scelte"],"correct":0,"topic":"Organi"},
-            {"question":"I ricorsi per mancata erogazione di servizi possono riguardare:","options":["Supporti per l'inclusione e assistenza specialistica","Solo questioni edilizie"],"correct":0,"topic":"Giurisprudenza"},
-
-            // VARIE/INTEGRAZIONE per bilanciare fino a 200 (20)
-            {"question":"In ambito scolastico, la progettazione per competenze mira a:","options":["Favorire apprendimento significativo e trasferibilità","Solo memorizzazione nozionistica","Solo valutazione sommativa"],"correct":0,"topic":"Competenze"},
-            {"question":"La collaborazione tra docenti curricolari e di sostegno è importante per:","options":["Garantire coerenza educativa e inclusione","Solo ruoli separati","Sostituire il lavoro delle famiglie"],"correct":0,"topic":"Didattica"},
-            {"question":"L'analisi dei bisogni formativi nell'istituto si realizza attraverso:","options":["Rilevazioni, RAV e consultazione territoriale","Solo osservazioni individuali"],"correct":0,"topic":"Pianificazione"},
-            {"question":"L'orientamento scolastico ha lo scopo di:","options":["Supportare scelte formative e professionali degli studenti","Selezionare studenti per percorsi elitari"],"correct":0,"topic":"Orientamento"},
-            {"question":"La partecipazione della comunità locale alle attività scolastiche favorisce:","options":["Risorse e progetti pertinenti al territorio","Solo attività sociali senza legame educativo"],"correct":0,"topic":"Reti"},
-            {"question":"La gestione delle risorse per l'inclusione richiede:","options":["Trasparenza, programmazione e rendicontazione","Solo assegnazione discrezionale"],"correct":0,"topic":"Gestione"},
-            {"question":"L'educazione alla cittadinanza attiva è coerente con:","options":["Obiettivi costituzionali e competenze trasversali","Solo programmi secondari"],"correct":0,"topic":"Cittadinanza"},
-            {"question":"La formazione iniziale e in servizio dei docenti influisce su:","options":["Qualità dell'insegnamento e capacità di inclusione","Solo questioni amministrative"],"correct":0,"topic":"Formazione"},
-            {"question":"Le reti tra istituti scolastici servono a:","options":["Condividere risorse e buone pratiche","Isolare le scuole tra loro"],"correct":0,"topic":"Reti"},
-            {"question":"L'educazione speciale integrata riguarda:","options":["Progetti personalizzati e servizi territoriali integrati","Programmi esclusivi senza scuola"],"correct":0,"topic":"Inclusione"}
+            {"question":"Quale legge ha introdotto il Piano Educativo Individualizzato (PEI) come strumento per l'integrazione degli alunni con disabilità?","options":["Legge 104/1992","Legge 170/2010","D.Lgs. 66/2017","Legge 517/1977"],"correct":0,"topic":"Inclusione"},
+            {"question":"Quale provvedimento è storicamente associato all'avvio dell'integrazione scolastica?","options":["Legge 517/1977","Legge 104/1992","Legge 107/2015","DPR 275/1999"],"correct":0,"topic":"Storia"},
+            {"question":"Con quale decreto legislativo è stato introdotto l'utilizzo dell'ICF come riferimento per la redazione del PEI?","options":["D.Lgs. 66/2017","D.Lgs. 62/2017","Legge 170/2010","DPR 275/1999"],"correct":0,"topic":"PEI/ICF"},
+            {"question":"Quale legge tutela specificamente gli studenti con Disturbi Specifici dell'Apprendimento (DSA)?","options":["Legge 170/2010","Legge 104/1992","Legge 53/2003","Legge 107/2015"],"correct":0,"topic":"DSA"},
+            {"question":"Cosa significa l'acronimo BES?","options":["Bisogni Educativi Speciali","Buone Educazioni Scolastiche","Bilancio Educativo Statale","Base Educativa Standard"],"correct":0,"topic":"BES"},
+            {"question":"Che cos'è il PEI?","options":["Piano Educativo Individualizzato","Programma Educativo Istituzionale","Piano Triennale Offerta Formativa","Progetto Educativo Integrato"],"correct":0,"topic":"PEI"},
+            {"question":"Che cos'è il PDP?","options":["Piano Didattico Personalizzato","Programma Didattico Provvisorio","Piano Docente Personale","Progetto Didattico Pubblico"],"correct":0,"topic":"DSA"},
+            {"question":"Qual è la finalità principale del PDP per DSA?","options":["Adeguare metodologie e strumenti per consentire la valutazione delle competenze","Ridurre l'orario scolastico","Sostituire il PEI","Aumentare le prove scritte"],"correct":0,"topic":"DSA"},
+            {"question":"Quale documento definisce la missione e l'offerta educativa di un istituto?","options":["PTOF","RAV","Programma Annuale","Regolamento d'istituto"],"correct":0,"topic":"PTOF"},
+            {"question":"Chi approva il PTOF di un'istituzione scolastica?","options":["Il Consiglio di Istituto","Il Collegio dei Docenti","Il Dirigente Scolastico","Il Ministero"],"correct":0,"topic":"PTOF"},
+            {"question":"Quale organo ha funzioni deliberative in una scuola?","options":["Consiglio di Istituto","Collegio dei Docenti","Il Dirigente Scolastico","GLI"],"correct":0,"topic":"Organi"},
+            {"question":"Chi è il responsabile legale dell'istituto scolastico?","options":["Il Dirigente Scolastico","Il Presidente del Consiglio di Istituto","Il DSGA","Il Collegio dei Docenti"],"correct":0,"topic":"Dirigenza"},
+            {"question":"Che cos'è l'INVALSI?","options":["Istituto Nazionale per la Valutazione del Sistema Educativo","Istituto Nazionale Valutazione Studenti Italiani","Ente di Ispezione Scolastica","Organismo Privato di Test"],"correct":0,"topic":"Valutazione"},
+            {"question":"A cosa servono le prove INVALSI?","options":["Monitorare risultati e qualità del sistema educativo","Sostituire la valutazione docente","Premiare gli studenti migliori","Finanziare direttamente le scuole"],"correct":0,"topic":"Valutazione"},
+            {"question":"Cos'è il RAV?","options":["Rapporto di Autovalutazione della scuola","Registro Attività e Valutazioni","Rapporto Annuale Viabilità","Registro Amministrativo Valeri"],"correct":0,"topic":"Valutazione"},
+            {"question":"Quale legge è nota come 'La Buona Scuola'?","options":["Legge 107/2015","Legge 170/2010","Legge 53/2003","D.Lgs. 66/2017"],"correct":0,"topic":"Riforme"},
+            {"question":"Che cosa significa ICF nel contesto del PEI?","options":["Classificazione Internazionale del Funzionamento","Indice di Competenza Formativa","Istituto Centrale Formazione","Indicatori Curriculari Funzionali"],"correct":0,"topic":"ICF"},
+            {"question":"Chi partecipa normalmente alla redazione del PEI?","options":["Equipe multidisciplinare, famiglia e docenti","Solo il Dirigente Scolastico","Solo il Collegio dei Docenti","Solo l'ASL"],"correct":0,"topic":"PEI"},
+            {"question":"Cosa si intende per misure compensative?","options":["Strumenti che consentono di compensare le difficoltà (es. calcolatrice, mappe)","Riduzioni di voti","Sanzioni disciplinari","Prolungamento obbligatorio delle lezioni"],"correct":0,"topic":"DSA"},
+            {"question":"Cosa si intende per misure dispensative?","options":["Semplificazioni di alcune richieste per non compromettere la dimostrazione delle competenze","Aumenti di voti","Esami sostitutivi obbligatori","Eliminazione di verifiche"],"correct":0,"topic":"DSA"},
+            {"question":"Che ruolo ha il docente di sostegno in classe?","options":["Favorire l'inclusione didattica e relazionale dello studente","Sostituire il docente curricolare","Gestire l'organico dell'istituto","Valutare i docenti"],"correct":0,"topic":"Sostegno"},
+            {"question":"Il GLI serve a:","options":["Coordinare le attività di inclusione all'interno dell'istituto","Approvare il bilancio","Redigere le diagnosi cliniche","Gestire le supplenze"],"correct":0,"topic":"GLI"},
+            {"question":"Cosa rappresentano le certificazioni delle competenze?","options":["Strumenti per attestare competenze acquisite dagli studenti","Solo documenti amministrativi","Sanzioni per gli studenti con difficoltà","Regolamenti per gli insegnanti"],"correct":0,"topic":"Valutazione"},
+            {"question":"Qual è lo scopo del RAV?","options":["Individuare punti di forza e debolezza della scuola e pianificare miglioramenti","Valutare singoli insegnanti con punteggi","Sostituire il PTOF","Gestire le supplenze"],"correct":0,"topic":"Valutazione"},
+            {"question":"Cosa indica l'acronimo PTOF?","options":["Piano Triennale dell'Offerta Formativa","Piano Tecnico Operativo Formativo","Programma Triennale Offerte Finanziarie","Progetto Territoriale Offerta Formativa"],"correct":0,"topic":"PTOF"},
+            {"question":"Chi approva il regolamento d'istituto?","options":["Il Consiglio di Istituto","Il Collegio dei Docenti","Il Dirigente Scolastico","L'ASL territoriale"],"correct":0,"topic":"Organi"},
+            {"question":"Che cosa è il Programma Annuale?","options":["Il documento di bilancio della scuola","Il piano didattico del docente","Il registro dei docenti","Una guida per le famiglie"],"correct":0,"topic":"Bilancio"},
+            {"question":"Qual è il ruolo del DSGA?","options":["Gestire i servizi amministrativi e contabili della scuola","Coordinare le attività didattiche","Redigere i PEI in autonomia","Valutare gli studenti"],"correct":0,"topic":"Personale"},
+            {"question":"La documentazione del percorso di inclusione è utile per:","options":["Monitorare interventi e risultati e aggiornare il progetto educativo","Creare burocrazia inutile","Sostituire la diagnosi clinica","Isolare lo studente dal gruppo"],"correct":0,"topic":"Inclusione"},
+            {"question":"Il diritto all'istruzione è sancito dalla Costituzione in quale articolo?","options":["Art. 34","Art. 3","Art. 33","Art. 21"],"correct":0,"topic":"Costituzione"},
+            {"question":"Perché è importante il coinvolgimento della famiglia nel PEI?","options":["Per garantire condivisione e continuità degli interventi","Per delegare tutte le funzioni alla famiglia","Per ridurre la responsabilità della scuola","Per evitare la partecipazione dei servizi sanitari"],"correct":0,"topic":"Inclusione"},
+            {"question":"La progettazione per competenze mira a:","options":["Favorire apprendimento significativo e trasferibilità delle competenze","Aumentare la memorizzazione di nozioni","Ridurre l'autonomia degli studenti","Standardizzare tutte le prove"],"correct":0,"topic":"Didattica"},
+            {"question":"Che funzione ha il Collegio dei Docenti?","options":["Progettare e coordinare l'attività didattica","Approvare il bilancio economico","Gestire contratti del personale ATA","Emanare normative nazionali"],"correct":0,"topic":"Organi"},
+            {"question":"Che cosa significa 'inclusione' nella scuola?","options":["Adattare la didattica e l'ambiente per la partecipazione di tutti gli studenti","Segregare gli alunni con difficoltà","Semplificare gli esami per tutti","Eliminare la valutazione"],"correct":0,"topic":"Inclusione"},
+            {"question":"Una rete territoriale per l'inclusione serve a:","options":["Coordinare servizi e risorse tra scuola e territorio","Solo scambiare documenti amministrativi","Sostituire la famiglia","Creare nuove normative"],"correct":0,"topic":"Reti"},
+            {"question":"La formazione in servizio degli insegnanti è importante per:","options":["Migliorare competenze metodologiche e inclusive","Ridurre il carico di lavoro senza impatto","Aumentare esclusivamente la teoria"],"correct":0,"topic":"Formazione"},
+            {"question":"Che cosa misura la certificazione delle competenze?","options":["Competenze raggiunte dallo studente in ambito disciplinare e trasversale","La presenza in classe","La quota di assenze"],"correct":0,"topic":"Valutazione"},
+            {"question":"Qual è il compito principale del Dirigente Scolastico?","options":["Garantire la direzione e l'organizzazione dell'istituto e l'attuazione del PTOF","Redigere diagnosi cliniche","Gestire esclusivamente il bilancio"],"correct":0,"topic":"Dirigenza"},
+            {"question":"L'accessibilità nell'istituto scolastico riguarda:","options":["Barriere architettoniche, materiali e metodologie didattiche adeguate","Solo rampe esterne","Solo calcolo delle spese"],"correct":0,"topic":"Inclusione"},
+            {"question":"La valutazione formativa ha lo scopo di:","options":["Sostenere il processo di apprendimento e migliorare pratiche didattiche","Selezionare gli studenti per l'accesso a scuole d'élite","Sostituire la valutazione sommativa"],"correct":0,"topic":"Valutazione"},
+            {"question":"Il monitoraggio dei PEI serve a:","options":["Verificare risultati e aggiornare gli obiettivi","Sostituire la valutazione finale","Limitare l'accesso ai servizi"],"correct":0,"topic":"PEI"},
+            {"question":"Gli strumenti compensativi includono:","options":["Software, mappe, tabelle e strumenti tecnologici","Sanzioni disciplinari","Aumenti di voti automatici"],"correct":0,"topic":"DSA"},
+            {"question":"La personalizzazione dei percorsi richiede:","options":["Valutazione iniziale, obiettivi personalizzati e verifica continua","Solo limiti amministrativi","Solo prove finali standardizzate"],"correct":0,"topic":"Inclusione"}
         ];
 
-        // shuffle (Fisher-Yates)
-        function shuffleArray(array) {
-            const newArray = [...array];
-            for (let i = newArray.length - 1; i > 0; i--) {
+        // Utility: shuffle (Fisher-Yates)
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
-                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+                [array[i], array[j]] = [array[j], array[i]];
             }
-            return newArray;
+            return array;
+        }
+
+        // Build global distractor pool from existing option strings
+        function buildDistractorPool(questions) {
+            const set = new Set();
+            questions.forEach(q => {
+                (q.options || []).forEach(opt => set.add(opt));
+            });
+            return Array.from(set);
         }
 
         function getRandomQuestions(questions, count) {
-            const pool = [...questions];
-            const desired = Math.min(count, pool.length);
-            const shuffled = shuffleArray(pool);
-            const selected = shuffled.slice(0, desired);
-            return selected.map(q => {
-                const correctAnswer = q.options[q.correct];
-                const shuffledOptions = shuffleArray(q.options);
-                const newCorrectIndex = shuffledOptions.indexOf(correctAnswer);
-                return { ...q, options: shuffledOptions, correct: newCorrectIndex };
-            });
+            try {
+                const pool = shuffle([...questions]);
+                const selected = pool.slice(0, Math.min(count, pool.length));
+                const distractorPool = buildDistractorPool(questions);
+                return selected.map(q => {
+                    const correctAnswer = (q.options && q.options[q.correct]) ? q.options[q.correct] : (q.options ? q.options[0] : 'Risposta corretta');
+                    // take distractors not equal to correct
+                    const candidates = distractorPool.filter(x => x !== correctAnswer);
+                    shuffle(candidates);
+                    const picks = candidates.slice(0, 3);
+                    const options = shuffle([correctAnswer, ...picks]);
+                    const newCorrect = options.indexOf(correctAnswer);
+                    return { question: q.question, options, correct: newCorrect, topic: q.topic };
+                });
+            } catch (err) {
+                console.error('Errore getRandomQuestions:', err);
+                throw err;
+            }
         }
 
         function renderQuiz(questions) {
-            const quizContainer = document.getElementById('quiz-container');
-            quizContainer.innerHTML = '';
-            questions.forEach((question, index) => {
-                const questionDiv = document.createElement('div');
-                questionDiv.className = 'question';
-                questionDiv.innerHTML = `
-                    <div class="question-number">Domanda ${index + 1}</div>
-                    <div class="topic">Argomento: ${question.topic}</div>
-                    <p>${question.question}</p>
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = '';
+            if (!questions || questions.length === 0) {
+                container.innerHTML = '<div class="error">Errore: nessuna domanda disponibile.</div>';
+                return;
+            }
+            questions.forEach((q, idx) => {
+                const div = document.createElement('div');
+                div.className = 'question';
+                div.innerHTML = `
+                    <div class="question-number">Domanda ${idx + 1}</div>
+                    <div class="topic">Argomento: ${q.topic || '-'}<\/div>
+                    <p>${q.question}<\/p>
                     <div class="options">
-                        ${question.options.map((option, i) => `
+                        ${q.options.map((opt, i) => `
                             <div class="option">
-                                <input type="radio" id="q${index}_o${i}" name="q${index}" value="${i}">
-                                <label for="q${index}_o${i}">${option}</label>
-                            </div>
-                        `).join('')}
-                    </div>
-                `;
-                quizContainer.appendChild(questionDiv);
+                                <input type="radio" id="q${idx}_o${i}" name="q${idx}" value="${i}">
+                                <label for="q${idx}_o${i}">${opt}</label>
+                            <\/div>`).join('')}
+                    <\/div>`;
+                container.appendChild(div);
             });
-            document.getElementById('current-topic').textContent = `Argomento: ${questions[0].topic}`;
         }
 
         function calculateScore(questions) {
             let score = 0;
-            const resultsContainer = document.getElementById('results');
-            resultsContainer.innerHTML = '<h2>Risultati</h2>';
-            resultsContainer.style.display = 'block';
-            questions.forEach((question, index) => {
-                const selectedOption = document.querySelector(`input[name="q${index}"]:checked`);
-                const userAnswer = selectedOption ? parseInt(selectedOption.value) : -1;
-                const isCorrect = userAnswer === question.correct;
+            const results = document.getElementById('results');
+            results.innerHTML = '<h2>Risultati</h2>';
+            results.style.display = 'block';
+            questions.forEach((q, idx) => {
+                const sel = document.querySelector(`input[name="q${idx}"]:checked`);
+                const answer = sel ? parseInt(sel.value) : -1;
+                const isCorrect = answer === q.correct;
                 if (isCorrect) score++;
-                const resultDiv = document.createElement('div');
-                resultDiv.className = `question-result ${isCorrect ? 'correct' : 'incorrect'}`;
-                resultDiv.innerHTML = `
-                    <p><strong>Domanda ${index + 1}:</strong> ${question.question}</p>
-                    <p>La tua risposta: ${userAnswer !== -1 ? question.options[userAnswer] : 'Nessuna risposta'}</p>
-                    <p class="correct">Risposta corretta: ${question.options[question.correct]}</p>
-                    <div class="topic">Argomento: ${question.topic}</div>
+                const item = document.createElement('div');
+                item.className = 'result-item';
+                item.innerHTML = `
+                    <p><strong>Domanda ${idx+1}:</strong> ${q.question}</p>
+                    <p>La tua risposta: ${answer !== -1 ? q.options[answer] : '<em>Nessuna risposta</em>'}</p>
+                    <p class="correct">Risposta corretta: ${q.options[q.correct]}</p>
+                    <div class="topic">Argomento: ${q.topic || '-'}</div>
                 `;
-                resultsContainer.appendChild(resultDiv);
+                results.appendChild(item);
             });
-
             const scoreDiv = document.createElement('div');
             scoreDiv.className = 'score';
-            scoreDiv.innerHTML = `Hai totalizzato ${score} punti su ${questions.length}`;
-            resultsContainer.prepend(scoreDiv);
+            scoreDiv.textContent = `Hai totalizzato ${score} punti su ${questions.length}`;
+            results.prepend(scoreDiv);
 
-            const retryDiv = document.createElement('div');
-            retryDiv.className = 'retry-btn';
-            retryDiv.innerHTML = '<button onclick="location.reload()">Ripeti il Quiz con altre 15 domande</button>';
-            resultsContainer.appendChild(retryDiv);
-
-            resultsContainer.scrollIntoView({ behavior: 'smooth' });
+            const retry = document.createElement('div');
+            retry.className = 'retry';
+            retry.innerHTML = '<button onclick="location.reload()">Ripeti il Quiz con altre 15 domande</button>';
+            results.appendChild(retry);
+            results.scrollIntoView({ behavior: 'smooth' });
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
-            const selectedQuestions = getRandomQuestions(questionsPool, 15);
-            renderQuiz(selectedQuestions);
+        // Inizializzazione
+        try {
+            const selected = getRandomQuestions(questionsPool, 15);
+            renderQuiz(selected);
             document.getElementById('total').textContent = '15';
-            document.getElementById('submit-btn').addEventListener('click', function() {
-                calculateScore(selectedQuestions);
-            });
-
+            document.getElementById('submit-btn').addEventListener('click', function(){ calculateScore(selected); });
+            // update progress/topic when scrolling
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         const topic = entry.target.querySelector('.topic').textContent.replace('Argomento: ', '');
                         document.getElementById('current-topic').textContent = `Argomento: ${topic}`;
-                        const questionNumber = entry.target.querySelector('.question-number').textContent.replace('Domanda ', '');
-                        document.getElementById('current').textContent = questionNumber;
+                        const qnum = entry.target.querySelector('.question-number').textContent.replace('Domanda ', '');
+                        document.getElementById('current').textContent = qnum;
                     }
                 });
             }, { threshold: 0.6 });
-
-            const questions = document.querySelectorAll('.question');
-            questions.forEach(q => observer.observe(q));
-        });
+            // observe created question nodes
+            setTimeout(()=>{
+                document.querySelectorAll('.question').forEach(n => observer.observe(n));
+            }, 100);
+        } catch (err) {
+            console.error('Errore inizializzazione quiz:', err);
+            const errBox = document.getElementById('error');
+            errBox.style.display = 'block';
+            errBox.textContent = 'Si è verificato un errore durante il caricamento del quiz. Apri la Console (F12) e incolla qui l'errore: lo correggo subito.';
+            document.getElementById('quiz-container').innerHTML = '';
+        }
+    })();
     </script>
 </body>
 </html>
