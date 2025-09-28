@@ -5,211 +5,211 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quiz di Legislazione scolastica</title>
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
-            color: #333;
-            min-height: 100vh;
-            padding: 20px;
-        }
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            background-color: white;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-        }
-        header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        h1 {
-            color: #2c3e50;
-            margin-bottom: 10px;
-            font-size: 2.2rem;
-        }
-        .description {
-            color: #7f8c8d;
-            margin-bottom: 20px;
-        }
-        .stats {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-            background-color: #f8f9fa;
-            padding: 15px;
-            border-radius: 10px;
-            font-weight: bold;
-        }
-        .question {
-            margin-bottom: 25px;
-            padding: 20px;
-            border: 1px solid #e0e0e0;
-            border-radius: 10px;
-            background-color: #f8f9fa;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-        }
-        .question-number {
-            font-weight: bold;
-            color: #3498db;
-            margin-bottom: 10px;
-            font-size: 1.1rem;
-        }
-        .options {
-            margin-left: 10px;
-        }
-        .option {
-            margin: 12px 0;
-            display: flex;
-            align-items: flex-start;
-        }
-        .option input {
-            margin-top: 5px;
-            margin-right: 12px;
-            cursor: pointer;
-        }
-        .option label {
-            cursor: pointer;
-            flex: 1;
-        }
-        button {
-            display: block;
-            margin: 30px auto;
-            padding: 14px 35px;
-            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
-            color: white;
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
-            font-size: 1.1rem;
-            font-weight: bold;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            transition: all 0.3s ease;
-        }
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
-        }
-        button:active {
-            transform: translateY(0);
-        }
-        .results {
-            margin-top: 30px;
-            padding: 25px;
-            border: 1px solid #e0e0e0;
-            border-radius: 10px;
-            background-color: #e7f3fe;
-            display: none;
-        }
-        .results h2 {
-            text-align: center;
-            color: #2c3e50;
-            margin-bottom: 20px;
-        }
-        .question-result {
-            margin-bottom: 20px;
-            padding: 15px;
-            border-radius: 8px;
-            background-color: white;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-        }
-        .correct {
-            color: #27ae60;
-            font-weight: bold;
-        }
-        .incorrect {
-            color: #e74c3c;
-        }
-        .score {
-            font-size: 1.4rem;
-            font-weight: bold;
-            text-align: center;
-            margin: 25px 0;
-            color: #2c3e50;
-        }
-        .topic {
-            font-size: 0.9rem;
-            color: #7f8c8d;
-            font-style: italic;
-            margin-top: 5px;
-        }
-        .retry-btn {
-            text-align: right;
-            margin-top: 20px;
-        }
-        .retry-btn button {
-            margin: 0;
-            padding: 10px 25px;
-            font-size: 1rem;
-        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%); color: #333; min-height: 100vh; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background-color: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); }
+        header { text-align: center; margin-bottom: 30px; }
+        h1 { color: #2c3e50; margin-bottom: 10px; font-size: 2.2rem; }
+        .description { color: #7f8c8d; margin-bottom: 20px; }
+        .stats { display:flex; justify-content:space-between; margin-bottom:20px; background:#f8f9fa; padding:15px; border-radius:10px; font-weight:bold; }
+        .question { margin-bottom:25px; padding:20px; border:1px solid #e0e0e0; border-radius:10px; background:#f8f9fa; box-shadow:0 4px 6px rgba(0,0,0,0.05); }
+        .question-number { font-weight:bold; color:#3498db; margin-bottom:10px; font-size:1.1rem; }
+        .options { margin-left:10px; }
+        .option { margin:12px 0; display:flex; align-items:flex-start; }
+        .option input { margin-top:5px; margin-right:12px; cursor:pointer; }
+        .option label { cursor:pointer; flex:1; }
+        button { display:block; margin:30px auto; padding:14px 35px; background:linear-gradient(135deg,#6a11cb 0%,#2575fc 100%); color:white; border:none; border-radius:50px; cursor:pointer; font-size:1.1rem; font-weight:bold; box-shadow:0 4px 15px rgba(0,0,0,0.2); transition:all .3s ease; }
+        button:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(0,0,0,0.25); }
+        .results { margin-top:30px; padding:25px; border:1px solid #e0e0e0; border-radius:10px; background:#e7f3fe; display:none; }
+        .results h2 { text-align:center; color:#2c3e50; margin-bottom:20px; }
+        .question-result { margin-bottom:20px; padding:15px; border-radius:8px; background:white; box-shadow:0 2px 4px rgba(0,0,0,0.05); }
+        .correct { color:#27ae60; font-weight:bold; }
+        .incorrect { color:#e74c3c; }
+        .score { font-size:1.4rem; font-weight:bold; text-align:center; margin:25px 0; color:#2c3e50; }
+        .topic { font-size:0.9rem; color:#7f8c8d; font-style:italic; margin-top:5px; }
+        .retry-btn { text-align:right; margin-top:20px; }
+        .retry-btn button { margin:0; padding:10px 25px; font-size:1rem; }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
             <h1>Quiz di Legislazione scolastica</h1>
-            <p class="description">15 domande estratte casualmente da un pool di 50</p>
+            <p class="description">15 domande estratte casualmente da un pool di 50 (test intermedio)</p>
         </header>
-        
+
         <div class="stats">
             <div id="current-topic">Argomento: -</div>
             <div id="progress">Domanda: <span id="current">1</span> di <span id="total">15</span></div>
         </div>
-        
+
         <div id="quiz-container"></div>
         <button id="submit-btn">Invia risposte</button>
-        
+
         <div id="results" class="results"></div>
-        
+
         <footer>
             <p>Quiz preparato sulla legislazione scolastica italiana</p>
         </footer>
     </div>
 
     <script>
-        // Pool di 50 domande di esempio
+        // Pool di 50 domande sensate sulla legislazione scolastica (versione test)
         const questionsPool = [
             {"question":"Quale legge del 1992 ha introdotto il PEI come strumento di inclusione scolastica?","options":["Legge 104/1992","Legge 170/2010","D.Lgs. 66/2017","Legge 517/1977"],"correct":0,"topic":"Inclusione"},
-            {"question":"Cosa sancisce l’articolo 3 della Costituzione Italiana?","options":["Principio di uguaglianza","Obbligo di istruzione fino a 18 anni","Centralità della famiglia","Tutela dei diritti linguistici"],"correct":0,"topic":"Costituzione"},
-            {"question":"Cosa stabilisce la Legge 170/2010?","options":["Tutela degli studenti con DSA","Introduzione PEI","Autonomia scolastica","Valutazione formativa"],"correct":0,"topic":"DSA"},
-            {"question":"Quale decreto ha ridefinito il PEI secondo il modello ICF?","options":["D.Lgs. 66/2017","Legge 104/1992","Legge 170/2010","DPR 275/1999"],"correct":0,"topic":"PEI"},
-            {"question":"Cosa significa l’acronimo BES?","options":["Bisogni Educativi Speciali","Benefici Economici Statali","Base Educativa Statale","Bisogni Extra Scolastici"],"correct":0,"topic":"BES"},
-            {"question":"Quale legge del 1977 ha segnato l’inizio dell’integrazione degli alunni disabili nella scuola comune?","options":["Legge 517/1977","Legge 170/2010","Legge 104/1992","D.Lgs. 66/2017"],"correct":0,"topic":"Storia inclusione"},
-            {"question":"Cosa regola il DPR 275/1999?","options":["Autonomia scolastica","Valutazione nazionale","Esami di Stato","Concorso docenti"],"correct":0,"topic":"Autonomia"},
-            {"question":"Quale organo scolastico adotta il PTOF?","options":["Collegio dei docenti","Consiglio di istituto","Dirigente scolastico","Ministero"],"correct":1,"topic":"PTOF"},
-            {"question":"Chi è responsabile della redazione del PEI?","options":["GLHO","Consiglio di istituto","Collegio docenti","DSGA"],"correct":0,"topic":"PEI"},
-            {"question":"Qual è l’età dell’obbligo scolastico in Italia?","options":["6-16 anni","3-18 anni","6-18 anni","5-16 anni"],"correct":0,"topic":"Obbligo scolastico"},
-            {"question":"Quale organo approva il bilancio della scuola?","options":["Consiglio di istituto","Collegio dei docenti","Dirigente scolastico","Ministero"],"correct":0,"topic":"Organi collegiali"},
-            {"question":"Cosa si intende per PEI?","options":["Piano Educativo Individualizzato","Programma Educativo Italiano","Progetto Educativo Istituzionale","Piano Educativo Integrato"],"correct":0,"topic":"Inclusione"},
-            {"question":"Che cosa stabilisce la Legge 517/1977?","options":["Abolizione classi differenziali","Tutela DSA","Introduzione autonomia scolastica","PEI obbligatorio"],"correct":0,"topic":"Storia inclusione"},
-            {"question":"Cosa regola la Legge 107/2015?","options":["La Buona Scuola","Autonomia scolastica","Legge DSA","Ordinamento università"],"correct":0,"topic":"Riforme"},
-            {"question":"Quale articolo della Costituzione sancisce il diritto all’istruzione?","options":["Art. 34","Art. 1","Art. 12","Art. 117"],"correct":0,"topic":"Costituzione"},
-            {"question":"Chi presiede il Collegio dei docenti?","options":["Dirigente scolastico","Presidente del consiglio di istituto","DSGA","Ministro"],"correct":0,"topic":"Organi collegiali"},
-            {"question":"Chi convoca il GLHO?","options":["Dirigente scolastico","Collegio dei docenti","Consiglio di istituto","Ministero"],"correct":0,"topic":"Inclusione"},
-            {"question":"Quale documento definisce la missione educativa della scuola?","options":["PTOF","Bilancio","Circolare ministeriale","Legge finanziaria"],"correct":0,"topic":"PTOF"},
-            {"question":"Cosa si intende per PDP?","options":["Piano Didattico Personalizzato","Programma Didattico Pubblico","Piano Didattico Provvisorio","Progetto Didattico Permanente"],"correct":0,"topic":"DSA"},
-            {"question":"Chi valuta e approva il PTOF?","options":["Consiglio di istituto","Collegio docenti","Dirigente scolastico","Ministero"],"correct":0,"topic":"PTOF"},
-            {"question":"Quale organo scolastico ha funzioni deliberative?","options":["Consiglio di istituto","Collegio docenti","Dirigente scolastico","DSGA"],"correct":0,"topic":"Organi collegiali"},
-            {"question":"Chi è il responsabile legale della scuola?","options":["Dirigente scolastico","Consiglio di istituto","Collegio docenti","GLHO"],"correct":0,"topic":"Dirigenza"},
-            {"question":"Che cos’è il PTOF?","options":["Piano Triennale dell’Offerta Formativa","Progetto Triennale dell’Organico Funzionamento","Piano Triennale Offerta Finanziaria","Progetto Tecnico Offerta Formativa"],"correct":0,"topic":"PTOF"},
-            {"question":"Quale articolo della Costituzione sancisce la libertà di insegnamento?","options":["Art. 33","Art. 1","Art. 3","Art. 34"],"correct":0,"topic":"Costituzione"},
-            {"question":"Cosa prevede il D.Lgs. 62/2017?","options":["Valutazione e certificazione competenze","Legge sull’autonomia","PEI","PDP"],"correct":0,"topic":"Valutazione"},
-            {"question":"Quale documento è obbligatorio per studenti con DSA?","options":["PDP","PEI","PTOF","Bilancio"],"correct":0,"topic":"DSA"},
-            {"question":"Chi è il DSGA?","options":["Direttore Servizi Generali e Amministrativi","Direttore Scuola Generale Area","Docente Sostegno Gestione Alunni","Delegato Servizi Gestione Amministrativa"],"correct":0,"topic":"Personale"},
-            {"question":"Cosa si intende per GLI?","options":["Gruppo di Lavoro per l’Inclusione","Gruppo di Lavoro Interistituzionale","Gestione Legale Inclusiva","Gruppo Locale Istruzione"],"correct":0,"topic":"Inclusione"},
-            {"question":"Chi presiede il Consiglio di istituto?","options":["Un genitore","Dirigente scolastico","DSGA","Collegio docenti"],"correct":0,"topic":"Organi collegiali"},
-            {"question":"Quale documento definisce le strategie per l’inclusione?","options":["PAI","PTOF","PEI","PDP"],"correct":0,"topic":"Inclusione"},
-            {"question":"Cosa introduce la Legge 53/2003?","options":["Riforma Moratti","Riforma Gentile","Riforma Berlinguer","Riforma Gelmini"],"correct":0,"topic":"Riforme"},
-            {"question":"Quale organo scolastico ha funzione propositiva?","options":["Collegio docenti","Consiglio di istituto","Dirigente scolastico","GLHO"],"correct":0,"topic":"Organi collegiali"},
-            {"question":"Chi convoca il Collegio docenti?","options":["Dirigente scolastico","DSGA","Consiglio di istituto","Ministero"],"correct":0,"topic":"Organi collegiali"},
-            {"question":"Cosa disciplina la Legge 107/2015 (Buona Scuola)?","options":["Organico dell’autonomia","PEI","DSA","Classi differenziali"],"correct":0,"topic":"Riforme"},
-            {"question":"Chi approva il Regolamento d’istituto?","options":["Consiglio di istituto","Collegio docenti","Dirigente scolastico","Ministero"],"correct":0,"topic":"Organi collegiali"},
-            {"question":"Che cos’è l’INVALSI?","options":["Istituto nazionale di valutazione del sistema educativo","Istituto nazionale valutazione studenti italiani","Istituto nuovo valutazione scolastica inclusiva","Indagine nazionale valutazione sistemi istruzione"],"correct":0,"topic":"Valutazione"},
-            {"question":"Cosa significa ICF?","options":["Classificazione Internazionale del Funzionamento","Indice Classificazione Formativa","Istituto Centrale Formazione","Indicatore Curricolo Formativo"],"correct":0,"topic":"Inclusione"},
-            {"question":"Chi approva il Programma annuale?","options":["Consiglio di istituto","Collegio docenti","Dirigente scolastico","DSGA"],"correct":0,"topic":"Bilancio"},
-            {"question":"Cosa sancisce l’articolo 34 della Costituzione?","options":["La scuola è aperta a tutti","La scuola è gratuita solo per i ricchi","La scuola è obbligatoria fino ai 21 anni","La scuola superiore è obbligatoria"],"correct":0,"topic":"Costituzione"},
-            {"question":"Chi elabora il RAV (Rapporto di Autovalutazione)?","options":["Il Nucleo interno di valutazione","Consiglio di istituto","Dirigente scolastico","Ministero"],"correct":0,"topic":"Valutazione"},
-            {"question":"Cosa significa PTOF?","options":["Piano Triennale Offerta Formativa","Programma Triennale Offerta Finanziaria","Progetto Tecnico Offerta Formativa","Piano Triennale Ordinamenti Formativi"],"correct":0,"topic":"PTOF"},
-            {"question":"Chi è il garante dell’unità educativa dell’istituto?","options":["Dirigente scolastico","Consiglio di
+            {"question":"Cosa sancisce l'articolo 3 della Costituzione italiana?","options":["Principio di uguaglianza","Diritto all'istruzione gratuita","Libertà di insegnamento","Autonomia scolastica"],"correct":0,"topic":"Costituzione"},
+            {"question":"Qual è la normativa specifica che tutela gli studenti con DSA?","options":["Legge 170/2010","Legge 104/1992","DPR 275/1999","Legge 517/1977"],"correct":0,"topic":"DSA"},
+            {"question":"Quale provvedimento ha introdotto l'uso dell'ICF per il PEI?","options":["D.Lgs. 66/2017","Legge 170/2010","Legge 104/1992","D.Lgs. 62/2017"],"correct":0,"topic":"PEI"},
+            {"question":"Cosa significa l'acronimo BES?","options":["Bisogni Educativi Speciali","Benefici Economici Statali","Basi Educative Standard","Bisogni Extra Scolastici"],"correct":0,"topic":"BES"},
+            {"question":"Quale legge ha segnato l'inizio dell'integrazione scolastica (abolizione classi differenziali)?","options":["Legge 517/1977","Legge 104/1992","Legge 170/2010","D.Lgs. 66/2017"],"correct":0,"topic":"Storia dell'inclusione"},
+            {"question":"Qual è l'oggetto principale del DPR 275/1999?","options":["Autonomia scolastica","Valutazione nazionale","Organizzazione degli esami","Sistema di reclutamento docenti"],"correct":0,"topic":"Autonomia"},
+            {"question":"Quale organo approva formalmente il PTOF?","options":["Consiglio di istituto","Collegio dei docenti","Dirigente scolastico","Ministero"],"correct":0,"topic":"PTOF"},
+            {"question":"Chi coordina la redazione del PEI a livello di singola scuola?","options":["GLHO (Gruppo per il Lavoro con l'Handicap Operativo)","Collegio dei docenti","Consiglio di istituto","MIUR"],"correct":0,"topic":"PEI"},
+            {"question":"Qual è l'età dell'obbligo scolastico in Italia (anni di frequenza obbligatoria)?","options":["6-16 anni","3-18 anni","6-18 anni","5-16 anni"],"correct":0,"topic":"Obbligo scolastico"},
+            {"question":"Quale organo approva il Programma annuale della scuola?","options":["Consiglio di istituto","Collegio dei docenti","Dirigente scolastico","DSGA"],"correct":0,"topic":"Bilancio"},
+            {"question":"Che cosa indica l'acronimo PEI?","options":["Piano Educativo Individualizzato","Programma Educativo Istituzionale","Piano Europeo dell'Inclusione","Progetto Educativo Integrato"],"correct":0,"topic":"PEI"},
+            {"question":"Cosa ha introdotto la Legge 517/1977?","options":["L'abolizione delle classi differenziali e integrazione scolastica","L'istituzione del PEI","La riforma degli esami di Stato","L'autonomia scolastica"],"correct":0,"topic":"Storia dell'inclusione"},
+            {"question":"Qual è il nome comune della riforma del 2015 conosciuta come 'La Buona Scuola'?","options":["Legge 107/2015","Legge 53/2003","D.Lgs. 66/2017","D.Lgs. 62/2017"],"correct":0,"topic":"Riforme"},
+            {"question":"Quale articolo della Costituzione riguarda la libertà di insegnamento?","options":["Art. 33","Art. 3","Art. 34","Art. 21"],"correct":0,"topic":"Costituzione"},
+            {"question":"Chi presiede il Collegio dei docenti?","options":["Il dirigente scolastico","Il presidente del Consiglio di istituto","Il DSGA","Un docente scelto a rotazione"],"correct":0,"topic":"Organi scolastici"},
+            {"question":"Chi convoca il GLHO in genere?","options":["Il dirigente scolastico","Il Ministero","Il Consiglio di istituto","Il referente per l'inclusione esterno"],"correct":0,"topic":"Inclusione"},
+            {"question":"Quale documento definisce la missione e l'offerta educativa della scuola?","options":["PTOF (Piano Triennale dell'Offerta Formativa)","Regolamento d'istituto","Programma annuale","Scheda di valutazione"],"correct":0,"topic":"PTOF"},
+            {"question":"Cosa indica l'acronimo PDP nel contesto scolastico?","options":["Piano Didattico Personalizzato","Piano Didattico Provvisorio","Progetto Didattico Pubblico","Programma Diffuso Personale"],"correct":0,"topic":"DSA/PDP"},
+            {"question":"Quale organo ha funzioni deliberative in ambito scolastico?","options":["Consiglio di istituto","Collegio dei docenti","Dirigente scolastico","GLHO"],"correct":0,"topic":"Organi scolastici"},
+            {"question":"Chi è il responsabile legale e amministrativo della scuola?","options":["Il dirigente scolastico","Il presidente del Consiglio di istituto","Il DSGA","Il Ministero"],"correct":0,"topic":"Dirigenza"},
+            {"question":"Che cos'è il PTOF?","options":["Piano Triennale dell'Offerta Formativa","Programma Triennale dell'Organico Docente","Piano Tecnico Organizzativo Formativo","Progetto Triennale Obiettivi Formativi"],"correct":0,"topic":"PTOF"},
+            {"question":"Quale articolo della Costituzione riguarda il diritto all'istruzione e la scuola aperta a tutti?","options":["Art. 34","Art. 33","Art. 3","Art. 36"],"correct":0,"topic":"Costituzione"},
+            {"question":"Cosa disciplina il D.Lgs. 62/2017?","options":["Valutazione e certificazione delle competenze nel primo ciclo","Autonomia scolastica","PEI","PDP"],"correct":0,"topic":"Valutazione"},
+            {"question":"Quale documento è generalmente predisposto per uno studente con DSA?","options":["PDP (Piano Didattico Personalizzato)","PEI","PTOF","RAV"],"correct":0,"topic":"DSA/PDP"},
+            {"question":"Cosa indica la sigla DSGA?","options":["Direttore dei Servizi Generali e Amministrativi","Direttore Scolastico Gestione Alunni","Delegato Servizi Gestionali Amministrativi","Docente Sostegno Gestione Amministrativa"],"correct":0,"topic":"Personale"},
+            {"question":"Cosa significa GLI?","options":["Gruppo di Lavoro per l'Inclusione","Gestione Locale dell'Inclusione","Gruppo Locale Istruzione","Gruppo Lavoro Interdisciplinare"],"correct":0,"topic":"Inclusione"},
+            {"question":"Chi approva il Regolamento d'istituto?","options":["Consiglio di istituto","Collegio dei docenti","Dirigente scolastico","Ministero"],"correct":0,"topic":"Organi scolastici"},
+            {"question":"Che cos'è l'INVALSI?","options":["Istituto nazionale per la valutazione del sistema educativo","Istituto nazionale valutazione studenti italiani","Istituto nuovo valutazione scolastica","Indicatori nazionali valutazione istruzione"],"correct":0,"topic":"Valutazione"},
+            {"question":"Cosa significa ICF nel contesto del PEI?","options":["Classificazione Internazionale del Funzionamento","Indice di Competenza Formativa","Istituto Centrale Formazione","Indicatori Competenza Formativa"],"correct":0,"topic":"PEI/ICF"},
+            {"question":"Chi elabora il RAV (Rapporto di Autovalutazione)?","options":["Il Nucleo interno di valutazione della scuola","Il Ministero","Il Consiglio di istituto","L'INVALSI"],"correct":0,"topic":"Valutazione"},
+            {"question":"Per quanti anni è valido generalmente il PTOF?","options":["3 anni","1 anno","5 anni","4 anni"],"correct":0,"topic":"PTOF"},
+            {"question":"Qual è lo scopo principale del RAV?","options":["Autovalutazione e miglioramento della qualità dell'istituto","Attribuire punteggi agli insegnanti","Regolare le assenze degli studenti","Stabilire il bilancio annuale"],"correct":0,"topic":"Valutazione"},
+            {"question":"Cosa si intende per autonomia didattica?","options":["Libertà di definire curricoli e modalità didattiche nell'ambito delle indicazioni nazionali","Autonomia amministrativa della segreteria","Indipendenza finanziaria dalle famiglie","Libertà di valutare senza criteri nazionali"],"correct":0,"topic":"Autonomia"},
+            {"question":"Quale legge è nota come 'Riforma Moratti'?","options":["Legge 53/2003","Legge 104/1992","Legge 170/2010","Legge 107/2015"],"correct":0,"topic":"Riforme"},
+            {"question":"Cosa prevede la Legge 104/1992 in termini generali?","options":["Tutela dei diritti e integrazione delle persone con disabilità","Obbligo del servizio militare","Norme sull'autonomia scolastica","Riforma degli organi collegiali"],"correct":0,"topic":"Legge 104"},
+            {"question":"Cosa sono le misure dispensative per gli studenti con DSA?","options":["Procedure che alleggeriscono alcuni compiti valutativi (es. non leggere ad alta voce)","Punizioni alternative","Sanzioni disciplinari","Programmi di recupero estivi"],"correct":0,"topic":"DSA"},
+            {"question":"Cosa sono le misure compensative per gli studenti con DSA?","options":["Strumenti e aiuti che compensano le difficoltà (es. calcolatrice, mappe)","Sanzioni disciplinari","Interventi psicoterapici obbligatori","Voti aumentati"],"correct":0,"topic":"DSA"},
+            {"question":"Che ruolo ha il Collegio dei docenti?","options":["Ha funzioni propositive e di progettazione didattica","Approva il bilancio della scuola","Gestisce l'organico ATA","Eroga i fondi ministeriali"],"correct":0,"topic":"Organi scolastici"},
+            {"question":"Qual è il principale strumento di pianificazione triennale a livello di istituto?","options":["Il PTOF","Il PDP","Il PEI","Il RAV"],"correct":0,"topic":"PTOF"},
+            {"question":"Chi pubblica e gestisce i dati INVALSI a livello nazionale?","options":["L'INVALSI","Il Ministero dell'Economia","Le singole scuole","Il Parlamento"],"correct":0,"topic":"Valutazione"},
+            {"question":"Quale documento certifica le competenze al termine del primo ciclo?","options":["Certificazione delle competenze (prevista dal D.Lgs. 62/2017)","PEI","PDP","PTOF"],"correct":0,"topic":"Valutazione"},
+            {"question":"Cosa si intende per 'didattica inclusiva'?","options":["Pratiche e strategie che consentono la partecipazione di tutti gli studenti","Attività riservate solo agli studenti con difficoltà","Esclusione di studenti con bisogni particolari","Didattica a distanza"],"correct":0,"topic":"Inclusione"},
+            {"question":"Chi può far parte del Consiglio di istituto?","options":["Docenti, genitori, personale ATA e rappresentanti locali","Solo docenti","Solo dirigenti","Solo studenti universitari"],"correct":0,"topic":"Organi scolastici"}
+        ];
+
+        // Funzione per mescolare un array (Fisher-Yates)
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+
+        // Seleziona domande casuali (gestisce anche il caso count > pool.length)
+        function getRandomQuestions(questions, count) {
+            const pool = [...questions];
+            const desired = Math.min(count, pool.length);
+            const shuffled = shuffleArray(pool);
+            const selected = shuffled.slice(0, desired);
+            return selected.map(q => {
+                const correctAnswer = q.options[q.correct];
+                const shuffledOptions = shuffleArray(q.options);
+                const newCorrectIndex = shuffledOptions.indexOf(correctAnswer);
+                return { ...q, options: shuffledOptions, correct: newCorrectIndex };
+            });
+        }
+
+        // Render del quiz
+        function renderQuiz(questions) {
+            const quizContainer = document.getElementById('quiz-container');
+            quizContainer.innerHTML = '';
+            questions.forEach((question, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question';
+                questionDiv.innerHTML = `
+                    <div class="question-number">Domanda ${index + 1}</div>
+                    <div class="topic">Argomento: ${question.topic}</div>
+                    <p>${question.question}</p>
+                    <div class="options">
+                        ${question.options.map((option, i) => `
+                            <div class="option">
+                                <input type="radio" id="q${index}_o${i}" name="q${index}" value="${i}">
+                                <label for="q${index}_o${i}">${option}</label>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                quizContainer.appendChild(questionDiv);
+            });
+            document.getElementById('current-topic').textContent = `Argomento: ${questions[0].topic}`;
+        }
+
+        // Calcolo punteggio e visualizzazione risultati
+        function calculateScore(questions) {
+            let score = 0;
+            const resultsContainer = document.getElementById('results');
+            resultsContainer.innerHTML = '<h2>Risultati</h2>';
+            resultsContainer.style.display = 'block';
+            questions.forEach((question, index) => {
+                const selectedOption = document.querySelector(`input[name="q${index}"]:checked`);
+                const userAnswer = selectedOption ? parseInt(selectedOption.value) : -1;
+                const isCorrect = userAnswer === question.correct;
+                if (isCorrect) score++;
+                const resultDiv = document.createElement('div');
+                resultDiv.className = `question-result ${isCorrect ? 'correct' : 'incorrect'}`;
+                resultDiv.innerHTML = `
+                    <p><strong>Domanda ${index + 1}:</strong> ${question.question}</p>
+                    <p>La tua risposta: ${userAnswer !== -1 ? question.options[userAnswer] : 'Nessuna risposta'}</p>
+                    <p class="correct">Risposta corretta: ${question.options[question.correct]}</p>
+                    <div class="topic">Argomento: ${question.topic}</div>
+                `;
+                resultsContainer.appendChild(resultDiv);
+            });
+
+            const scoreDiv = document.createElement('div');
+            scoreDiv.className = 'score';
+            scoreDiv.innerHTML = `Hai totalizzato ${score} punti su ${questions.length}`;
+            resultsContainer.prepend(scoreDiv);
+
+            const retryDiv = document.createElement('div');
+            retryDiv.className = 'retry-btn';
+            retryDiv.innerHTML = '<button onclick="location.reload()">Ripeti il Quiz con altre 15 domande</button>';
+            resultsContainer.appendChild(retryDiv);
+
+            resultsContainer.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Inizializzazione
+        document.addEventListener('DOMContentLoaded', function() {
+            const selectedQuestions = getRandomQuestions(questionsPool, 15);
+            renderQuiz(selectedQuestions);
+            document.getElementById('total').textContent = '15';
+            document.getElementById('submit-btn').addEventListener('click', function() {
+                calculateScore(selectedQuestions);
+            });
+
+            // osservatore per aggiornare topic e progresso
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const topic = entry.target.querySelector('.topic').textContent.replace('Argomento: ', '');
+                        document.getElementById('current-topic').textContent = `Argomento: ${topic}`;
+                        const questionNumber = entry.target.querySelector('.question-number').textContent.replace('Domanda ', '');
+                        document.getElementById('current').textContent = questionNumber;
+                    }
+                });
+            }, { threshold: 0.6 });
+
+            // osserva le domande create
+            const questions = document.querySelectorAll('.question');
+            questions.forEach(q => observer.observe(q));
+        });
+    </script>
+</body>
+</html>
