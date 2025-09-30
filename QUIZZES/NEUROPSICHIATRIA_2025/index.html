@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz di Neuropsichiatria Infantile</title>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            line-height: 1.6; 
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%); 
+            color: #333; 
+            min-height: 100vh; 
+            padding: 20px; 
+            margin: 0;
+        }
+        .container { 
+            max-width: 900px; 
+            margin: 0 auto; 
+            background-color: white; 
+            padding: 30px; 
+            border-radius: 15px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15); 
+        }
+        header { 
+            text-align: center; 
+            margin-bottom: 30px; 
+        }
+        h1 { 
+            color: #2c3e50; 
+            margin-bottom: 10px; 
+            font-size: 2.2rem; 
+        }
+        .description { 
+            color: #7f8c8d; 
+            margin-bottom: 20px; 
+        }
+        .stats { 
+            display: flex; 
+            justify-content: space-between; 
+            margin-bottom: 20px; 
+            background: #f8f9fa; 
+            padding: 15px; 
+            border-radius: 10px; 
+            font-weight: bold; 
+        }
+        .question { 
+            margin-bottom: 25px; 
+            padding: 20px; 
+            border: 1px solid #e0e0e0; 
+            border-radius: 10px; 
+            background: #f8f9fa; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05); 
+        }
+        .question-number { 
+            font-weight: bold; 
+            color: #3498db; 
+            margin-bottom: 10px; 
+            font-size: 1.1rem; 
+        }
+        .options { 
+            margin-left: 10px; 
+        }
+        .option { 
+            margin: 12px 0; 
+            display: flex; 
+            align-items: flex-start; 
+        }
+        .option input { 
+            margin-top: 5px; 
+            margin-right: 12px; 
+            cursor: pointer; 
+        }
+        .option label { 
+            cursor: pointer; 
+            flex: 1; 
+        }
+        button { 
+            display: block; 
+            margin: 30px auto; 
+            padding: 14px 35px; 
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%); 
+            color: white; 
+            border: none; 
+            border-radius: 50px; 
+            cursor: pointer; 
+            font-size: 1.1rem; 
+            font-weight: bold; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2); 
+            transition: all .3s ease; 
+        }
+        button:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 6px 20px rgba(0,0,0,0.25); 
+        }
+        .results { 
+            margin-top: 30px; 
+            padding: 25px; 
+            border: 1px solid #e0e0e0; 
+            border-radius: 10px; 
+            background: #e7f3fe; 
+            display: none; 
+        }
+        .results h2 { 
+            text-align: center; 
+            color: #2c3e50; 
+            margin-bottom: 20px; 
+        }
+        .question-result { 
+            margin-bottom: 20px; 
+            padding: 15px; 
+            border-radius: 8px; 
+            background: white; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05); 
+        }
+        .correct { 
+            color: #27ae60; 
+            font-weight: bold; 
+        }
+        .incorrect { 
+            color: #e74c3c; 
+        }
+        .score { 
+            font-size: 1.4rem; 
+            font-weight: bold; 
+            text-align: center; 
+            margin: 25px 0; 
+            color: #2c3e50; 
+        }
+        .topic { 
+            font-size: 0.9rem; 
+            color: #7f8c8d; 
+            font-style: italic; 
+            margin-top: 5px; 
+        }
+        .retry-btn { 
+            text-align: right; 
+            margin-top: 20px; 
+        }
+        .retry-btn button { 
+            margin: 0; 
+            padding: 10px 25px; 
+            font-size: 1rem; 
+        }
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Quiz di Neuropsichiatria Infantile</h1>
+            <p class="description">15 domande estratte casualmente da un pool di 200</p>
+        </header>
+
+        <div class="stats">
+            <div id="current-topic">Argomento: -</div>
+            <div id="progress">Domanda: <span id="current">1</span> di <span id="total">15</span></div>
+        </div>
+
+        <div id="quiz-container"></div>
+        <button id="submit-btn">Invia risposte</button>
+
+        <div id="results" class="results"></div>
+
+        <footer>
+            <p>Quiz preparato sulla Neuropsichiatria Infantile</p>
+        </footer>
+    </div>
+
+    <script>
+        // Pool di 200 domande sulla Neuropsichiatria Infantile
+        const questionsPool = [
+            // 1. Neuroscienze e processi di apprendimento (1-40)
+            {"question":"Le neuroscienze studiano:","options":["Le funzioni cognitive ed emotive del cervello","Solo i riflessi automatici","La genetica esclusivamente","La struttura muscolare"],"correct":0,"topic":"Neuroscienze e apprendimento"},
+            {"question":"La plasticità cerebrale si riferisce a:","options":["La capacità del cervello di modificarsi con l'esperienza","L'immutabilità delle funzioni","La fissità dei neuroni","L'indipendenza dall'ambiente"],"correct":0,"topic":"Neuroscienze e apprendimento"},
+            {"question":"Un concetto chiave delle neuroscienze educative è:","options":["Il legame tra processi mentali e apprendimento","L'isolamento mente-corpo","La separazione assoluta tra emozione e cognizione","L'indifferenza all'ambiente"],"correct":0,"topic":"Neuroscienze e apprendimento"},
+            {"question":"L'apprendimento implica:","options":["Modifiche relativamente stabili nel comportamento","Reazioni istantanee e casuali","Mutazioni genetiche permanenti","Processi automatici fissi"],"correct":0,"topic":"Neuroscienze e apprendimento"},
+            {"question":"Le neuroscienze educative integrano:","options":["Psicologia, biologia e pedagogia","Solo filosofia","Solo matematica","Esclusivamente sociologia"],"correct":0,"topic":"Neuroscienze e apprendimento"},
+            {"question":"La memoria di lavoro serve a:","options":["Manipolare temporaneamente le informazioni","Conservare ricordi remoti","Archiviare solo dati sensoriali","Bloccare nuove esperienze"],"correct":0,"topic":"Neuroscienze e apprendimento"},
+            {"question":"La memoria a lungo termine conserva:","options":["Le informazioni per periodi prolungati","Solo stimoli momentanei","Solo riflessi innati","Dati immediati"],"correct":0,"topic":"Neuroscienze e apprendimento"},
+            {"question":"L'attenzione selettiva permette di:","options":["Focalizzarsi su stimoli rilevanti","Percepire tutti gli stimoli allo stesso modo","Eliminare la memoria","Evitare la concentrazione"],"correct":0,"topic":"Neuroscienze e apprendimento"},
+            {"question":"Le emozioni influenzano:","options":["L'apprendimento e la memoria","Solo i riflessi","Esclusivamente i movimenti","Unicamente le abitudini motorie"],"correct":0,"topic":"Neuroscienze e apprendimento"},
+            {"question":"Le funzioni esecutive comprendono:","options":["Pianificazione, inibizione, flessibilità","Solo la memoria procedurale","Solo la percezione visiva","Unicamente i riflessi"],"correct":0,"topic":"Neuroscienze e apprendimento"},
+            {"question":"La corteccia prefrontale è implicata in:","options":["Controllo esecutivo e decisioni","Funzioni motorie automatiche","Regolazione del battito cardiaco","Riflessi spinali"],"correct":0,"topic":"Neuroscienze e apprendimento"},
+            {"question":"L'ippocampo è fondamentale per:","options":["Memoria e apprendimento","Controllo motorio","Visione periferica","Funzioni uditive"],"correct":0,"topic":"Neuroscienze e apprendimento"},
+            {"question":"L'amigdala è coinvolta in:","options":["Risposte emotive","Memoria semantica","Percezione visiva","Linguaggio"],"correct":0,"topic":"Neuroscienze e apprendimento"},
+            {"question":"La corteccia motoria regola:","options":["I movimenti volontari","Le emozioni","L'attenzione","La memoria semantica"],"correct":0,"topic":"Neuroscienze e apprendimento"},
+            {"question":"Le neuroscienze mostrano che il cervello è:","options":["Un sistema dinamico e adattivo","Statico e immutabile","Indifferente all'esperienza","Solo genetico"],"correct":0,"topic":"Neuroscienze e apprendimento"},
+            {"question":"Il processo di apprendimento avviene attraverso:","options":["Modificazioni sinaptiche","Mutazioni genetiche","Stimoli innati","Processi automatici"],"correct":0,"topic":"Neuroscienze e apprendimento"},
+            {"question":"Le funzioni cognitive superiori includono:","options":["Linguaggio, ragionamento, problem solving","Solo riflessi","Solo azioni motorie","Solo percezione"],"correct":0,"topic":"Neuroscienze e apprendimento"},
+            {"question":"La memoria episodica riguarda:","options":["Eventi personali vissuti","Regole grammaticali","Movimenti automatici","Reazioni istantanee"],"correct":0,"topic":"Neuroscienze e apprendimento"},
+            {"question":"La memoria semantica conserva:","options":["Conoscenze generali e concetti","Eventi autobiografici","Capacità motorie","Stimoli sensoriali"],"correct":0,"topic":"Neuroscienze e apprendimento"},
+            {"question":"La memoria procedurale è legata a:","options":["Abilità e automatismi","Eventi personali","Informazioni concettuali","Emozioni"],"correct":0,"topic":"Neuroscienze e apprendimento"},
+            {"question":"L'attenzione sostenuta consente di:","options":["Mantenere la concentrazione nel tempo","Cambiare continuamente stimolo","Bloccare la percezione","Eliminare le informazioni"],"correct":0,"topic":"Neuroscienze e apprendimento"},
+            {"question":"La memoria di lavoro è limitata in:","options":["Capacità e durata","Accesso illimitato","Permanenza assoluta","Quantità infinita"],"correct":0,"topic":"Neuroscienze e apprendimento"},
+            {"question":"Le emozioni positive tendono a:","options":["Facilitare l'apprendimento","Bloccare la memoria","Limitare l'attenzione","Escludere la motivazione"],"correct":0,"topic":"Neuroscienze e apprendimento"},
+            {"question":"Le emozioni negative intense possono:","options":["Ostacolare i processi cognitivi","Migliorare sempre la memoria","Non avere alcun effetto","Rinforzare automaticamente l'attenzione"],"correct":0,"topic":"Neuroscienze e apprendimento"},
+            {"question":"Le funzioni esecutive sono fondamentali per:","options":["Regolare il comportamento e l'apprendimento","Solo la motricità","Solo la percezione visiva","La memoria semantica"],"correct":0,"topic":"Neuroscienze e apprendimento"},
+            {"question":"La plasticità cerebrale è maggiore:","options":["Nei primi anni di vita","Nell'età avanzata","In età adulta tarda","Non cambia mai"],"correct":0,"topic":"Neuroscienze e apprendimento"},
+            {"question":"L'apprendimento scolastico dipende anche da:","options":["Fattori emotivi e motivazionali","Solo dalla genetica","Solo da punizioni","Solo da riflessi"],"correct":0,"topic":"Neuroscienze e apprendimento"},
+            {"question":"Le neuroscienze educative aiutano a:","options":["Migliorare le pratiche didattiche","Eliminare la pedagogia","Sostituire gli insegnanti","Bloccare l'innovazione"],"correct":0,"topic":"Neuroscienze e apprendimento"},
+            {"question":"Il problem solving richiede:","options":["Flessibilità cognitiva","Memoria procedurale","Reazioni riflesse","Azioni automatiche"],"correct":0,"topic":"Neuroscienze e apprendimento"},
+            {"question":"La memoria di lavoro è collegata a:","options":["Comprensione del linguaggio","Memoria procedurale","Abilità motorie","Riflessi"],"correct":0,"topic":"Neuroscienze e apprendimento"},
+            {"question":"L'apprendimento significativo avviene quando:","options":["Nuove informazioni si collegano a quelle già presenti","Si memorizza senza senso","Si ripete meccanicamente","Si ignorano i concetti"],"correct":0,"topic":"Neuroscienze e apprendimento"},
+            {"question":"Il rinforzo positivo favorisce:","options":["La ripetizione di comportamenti desiderati","L'abbandono scolastico","La dimenticanza","L'isolamento"],"correct":0,"topic":"Neuroscienze e apprendimento"},
+            {"question":"Le emozioni influenzano la memoria perché:","options":["Potenziano o riducono il ricordo","Non hanno effetto","Annullano le esperienze","Separano la cognizione"],"correct":0,"topic":"Neuroscienze e apprendimento"},
+            {"question":"Il sistema limbico è implicato in:","options":["Emozioni e memoria","Solo motricità","Solo riflessi","Solo linguaggio"],"correct":0,"topic":"Neuroscienze e apprendimento"},
+            {"question":"La regolazione emotiva richiede:","options":["Interazione tra corteccia prefrontale e sistema limbico","Solo ippocampo","Solo aree motorie","Solo cervelletto"],"correct":0,"topic":"Neuroscienze e apprendimento"},
+            {"question":"Le neuroscienze hanno dimostrato che l'apprendimento è:","options":["Dipendente dall'esperienza","Indipendente da stimoli","Solo genetico","Casualità"],"correct":0,"topic":"Neuroscienze e apprendimento"},
+            {"question":"La motivazione influenza:","options":["L'attenzione e la memoria","Solo riflessi","Solo motricità","Solo percezione"],"correct":0,"topic":"Neuroscienze e apprendimento"},
+            {"question":"Le funzioni esecutive si sviluppano soprattutto:","options":["Nell'infanzia e adolescenza","Restano fisse dalla nascita","Solo in età adulta","Non cambiano mai"],"correct":0,"topic":"Neuroscienze e apprendimento"},
+            {"question":"La memoria episodica è sensibile:","options":["All'età e all'esperienza","Solo alla genetica","Non cambia mai","È fissa"],"correct":0,"topic":"Neuroscienze e apprendimento"},
+            {"question":"Le neuroscienze educative sostengono che:","options":["Conoscere i meccanismi cerebrali aiuta la didattica","La didattica non ha legami col cervello","L'insegnamento è indipendente dagli studenti","Le emozioni non contano"],"correct":0,"topic":"Neuroscienze e apprendimento"},
+
+            // 2. Disturbi del neurosviluppo e diagnosi (41-80)
+            {"question":"I disturbi del neurosviluppo hanno origine:","options":["In età evolutiva","Solo in età adulta","Unicamente dopo traumi","Nell'invecchiamento"],"correct":0,"topic":"Disturbi neurosviluppo e diagnosi"},
+            {"question":"I disturbi del neurosviluppo riguardano:","options":["Funzioni cognitive, linguistiche, motorie e relazionali","Solo apparato muscolare","Solo apparato digerente","Esclusivamente sistema immunitario"],"correct":0,"topic":"Disturbi neurosviluppo e diagnosi"},
+            {"question":"La diagnosi in neuropsichiatria infantile è:","options":["Multidimensionale","Basata su un solo test","Puramente biologica","Solo osservativa"],"correct":0,"topic":"Disturbi neurosviluppo e diagnosi"},
+            {"question":"Gli strumenti diagnostici comprendono:","options":["Colloqui, test, osservazione","Solo analisi del sangue","Solo risonanza magnetica","Esclusivamente questionari online"],"correct":0,"topic":"Disturbi neurosviluppo e diagnosi"},
+            {"question":"Una caratteristica della valutazione diagnostica è:","options":["Considerare aspetti cognitivi, emotivi e sociali","Limitarsi ai dati biologici","Basarsi solo sulla genetica","Escludere la famiglia"],"correct":0,"topic":"Disturbi neurosviluppo e diagnosi"},
+            {"question":"I disturbi del neurosviluppo comprendono:","options":["Disturbi dello spettro autistico, ADHD, DSA","Malattie cardiovascolari","Disturbi respiratori","Infezioni gastrointestinali"],"correct":0,"topic":"Disturbi neurosviluppo e diagnosi"},
+            {"question":"I disturbi dello spettro autistico si caratterizzano per:","options":["Deficit nella comunicazione e interazione sociale","Solo difficoltà motorie","Problemi respiratori","Assenza di memoria"],"correct":0,"topic":"Disturbi neurosviluppo e diagnosi"},
+            {"question":"I comportamenti ripetitivi sono tipici di:","options":["Disturbi dello spettro autistico","Disturbi respiratori","Disturbi digestivi","Malattie cardiache"],"correct":0,"topic":"Disturbi neurosviluppo e diagnosi"},
+            {"question":"Nell'ADHD si osservano:","options":["Disattenzione, iperattività e impulsività","Problemi respiratori","Disturbi gastrointestinali","Crisi epilettiche"],"correct":0,"topic":"Disturbi neurosviluppo e diagnosi"},
+            {"question":"Un segnale di ADHD è:","options":["Difficoltà a mantenere l'attenzione","Buona concentrazione","Ottima memoria a lungo termine","Assenza di impulsività"],"correct":0,"topic":"Disturbi neurosviluppo e diagnosi"},
+            {"question":"I disturbi specifici dell'apprendimento riguardano:","options":["Lettura, scrittura e calcolo","Alimentazione","Movimento","Visione"],"correct":0,"topic":"Disturbi neurosviluppo e diagnosi"},
+            {"question":"La dislessia è:","options":["Difficoltà specifica nella lettura","Difficoltà motoria","Problema respiratorio","Disturbo alimentare"],"correct":0,"topic":"Disturbi neurosviluppo e diagnosi"},
+            {"question":"La disortografia riguarda:","options":["Errori ortografici persistenti","Problemi motori","Disturbi respiratori","Difficoltà alimentari"],"correct":0,"topic":"Disturbi neurosviluppo e diagnosi"},
+            {"question":"La disgrafia è:","options":["Difficoltà nella scrittura a mano","Difficoltà di lettura","Problema linguistico","Disturbo respiratorio"],"correct":0,"topic":"Disturbi neurosviluppo e diagnosi"},
+            {"question":"La discalculia è:","options":["Difficoltà specifica nel calcolo","Disturbo motorio","Deficit visivo","Problema alimentare"],"correct":0,"topic":"Disturbi neurosviluppo e diagnosi"},
+            {"question":"La valutazione dei DSA prevede:","options":["Test standardizzati e osservazioni","Solo risonanza magnetica","Esclusivamente colloquio","Analisi del sangue"],"correct":0,"topic":"Disturbi neurosviluppo e diagnosi"},
+            {"question":"La disabilità intellettiva comporta:","options":["Deficit cognitivi e adattivi","Problemi visivi","Difficoltà respiratorie","Disturbi motori temporanei"],"correct":0,"topic":"Disturbi neurosviluppo e diagnosi"},
+            {"question":"Un criterio diagnostico della disabilità intellettiva è:","options":["Limitazioni nel funzionamento adattivo","Ottime capacità cognitive","Nessuna difficoltà sociale","Abilità superiori"],"correct":0,"topic":"Disturbi neurosviluppo e diagnosi"},
+            {"question":"Il funzionamento adattivo riguarda:","options":["Capacità di affrontare richieste quotidiane","Solo capacità motorie","Esclusivamente linguaggio","Solo abilità scolastiche"],"correct":0,"topic":"Disturbi neurosviluppo e diagnosi"},
+            {"question":"La gravità della disabilità intellettiva si definisce:","options":["In base al funzionamento adattivo","Solo dal QI","Solo dall'età","Dalla statura"],"correct":0,"topic":"Disturbi neurosviluppo e diagnosi"},
+            {"question":"Un disturbo della comunicazione è:","options":["Disturbo del linguaggio","Malattia respiratoria","Disturbo visivo","Problema motorio"],"correct":0,"topic":"Disturbi neurosviluppo e diagnosi"},
+            {"question":"I disturbi del linguaggio comprendono:","options":["Deficit nell'espressione e comprensione verbale","Problemi cardiaci","Disturbi respiratori","Malattie renali"],"correct":0,"topic":"Disturbi neurosviluppo e diagnosi"},
+            {"question":"Il disturbo fonetico-fonologico riguarda:","options":["Produzione dei suoni","Movimento motorio","Attenzione","Memoria"],"correct":0,"topic":"Disturbi neurosviluppo e diagnosi"},
+            {"question":"I disturbi della fluenza includono:","options":["Balbuzie","Problemi respiratori","Deficit motori","Difficoltà visive"],"correct":0,"topic":"Disturbi neurosviluppo e diagnosi"},
+            {"question":"La balbuzie è caratterizzata da:","options":["Interruzioni e ripetizioni nel linguaggio","Fluenza regolare","Linguaggio privo di errori","Articolazione perfetta"],"correct":0,"topic":"Disturbi neurosviluppo e diagnosi"},
+            {"question":"I disturbi della comunicazione sociale riguardano:","options":["Uso del linguaggio in contesti sociali","Capacità motorie","Attività respiratorie","Abilità aritmetiche"],"correct":0,"topic":"Disturbi neurosviluppo e diagnosi"},
+            {"question":"I disturbi motori del neurosviluppo comprendono:","options":["Disturbo della coordinazione motoria","Malattie infettive","Problemi digestivi","Disturbi renali"],"correct":0,"topic":"Disturbi neurosviluppo e diagnosi"},
+            {"question":"Il disturbo della coordinazione motoria si manifesta con:","options":["Goffaggine e lentezza nei movimenti","Abilità motorie elevate","Capacità atletiche superiori","Nessun problema"],"correct":0,"topic":"Disturbi neurosviluppo e diagnosi"},
+            {"question":"I tic motori sono:","options":["Movimenti improvvisi e ripetitivi","Atti volontari programmati","Espressioni emotive controllate","Movimenti coordinati"],"correct":0,"topic":"Disturbi neurosviluppo e diagnosi"},
+            {"question":"I tic vocali si esprimono con:","options":["Suoni e parole emessi involontariamente","Linguaggio fluente","Articolazione corretta","Silenzio assoluto"],"correct":0,"topic":"Disturbi neurosviluppo e diagnosi"},
+            {"question":"La sindrome di Tourette presenta:","options":["Tic motori e vocali","Solo difficoltà respiratorie","Disturbi gastrointestinali","Problemi visivi"],"correct":0,"topic":"Disturbi neurosviluppo e diagnosi"},
+            {"question":"I disturbi del sonno in età evolutiva possono:","options":["Interferire con lo sviluppo cognitivo","Non avere alcun effetto","Migliorare l'attenzione","Favorire l'apprendimento"],"correct":0,"topic":"Disturbi neurosviluppo e diagnosi"},
+            {"question":"La valutazione neuropsichiatrica infantile include:","options":["Raccolta anamnestica e osservazione","Solo analisi di laboratorio","Esclusivamente test genetici","Solo radiografie"],"correct":0,"topic":"Disturbi neurosviluppo e diagnosi"},
+            {"question":"L'anamnesi raccoglie:","options":["Storia clinica e familiare","Dati geografici","Informazioni economiche","Dettagli politici"],"correct":0,"topic":"Disturbi neurosviluppo e diagnosi"},
+            {"question":"L'osservazione diretta permette di:","options":["Valutare comportamento e interazione","Calcolare il QI","Misurare la pressione","Stimare la statura"],"correct":0,"topic":"Disturbi neurosviluppo e diagnosi"},
+            {"question":"La valutazione psicometrica utilizza:","options":["Test standardizzati","Interviste politiche","Questionari economiche","Solo osservazioni casuali"],"correct":0,"topic":"Disturbi neurosviluppo e diagnosi"},
+            {"question":"I questionari e scale di valutazione servono a:","options":["Rilevare comportamenti e abilità","Misurare parametri medici","Contare battiti cardiaci","Valutare capacità atletiche"],"correct":0,"topic":"Disturbi neurosviluppo e diagnosi"},
+            {"question":"La diagnosi differenziale è necessaria per:","options":["Distinguere disturbi con sintomi simili","Eliminare la valutazione","Escludere la famiglia","Non fare test"],"correct":0,"topic":"Disturbi neurosviluppo e diagnosi"},
+            {"question":"L'intervento precoce è importante perché:","options":["Migliora la prognosi","Non influisce sullo sviluppo","Peggiora i disturbi","È irrilevante"],"correct":0,"topic":"Disturbi neurosviluppo e diagnosi"},
+            {"question":"La collaborazione con la scuola serve a:","options":["Integrare osservazioni educative nella diagnosi","Escludere il contesto","Evitare valutazioni globali","Limitare il supporto"],"correct":0,"topic":"Disturbi neurosviluppo e diagnosi"},
+
+            // 3. Disabilità intellettiva, disturbi del linguaggio e motori (81-120)
+            {"question":"La disabilità intellettiva si manifesta con:","options":["Deficit cognitivi e adattivi","Elevata creatività","Abilità cognitive superiori","Nessuna difficoltà sociale"],"correct":0,"topic":"Disabilità intellettiva e disturbi"},
+            {"question":"La gravità della disabilità intellettiva dipende da:","options":["Funzionamento adattivo","Solo livello motorio","Età anagrafica","Presenza di tic"],"correct":0,"topic":"Disabilità intellettiva e disturbi"},
+            {"question":"Le aree del funzionamento adattivo sono:","options":["Concettuale, sociale, pratica","Visiva, uditiva, motoria","Respiratoria, digestiva, cardiaca","Economica, politica, culturale"],"correct":0,"topic":"Disabilità intellettiva e disturbi"},
+            {"question":"Un esempio di funzionamento concettuale è:","options":["Capacità di linguaggio e scrittura","Forza fisica","Resistenza allo sforzo","Abilità atletiche"],"correct":0,"topic":"Disabilità intellettiva e disturbi"},
+            {"question":"Un'abilità di funzionamento sociale riguarda:","options":["Interazioni con coetanei","Capacità visive","Riflessi motori","Competenze sportive"],"correct":0,"topic":"Disabilità intellettiva e disturbi"},
+            {"question":"Un'abilità di funzionamento pratico è:","options":["Cura personale","Scrittura creativa","Calcolo matematico complesso","Memoria autobiografica"],"correct":0,"topic":"Disabilità intellettiva e disturbi"},
+            {"question":"La diagnosi di disabilità intellettiva richiede:","options":["Valutazione clinica e psicometrica","Solo test visivi","Solo esami del sangue","Solo risonanza magnetica"],"correct":0,"topic":"Disabilità intellettiva e disturbi"},
+            {"question":"Nei disturbi del linguaggio vi è:","options":["Deficit nell'espressione o comprensione","Eccessiva forza muscolare","Problema respiratorio","Disturbo digestivo"],"correct":0,"topic":"Disabilità intellettiva e disturbi"},
+            {"question":"Il disturbo fonetico-fonologico colpisce:","options":["Produzione dei suoni","Movimento motorio","Capacità visive","Abilità atletiche"],"correct":0,"topic":"Disabilità intellettiva e disturbi"},
+            {"question":"La balbuzie è un disturbo della:","options":["Fluenza del linguaggio","Memoria a lungo termine","Visione","Motricità fine"],"correct":0,"topic":"Disabilità intellettiva e disturbi"},
+            {"question":"La balbuzie si caratterizza per:","options":["Ripetizioni e blocchi nel parlato","Linguaggio fluente","Espressione perfetta","Parlato rapido e continuo"],"correct":0,"topic":"Disabilità intellettiva e disturbi"},
+            {"question":"I disturbi della comunicazione sociale implicano:","options":["Uso inadeguato del linguaggio nei contesti","Deficit motorio","Problemi respiratori","Difficoltà digestive"],"correct":0,"topic":"Disabilità intellettiva e disturbi"},
+            {"question":"Un segno di disturbo fonetico-fonologico è:","options":["Articolazione scorretta dei suoni","Ottima comprensione","Assenza di errori","Fluenza perfetta"],"correct":0,"topic":"Disabilità intellettiva e disturbi"},
+            {"question":"Nei disturbi del linguaggio la comprensione può essere:","options":["Limitata","Sempre normale","Sempre superiore","Non influenzata"],"correct":0,"topic":"Disabilità intellettiva e disturbi"},
+            {"question":"Il disturbo della coordinazione motoria si osserva in:","options":["Goffaggine e lentezza nei movimenti","Abilità motorie elevate","Coordinazione perfetta","Forza superiore"],"correct":0,"topic":"Disabilità intellettiva e disturbi"},
+            {"question":"La sindrome di Tourette include:","options":["Tic motori e vocali","Difficoltà visive","Problemi respiratori","Disturbi cardiaci"],"correct":0,"topic":"Disabilità intellettiva e disturbi"},
+            {"question":"I tic motori sono:","options":["Movimenti improvvisi e ripetitivi","Movimenti volontari","Azioni programmate","Reazioni coscienti"],"correct":0,"topic":"Disabilità intellettiva e disturbi"},
+            {"question":"I tic vocali si manifestano con:","options":["Emissione involontaria di suoni","Pronuncia perfetta","Parlato continuo","Espressione fluida"],"correct":0,"topic":"Disabilità intellettiva e disturbi"},
+            {"question":"I disturbi motori comprendono:","options":["Disturbi della coordinazione","Disturbi respiratori","Disturbi digestivi","Malattie renali"],"correct":0,"topic":"Disabilità intellettiva e disturbi"},
+            {"question":"Un bambino con disturbo della coordinazione motoria può avere difficoltà in:","options":["Attività quotidiane come vestirsi","Visione notturna","Comprensione verbale","Capacità mnemoniche"],"correct":0,"topic":"Disabilità intellettiva e disturbi"},
+            {"question":"I disturbi del linguaggio si distinguono dai DSA perché:","options":["Non riguardano abilità scolastiche specifiche","Sono uguali ai DSA","Hanno la stessa origine","Sono sempre permanenti"],"correct":0,"topic":"Disabilità intellettiva e disturbi"},
+            {"question":"Nei disturbi della fluenza il linguaggio è:","options":["Interrotto da ripetizioni e pause","Fluido","Perfettamente scorrevole","Sempre normale"],"correct":0,"topic":"Disabilità intellettiva e disturbi"},
+            {"question":"La valutazione dei disturbi del linguaggio prevede:","options":["Osservazioni e test specifici","Solo analisi del sangue","Solo risonanza magnetica","Esami visivi"],"correct":0,"topic":"Disabilità intellettiva e disturbi"},
+            {"question":"Un disturbo motorio si riflette su:","options":["Coordinazione dei movimenti","Memoria a lungo termine","Comprensione linguistica","Visione periferica"],"correct":0,"topic":"Disabilità intellettiva e disturbi"},
+            {"question":"La disabilità intellettiva è distinta dai DSA perché:","options":["Coinvolge il funzionamento globale","È limitata alla lettura","È circoscritta al calcolo","Riguarda solo la scrittura"],"correct":0,"topic":"Disabilità intellettiva e disturbi"},
+            {"question":"Nei disturbi della comunicazione sociale manca:","options":["Uso appropriato di gesti e contesto","Capacità respiratoria","Visione normale","Capacità motoria"],"correct":0,"topic":"Disabilità intellettiva e disturbi"},
+            {"question":"La balbuzie può influenzare:","options":["Le interazioni sociali","La vista","L'udito","La memoria visiva"],"correct":0,"topic":"Disabilità intellettiva e disturbi"},
+            {"question":"Il disturbo fonologico compromette:","options":["La correttezza dei suoni linguistici","La coordinazione muscolare","La capacità atletica","La digestione"],"correct":0,"topic":"Disabilità intellettiva e disturbi"},
+            {"question":"I disturbi del linguaggio sono diagnosticati:","options":["In età evolutiva","Solo in età adulta","Solo nella vecchiaia","Dopo traumi"],"correct":0,"topic":"Disabilità intellettiva e disturbi"},
+            {"question":"Il disturbo della coordinazione motoria può causare difficoltà:","options":["Nelle attività scolastiche","Nella vista","Nell'udito","Nella memoria semantica"],"correct":0,"topic":"Disabilità intellettiva e disturbi"},
+            {"question":"I tic si distinguono per essere:","options":["Involontari","Volontari","Programmati","Controllati"],"correct":0,"topic":"Disabilità intellettiva e disturbi"},
+            {"question":"I disturbi del linguaggio includono problemi:","options":["Nella produzione o comprensione","Nella forza muscolare","Nell'equilibrio","Nella vista"],"correct":0,"topic":"Disabilità intellettiva e disturbi"},
+            {"question":"La sindrome di Tourette è un disturbo:","options":["Del neurosviluppo","Respiratorio","Cardiaco","Digestivo"],"correct":0,"topic":"Disabilità intellettiva e disturbi"},
+            {"question":"Un bambino con balbuzie può:","options":["Ripetere sillabe involontariamente","Parlare senza interruzioni","Esprimersi fluentemente","Usare linguaggio perfetto"],"correct":0,"topic":"Disabilità intellettiva e disturbi"},
+            {"question":"I disturbi del linguaggio possono influire su:","options":["Apprendimento scolastico","Capacità visive","Resistenza fisica","Funzioni respiratorie"],"correct":0,"topic":"Disabilità intellettiva e disturbi"},
+            {"question":"La diagnosi di disabilità intellettiva richiede:","options":["Evidenza di deficit adattivi","Assenza di sintomi","Valutazione esclusiva del QI","Solo test motori"],"correct":0,"topic":"Disabilità intellettiva e disturbi"},
+            {"question":"Le difficoltà pratiche nella disabilità intellettiva includono:","options":["Gestione del denaro","Forza muscolare","Vista acuta","Resistenza fisica"],"correct":0,"topic":"Disabilità intellettiva e disturbi"},
+            {"question":"Un esempio di deficit sociale nella disabilità intellettiva è:","options":["Difficoltà a fare amicizie","Vista ridotta","Capacità motorie ridotte","Udito basso"],"correct":0,"topic":"Disabilità intellettiva e disturbi"},
+            {"question":"Nei disturbi della comunicazione sociale vi è compromessa:","options":["Capacità di rispettare turni conversazionali","Capacità respiratoria","Forza fisica","Memoria visiva"],"correct":0,"topic":"Disabilità intellettiva e disturbi"},
+            {"question":"Un disturbo della coordinazione motoria può limitare:","options":["Attività quotidiane come scrivere","Capacità visive","Abilità musicali innate","Funzioni respiratorie"],"correct":0,"topic":"Disabilità intellettiva e disturbi"},
+
+            // 4. ADHD, disturbi dell'apprendimento e del comportamento (121-160)
+            {"question":"L'ADHD è caratterizzato da:","options":["Disattenzione, iperattività, impulsività","Problemi respiratori","Disturbi visivi","Deficit uditivi"],"correct":0,"topic":"ADHD e disturbi comportamento"},
+            {"question":"Un segnale di ADHD è:","options":["Difficoltà a mantenere la concentrazione","Ottima memoria a lungo termine","Capacità di attenzione illimitata","Assenza di impulsività"],"correct":0,"topic":"ADHD e disturbi comportamento"},
+            {"question":"Un bambino con ADHD può:","options":["Agire senza riflettere","Essere sempre calmo","Mostrare iperconcentrazione costante","Parlare poco"],"correct":0,"topic":"ADHD e disturbi comportamento"},
+            {"question":"L'iperattività si manifesta con:","options":["Eccessiva attività motoria","Immobilità prolungata","Lentezza motoria","Mancanza di gesti"],"correct":0,"topic":"ADHD e disturbi comportamento"},
+            {"question":"L'impulsività comporta:","options":["Agire senza considerare le conseguenze","Pianificazione accurata","Eccessiva prudenza","Silenzio costante"],"correct":0,"topic":"ADHD e disturbi comportamento"},
+            {"question":"La diagnosi di ADHD richiede:","options":["Osservazione in più contesti","Solo esame del sangue","Solo valutazione motoria","Una singola prova scritta"],"correct":0,"topic":"ADHD e disturbi comportamento"},
+            {"question":"Un criterio per l'ADHD è:","options":["Persistenza dei sintomi in età evolutiva","Comparsa solo in età adulta","Assenza di difficoltà a scuola","Sintomi esclusivamente notturni"],"correct":0,"topic":"ADHD e disturbi comportamento"},
+            {"question":"I disturbi specifici dell'apprendimento (DSA) riguardano:","options":["Lettura, scrittura, calcolo","Attività sportive","Movimento","Alimentazione"],"correct":0,"topic":"ADHD e disturbi comportamento"},
+            {"question":"La dislessia è:","options":["Difficoltà specifica nella lettura","Problema respiratorio","Deficit motorio","Disturbo visivo"],"correct":0,"topic":"ADHD e disturbi comportamento"},
+            {"question":"La disortografia implica:","options":["Errori ortografici ricorrenti","Abilità superiori","Ottima scrittura","Nessuna difficoltà"],"correct":0,"topic":"ADHD e disturbi comportamento"},
+            {"question":"La disgrafia riguarda:","options":["Abilità grafo-motorie","Capacità visive","Difficoltà respiratorie","Abilità musicali"],"correct":0,"topic":"ADHD e disturbi comportamento"},
+            {"question":"La discalculia si manifesta con:","options":["Difficoltà nelle abilità numeriche","Ottima memoria matematica","Capacità logiche superiori","Nessuna difficoltà nel calcolo"],"correct":0,"topic":"ADHD e disturbi comportamento"},
+            {"question":"La diagnosi dei DSA prevede:","options":["Test standardizzati e osservazioni","Solo colloquio informale","Solo radiografia","Esame del sangue"],"correct":0,"topic":"ADHD e disturbi comportamento"},
+            {"question":"I DSA si distinguono perché:","options":["Non dipendono da deficit intellettivo","Sono uguali alla disabilità intellettiva","Coincidono con i disturbi motori","Dipendono solo da deficit sensoriali"],"correct":0,"topic":"ADHD e disturbi comportamento"},
+            {"question":"Un bambino con dislessia può avere:","options":["Lentezza nella lettura","Abilità visive superiori","Nessuna difficoltà","Espressione perfetta"],"correct":0,"topic":"ADHD e disturbi comportamento"},
+            {"question":"La disgrafia può comportare:","options":["Calligrafia poco leggibile","Scrittura chiara","Ottima ortografia","Produzione fluida"],"correct":0,"topic":"ADHD e disturbi comportamento"},
+            {"question":"La discalculia può portare a:","options":["Errori nei calcoli","Abilità matematiche eccellenti","Ottimo ragionamento numerico","Nessuna difficoltà"],"correct":0,"topic":"ADHD e disturbi comportamento"},
+            {"question":"I DSA sono diagnosticati:","options":["In età scolare","Solo in età adulta","Sempre alla nascita","Mai"],"correct":0,"topic":"ADHD e disturbi comportamento"},
+            {"question":"La valutazione dei DSA coinvolge:","options":["Psicologi e neuropsichiatri","Solo insegnanti","Solo genitori","Solo logopedisti"],"correct":0,"topic":"ADHD e disturbi comportamento"},
+            {"question":"Nei DSA la scrittura può essere:","options":["Lenta e con errori","Perfetta","Senza sbagli","Sempre ordinata"],"correct":0,"topic":"ADHD e disturbi comportamento"},
+            {"question":"La lettura nei bambini con dislessia è spesso:","options":["Faticosa","Fluida","Veloce","Senza errori"],"correct":0,"topic":"ADHD e disturbi comportamento"},
+            {"question":"Un disturbo del comportamento si caratterizza per:","options":["Violazione persistente delle regole","Rispetto delle regole","Comportamento sempre corretto","Osservanza assoluta"],"correct":0,"topic":"ADHD e disturbi comportamento"},
+            {"question":"I disturbi del comportamento includono:","options":["Aggressività e oppositività","Collaborazione costante","Rispetto totale delle regole","Obbedienza assoluta"],"correct":0,"topic":"ADHD e disturbi comportamento"},
+            {"question":"Il disturbo oppositivo-provocatorio si manifesta con:","options":["Atteggiamenti sfidanti e ostili","Collaborazione continua","Obbedienza","Comportamento passivo"],"correct":0,"topic":"ADHD e disturbi comportamento"},
+            {"question":"Un segnale di disturbo oppositivo-provocatorio è:","options":["Litigi frequenti con adulti","Ubbidienza totale","Rispetto costante delle regole","Calma assoluta"],"correct":0,"topic":"ADHD e disturbi comportamento"},
+            {"question":"I disturbi della condotta comprendono:","options":["Comportamenti aggressivi e violazioni gravi","Cooperazione","Rispetto per la legge","Altruismo"],"correct":0,"topic":"ADHD e disturbi comportamento"},
+            {"question":"Nei disturbi della condotta si osservano:","options":["Azioni dannose verso persone o cose","Solo rispetto delle norme","Nessuna aggressività","Solo empatia"],"correct":0,"topic":"ADHD e disturbi comportamento"},
+            {"question":"Un comportamento aggressivo persistente può indicare:","options":["Disturbo della condotta","Alta socialità","Equilibrio emotivo","Nessun problema"],"correct":0,"topic":"ADHD e disturbi comportamento"},
+            {"question":"La diagnosi dei disturbi del comportamento si basa su:","options":["Osservazioni cliniche e criteri specifici","Solo test visivi","Solo analisi del sangue","Misurazioni fisiche"],"correct":0,"topic":"ADHD e disturbi comportamento"},
+            {"question":"Nei disturbi del comportamento i sintomi devono essere:","options":["Persistenti e significativi","Episodici e rari","Sempre lievi","Irrilevanti"],"correct":0,"topic":"ADHD e disturbi comportamento"},
+            {"question":"L'ADHD può coesistere con:","options":["Disturbi del comportamento","Assenza di difficoltà","Abilità motorie superiori","Nessun problema"],"correct":0,"topic":"ADHD e disturbi comportamento"},
+            {"question":"Nei disturbi del comportamento è compromesso:","options":["Funzionamento sociale","Capacità visiva","Abilità motorie","Capacità uditive"],"correct":0,"topic":"ADHD e disturbi comportamento"},
+            {"question":"La valutazione dei disturbi del comportamento include:","options":["Anamnesi, colloqui, osservazione","Solo risonanza magnetica","Esclusivamente esami del sangue","Solo questionari online"],"correct":0,"topic":"ADHD e disturbi comportamento"},
+            {"question":"La diagnosi precoce dei disturbi del comportamento serve a:","options":["Migliorare gli interventi","Non cambia nulla","Peggiora la prognosi","È inutile"],"correct":0,"topic":"ADHD e disturbi comportamento"},
+            {"question":"I disturbi del comportamento possono influire su:","options":["Apprendimento scolastico","Visione","Udito","Crescita fisica"],"correct":0,"topic":"ADHD e disturbi comportamento"},
+            {"question":"Nei disturbi della condotta vi è spesso:","options":["Mancanza di empatia","Collaborazione","Compassione","Rispetto delle regole"],"correct":0,"topic":"ADHD e disturbi comportamento"},
+            {"question":"Un esempio di comportamento oppositivo è:","options":["Rifiutare costantemente le richieste","Obbedire","Collaborare","Partecipare attivamente"],"correct":0,"topic":"ADHD e disturbi comportamento"},
+            {"question":"Un comportamento tipico dei disturbi della condotta è:","options":["Rubare o distruggere oggetti","Aiutare gli altri","Rispettare la legge","Mostrare altruismo"],"correct":0,"topic":"ADHD e disturbi comportamento"},
+            {"question":"I disturbi del comportamento compromettono:","options":["Relazioni sociali","Funzioni sensoriali","Capacità motorie","Vista"],"correct":0,"topic":"ADHD e disturbi comportamento"},
+            {"question":"Nei disturbi del comportamento la gestione richiede:","options":["Interventi educativi e clinici","Solo farmaci","Nessun supporto","Isolamento"],"correct":0,"topic":"ADHD e disturbi comportamento"},
+
+            // 5. Interventi terapeutici, scuola e famiglia (161-200)
+            {"question":"Un principio fondamentale degli interventi in neuropsichiatria infantile è:","options":["Precocità dell'intervento","Attesa passiva","Solo osservazione","Mancanza di strategie"],"correct":0,"topic":"Interventi terapeutici"},
+            {"question":"Gli interventi devono essere:","options":["Personalizzati e multidisciplinari","Uguali per tutti","Standardizzati senza adattamenti","Solo farmacologici"],"correct":0,"topic":"Interventi terapeutici"},
+            {"question":"Una componente importante degli interventi è:","options":["Coinvolgimento della famiglia","Esclusione dei genitori","Solo lavoro clinico","Nessuna collaborazione"],"correct":0,"topic":"Interventi terapeutici"},
+            {"question":"La scuola ha un ruolo:","options":["Centrale nel sostegno allo sviluppo","Marginale","Secondario","Irrilevante"],"correct":0,"topic":"Interventi terapeutici"},
+            {"question":"I piani educativi individualizzati (PEI) servono a:","options":["Definire obiettivi personalizzati","Standardizzare i percorsi","Sostituire i docenti","Eliminare differenze"],"correct":0,"topic":"Interventi terapeutici"},
+            {"question":"Nei PEI la collaborazione è tra:","options":["Scuola, famiglia, servizi","Solo studenti","Solo docenti","Solo genitori"],"correct":0,"topic":"Interventi terapeutici"},
+            {"question":"Un intervento logopedico è utile in caso di:","options":["Disturbi del linguaggio","Problemi respiratori","Disturbi visivi","Deficit motorio"],"correct":0,"topic":"Interventi terapeutici"},
+            {"question":"La logopedia mira a:","options":["Migliorare linguaggio e comunicazione","Aumentare forza fisica","Sviluppare abilità sportive","Correggere la vista"],"correct":0,"topic":"Interventi terapeutici"},
+            {"question":"La psicomotricità lavora su:","options":["Relazione tra movimento e sviluppo","Esclusivamente forza muscolare","Solo abilità visive","Alimentazione"],"correct":0,"topic":"Interventi terapeutici"},
+            {"question":"Un obiettivo della psicomotricità è:","options":["Sostenere l'integrazione corpo-mente","Rafforzare solo la muscolatura","Escludere emozioni","Sviluppare abilità aritmetiche"],"correct":0,"topic":"Interventi terapeutici"},
+            {"question":"Un intervento psicologico può aiutare a:","options":["Gestire emozioni e relazioni","Solo migliorare la vista","Correggere i movimenti","Eliminare disturbi respiratori"],"correct":0,"topic":"Interventi terapeutici"},
+            {"question":"La terapia occupazionale sostiene:","options":["Autonomia nelle attività quotidiane","Capacità visive","Forza fisica","Abilità sportive"],"correct":0,"topic":"Interventi terapeutici"},
+            {"question":"La terapia farmacologica può essere indicata in:","options":["ADHD","Disturbi visivi","Disturbi respiratori","Disgrafia"],"correct":0,"topic":"Interventi terapeutici"},
+            {"question":"Un principio degli interventi terapeutici è:","options":["Multidisciplinarità","Isolamento","Assenza di collaborazione","Standardizzazione"],"correct":0,"topic":"Interventi terapeutici"},
+            {"question":"La collaborazione scuola-servizi sanitari serve a:","options":["Integrare interventi educativi e clinici","Separare le competenze","Escludere i docenti","Evitare piani comuni"],"correct":0,"topic":"Interventi terapeutici"},
+            {"question":"I genitori sono considerati:","options":["Parte attiva del percorso","Osservatori esterni","Figure marginali","Non coinvolti"],"correct":0,"topic":"Interventi terapeutici"},
+            {"question":"La riabilitazione linguistica si rivolge a:","options":["Bambini con disturbi della comunicazione","Disturbi visivi","Problemi respiratori","Capacità motorie"],"correct":0,"topic":"Interventi terapeutici"},
+            {"question":"La psicoterapia infantile può sostenere:","options":["Regolazione emotiva","Capacità visiva","Forza muscolare","Abilità motorie"],"correct":0,"topic":"Interventi terapeutici"},
+            {"question":"Gli interventi educativi personalizzati favoriscono:","options":["Inclusione scolastica","Isolamento","Selezione","Esclusione"],"correct":0,"topic":"Interventi terapeutici"},
+            {"question":"La formazione degli insegnanti è:","options":["Fondamentale per l'inclusione","Non necessaria","Superflua","Facoltativa"],"correct":0,"topic":"Interventi terapeutici"},
+            {"question":"Un insegnante di sostegno collabora con:","options":["Docenti curricolari","Solo con genitori","Solo con dirigenti","Nessuno"],"correct":0,"topic":"Interventi terapeutici"},
+            {"question":"La collaborazione tra insegnanti favorisce:","options":["Didattica inclusiva","Competizione interna","Isolamento","Divisione rigida"],"correct":0,"topic":"Interventi terapeutici"},
+            {"question":"Un obiettivo degli interventi scolastici è:","options":["Successo formativo","Esclusione sociale","Isolamento degli studenti","Uniformità"],"correct":0,"topic":"Interventi terapeutici"},
+            {"question":"La rete territoriale per l'infanzia comprende:","options":["Scuola, servizi, famiglie","Solo ospedali","Solo insegnanti","Solo genitori"],"correct":0,"topic":"Interventi terapeutici"},
+            {"question":"La continuità educativa è:","options":["Passaggio graduale tra ordini scolastici","Interruzione netta","Nessuna connessione","Isolamento"],"correct":0,"topic":"Interventi terapeutici"},
+            {"question":"I servizi sociali collaborano per:","options":["Benessere del minore","Attività sportive","Esclusione scolastica","Burocrazia"],"correct":0,"topic":"Interventi terapeutici"},
+            {"question":"Gli interventi precoci riducono:","options":["Rischio di aggravamento","Apprendimento","Collaborazione","Inclusione"],"correct":0,"topic":"Interventi terapeutici"},
+            {"question":"La valutazione degli interventi deve essere:","options":["Continua e verificabile","Episodica","Inesistente","Standardizzata"],"correct":0,"topic":"Interventi terapeutici"},
+            {"question":"Il ruolo del pediatra può essere:","options":["Segnalare difficoltà dello sviluppo","Solo curare malattie fisiche","Escludere la scuola","Evitare diagnosi"],"correct":0,"topic":"Interventi terapeutici"},
+            {"question":"La scuola collabora con:","options":["Famiglia e servizi sanitari","Solo con gli studenti","Solo con i docenti","Nessuno"],"correct":0,"topic":"Interventi terapeutici"},
+            {"question":"Gli interventi integrati hanno come obiettivo:","options":["Sviluppo globale del bambino","Solo crescita fisica","Solo prestazioni scolastiche","Solo abilità motorie"],"correct":0,"topic":"Interventi terapeutici"},
+            {"question":"La collaborazione scuola-famiglia è:","options":["Fondamentale per il successo","Inutile","Secondaria","Facoltativa"],"correct":0,"topic":"Interventi terapeutici"},
+            {"question":"Il logopedista lavora su:","options":["Linguaggio e comunicazione","Abilità sportive","Forza fisica","Visione"],"correct":0,"topic":"Interventi terapeutici"},
+            {"question":"Lo psicomotricista si concentra su:","options":["Relazione tra corpo e psiche","Solo abilità visive","Solo respirazione","Solo calcolo"],"correct":0,"topic":"Interventi terapeutici"},
+            {"question":"La valutazione degli interventi serve a:","options":["Misurarne l'efficacia","Bloccare i progressi","Eliminare i dati","Creare isolamento"],"correct":0,"topic":"Interventi terapeutici"},
+            {"question":"Il successo degli interventi dipende da:","options":["Collaborazione tra figure diverse","Azione isolata","Mancanza di comunicazione","Interventi casuali"],"correct":0,"topic":"Interventi terapeutici"},
+            {"question":"Un intervento psicoeducativo sostiene:","options":["Sviluppo emotivo e cognitivo","Solo vista","Solo motricità","Solo forza"],"correct":0,"topic":"Interventi terapeutici"},
+            {"question":"L'obiettivo finale della neuropsichiatria infantile è:","options":["Benessere globale del bambino","Solo abilità scolastiche","Solo forza fisica","Solo autonomia motoria"],"correct":0,"topic":"Interventi terapeutici"},
+            {"question":"L'approccio multidisciplinare integra:","options":["Diversi professionisti","Solo un clinico","Solo insegnanti","Solo famiglia"],"correct":0,"topic":"Interventi terapeutici"},
+            {"question":"La presa in carico globale comprende:","options":["Aspetti clinici, educativi e sociali","Solo scolastici","Solo fisici","Solo economici"],"correct":0,"topic":"Interventi terapeutici"}
+        ];
+
+        // Funzione per mescolare un array (Fisher-Yates)
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+
+        // Seleziona domande casuali (gestisce anche il caso count > pool.length)
+        function getRandomQuestions(questions, count) {
+            const pool = [...questions];
+            const desired = Math.min(count, pool.length);
+            const shuffled = shuffleArray(pool);
+            const selected = shuffled.slice(0, desired);
+            return selected.map(q => {
+                const correctAnswer = q.options[q.correct];
+                const shuffledOptions = shuffleArray(q.options);
+                const newCorrectIndex = shuffledOptions.indexOf(correctAnswer);
+                return { ...q, options: shuffledOptions, correct: newCorrectIndex };
+            });
+        }
+
+        // Render del quiz
+        function renderQuiz(questions) {
+            const quizContainer = document.getElementById('quiz-container');
+            quizContainer.innerHTML = '';
+            questions.forEach((question, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question';
+                questionDiv.innerHTML = `
+                    <div class="question-number">Domanda ${index + 1}</div>
+                    <div class="topic">Argomento: ${question.topic}</div>
+                    <p>${question.question}</p>
+                    <div class="options">
+                        ${question.options.map((option, i) => `
+                            <div class="option">
+                                <input type="radio" id="q${index}_o${i}" name="q${index}" value="${i}">
+                                <label for="q${index}_o${i}">${option}</label>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                quizContainer.appendChild(questionDiv);
+            });
+            document.getElementById('current-topic').textContent = `Argomento: ${questions[0].topic}`;
+        }
+
+        // Calcolo punteggio e visualizzazione risultati
+        function calculateScore(questions) {
+            let score = 0;
+            const resultsContainer = document.getElementById('results');
+            resultsContainer.innerHTML = '<h2>Risultati</h2>';
+            resultsContainer.style.display = 'block';
+            questions.forEach((question, index) => {
+                const selectedOption = document.querySelector(`input[name="q${index}"]:checked`);
+                const userAnswer = selectedOption ? parseInt(selectedOption.value) : -1;
+                const isCorrect = userAnswer === question.correct;
+                if (isCorrect) score++;
+                const resultDiv = document.createElement('div');
+                resultDiv.className = `question-result ${isCorrect ? 'correct' : 'incorrect'}`;
+                resultDiv.innerHTML = `
+                    <p><strong>Domanda ${index + 1}:</strong> ${question.question}</p>
+                    <p>La tua risposta: ${userAnswer !== -1 ? question.options[userAnswer] : 'Nessuna risposta'}</p>
+                    <p class="correct">Risposta corretta: ${question.options[question.correct]}</p>
+                    <div class="topic">Argomento: ${question.topic}</div>
+                `;
+                resultsContainer.appendChild(resultDiv);
+            });
+
+            const scoreDiv = document.createElement('div');
+            scoreDiv.className = 'score';
+            scoreDiv.innerHTML = `Hai totalizzato ${score} punti su ${questions.length}`;
+            resultsContainer.prepend(scoreDiv);
+
+            const retryDiv = document.createElement('div');
+            retryDiv.className = 'retry-btn';
+            retryDiv.innerHTML = '<button onclick="location.reload()">Ripeti il Quiz con altre 15 domande</button>';
+            resultsContainer.appendChild(retryDiv);
+
+            resultsContainer.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Inizializzazione
+        document.addEventListener('DOMContentLoaded', function() {
+            const selectedQuestions = getRandomQuestions(questionsPool, 15);
+            renderQuiz(selectedQuestions);
+            document.getElementById('total').textContent = '15';
+            document.getElementById('submit-btn').addEventListener('click', function() {
+                calculateScore(selectedQuestions);
+            });
+
+            // osservatore per aggiornare topic e progresso
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const topic = entry.target.querySelector('.topic').textContent.replace('Argomento: ', '');
+                        document.getElementById('current-topic').textContent = `Argomento: ${topic}`;
+                        const questionNumber = entry.target.querySelector('.question-number').textContent.replace('Domanda ', '');
+                        document.getElementById('current').textContent = questionNumber;
+                    }
+                });
+            }, { threshold: 0.6 });
+
+            // osserva le domande create
+            const questions = document.querySelectorAll('.question');
+            questions.forEach(q => observer.observe(q));
+        });
+    </script>
+</body>
+</html>
