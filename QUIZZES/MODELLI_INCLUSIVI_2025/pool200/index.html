@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz di Modelli Inclusivi</title>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            line-height: 1.6; 
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%); 
+            color: #333; 
+            min-height: 100vh; 
+            padding: 20px; 
+            margin: 0;
+        }
+        .container { 
+            max-width: 900px; 
+            margin: 0 auto; 
+            background-color: white; 
+            padding: 30px; 
+            border-radius: 15px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15); 
+        }
+        header { 
+            text-align: center; 
+            margin-bottom: 30px; 
+        }
+        h1 { 
+            color: #2c3e50; 
+            margin-bottom: 10px; 
+            font-size: 2.2rem; 
+        }
+        .description { 
+            color: #7f8c8d; 
+            margin-bottom: 20px; 
+        }
+        .stats { 
+            display: flex; 
+            justify-content: space-between; 
+            margin-bottom: 20px; 
+            background: #f8f9fa; 
+            padding: 15px; 
+            border-radius: 10px; 
+            font-weight: bold; 
+        }
+        .question { 
+            margin-bottom: 25px; 
+            padding: 20px; 
+            border: 1px solid #e0e0e0; 
+            border-radius: 10px; 
+            background: #f8f9fa; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05); 
+        }
+        .question-number { 
+            font-weight: bold; 
+            color: #3498db; 
+            margin-bottom: 10px; 
+            font-size: 1.1rem; 
+        }
+        .options { 
+            margin-left: 10px; 
+        }
+        .option { 
+            margin: 12px 0; 
+            display: flex; 
+            align-items: flex-start; 
+        }
+        .option input { 
+            margin-top: 5px; 
+            margin-right: 12px; 
+            cursor: pointer; 
+        }
+        .option label { 
+            cursor: pointer; 
+            flex: 1; 
+        }
+        button { 
+            display: block; 
+            margin: 30px auto; 
+            padding: 14px 35px; 
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%); 
+            color: white; 
+            border: none; 
+            border-radius: 50px; 
+            cursor: pointer; 
+            font-size: 1.1rem; 
+            font-weight: bold; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2); 
+            transition: all .3s ease; 
+        }
+        button:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 6px 20px rgba(0,0,0,0.25); 
+        }
+        .results { 
+            margin-top: 30px; 
+            padding: 25px; 
+            border: 1px solid #e0e0e0; 
+            border-radius: 10px; 
+            background: #e7f3fe; 
+            display: none; 
+        }
+        .results h2 { 
+            text-align: center; 
+            color: #2c3e50; 
+            margin-bottom: 20px; 
+        }
+        .question-result { 
+            margin-bottom: 20px; 
+            padding: 15px; 
+            border-radius: 8px; 
+            background: white; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05); 
+        }
+        .correct { 
+            color: #27ae60; 
+            font-weight: bold; 
+        }
+        .incorrect { 
+            color: #e74c3c; 
+        }
+        .score { 
+            font-size: 1.4rem; 
+            font-weight: bold; 
+            text-align: center; 
+            margin: 25px 0; 
+            color: #2c3e50; 
+        }
+        .topic { 
+            font-size: 0.9rem; 
+            color: #7f8c8d; 
+            font-style: italic; 
+            margin-top: 5px; 
+        }
+        .retry-btn { 
+            text-align: right; 
+            margin-top: 20px; 
+        }
+        .retry-btn button { 
+            margin: 0; 
+            padding: 10px 25px; 
+            font-size: 1rem; 
+        }
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Quiz di Modelli Inclusivi</h1>
+            <p class="description">15 domande estratte casualmente da un pool di 200</p>
+        </header>
+
+        <div class="stats">
+            <div id="current-topic">Argomento: -</div>
+            <div id="progress">Domanda: <span id="current">1</span> di <span id="total">15</span></div>
+        </div>
+
+        <div id="quiz-container"></div>
+        <button id="submit-btn">Invia risposte</button>
+
+        <div id="results" class="results"></div>
+
+        <footer>
+            <p>Quiz preparato sui modelli inclusivi</p>
+        </footer>
+    </div>
+
+    <script>
+        // Pool di 200 domande sui modelli inclusivi
+        const questionsPool = [
+            // 1. Fondamenti e principi dell'inclusione (40 domande)
+            {"question":"L'inclusione scolastica si basa sull'idea che:","options":["Tutti gli studenti abbiano diritto a partecipare pienamente","Solo gli studenti con alto rendimento vadano valorizzati","Gli studenti con disabilità siano separati","L'apprendimento sia esclusivo"],"correct":0,"topic":"Fondamenti inclusione"},
+            {"question":"Il termine 'integrazione' si distingue da 'inclusione' perché:","options":["L'inclusione mira a trasformare l'intero sistema","L'integrazione si concentra sul rendimento","L'integrazione ignora le differenze","L'inclusione esclude la società"],"correct":0,"topic":"Fondamenti inclusione"},
+            {"question":"Un principio cardine dell'inclusione è:","options":["Valorizzare la diversità come risorsa","Eliminare le differenze","Separare per livelli","Premiare solo i migliori"],"correct":0,"topic":"Fondamenti inclusione"},
+            {"question":"L'approccio inclusivo considera la disabilità come:","options":["Un'interazione tra individuo e contesto","Un problema solo medico","Una colpa personale","Una mancanza definitiva"],"correct":0,"topic":"Fondamenti inclusione"},
+            {"question":"Secondo l'approccio inclusivo, la scuola deve:","options":["Adattarsi agli studenti","Selezionare rigidamente","Escludere chi non raggiunge obiettivi","Ignorare i bisogni"],"correct":0,"topic":"Fondamenti inclusione"},
+            {"question":"L'inclusione scolastica in Italia ha avuto grande impulso con:","options":["La legge 517/1977","La riforma Gentile","La Costituzione del 1861","La legge Casati"],"correct":0,"topic":"Fondamenti inclusione"},
+            {"question":"La legge 104/1992 sancisce:","options":["I diritti delle persone con disabilità","L'abolizione delle scuole speciali","Solo criteri di valutazione","La centralità del voto"],"correct":0,"topic":"Fondamenti inclusione"},
+            {"question":"Un concetto chiave dell'inclusione è:","options":["Pari opportunità","Separazione","Meritocrazia assoluta","Isolamento"],"correct":0,"topic":"Fondamenti inclusione"},
+            {"question":"Il modello inclusivo supera:","options":["Il modello medico deficitario","Il valore della comunità","La collaborazione","Il ruolo della scuola"],"correct":0,"topic":"Fondamenti inclusione"},
+            {"question":"La prospettiva inclusiva è coerente con:","options":["I diritti umani","La selezione naturale","La gerarchia sociale","La competizione esasperata"],"correct":0,"topic":"Fondamenti inclusione"},
+            {"question":"L'inclusione si differenzia dall'assimilazione perché:","options":["Rispetta le identità diverse","Impone uniformità","Cancella le differenze","Esige conformismo"],"correct":0,"topic":"Fondamenti inclusione"},
+            {"question":"Un obiettivo dell'inclusione è:","options":["Partecipazione sociale attiva","Isolamento domestico","Passività","Separazione"],"correct":0,"topic":"Fondamenti inclusione"},
+            {"question":"La diversità in un contesto inclusivo è vista come:","options":["Risorsa educativa","Ostacolo","Deficit","Problema"],"correct":0,"topic":"Fondamenti inclusione"},
+            {"question":"La scuola inclusiva promuove:","options":["Equità e giustizia sociale","Competizione estrema","Omogeneità assoluta","Esclusione"],"correct":0,"topic":"Fondamenti inclusione"},
+            {"question":"Un presupposto dell'inclusione è:","options":["Adattare l'ambiente, non solo la persona","Richiedere sacrifici agli studenti","Escludere i più fragili","Uniformare i percorsi"],"correct":0,"topic":"Fondamenti inclusione"},
+            {"question":"La prospettiva inclusiva è contraria a:","options":["Segregazione e discriminazione","Collaborazione","Partecipazione","Dialogo"],"correct":0,"topic":"Fondamenti inclusione"},
+            {"question":"L'ICF dell'OMS propone una visione:","options":["Biopsicosociale della disabilità","Solo medica","Solo psicologica","Solo sociale"],"correct":0,"topic":"Fondamenti inclusione"},
+            {"question":"Secondo l'ICF, la disabilità deriva da:","options":["Interazione tra condizione di salute e ambiente","Difetti genetici esclusivi","Errori personali","Mancanza di volontà"],"correct":0,"topic":"Fondamenti inclusione"},
+            {"question":"La classificazione ICF valorizza:","options":["Funzionamento e partecipazione","Solo deficit","Solo diagnosi","Solo menomazioni"],"correct":0,"topic":"Fondamenti inclusione"},
+            {"question":"Il modello sociale della disabilità sottolinea:","options":["Le barriere ambientali e culturali","I limiti biologici","L'eredità genetica","Le capacità innate"],"correct":0,"topic":"Fondamenti inclusione"},
+            {"question":"Un contesto inclusivo richiede:","options":["Rimozione delle barriere","Uniformità assoluta","Riduzione della partecipazione","Controllo rigido"],"correct":0,"topic":"Fondamenti inclusione"},
+            {"question":"La pedagogia inclusiva è:","options":["Orientata alla valorizzazione di ogni studente","Riservata a pochi","Escludente","Meramente disciplinare"],"correct":0,"topic":"Fondamenti inclusione"},
+            {"question":"La scuola inclusiva in Italia nasce grazie a:","options":["Chiusura delle scuole speciali","Potenziamento delle classi separate","Segregazione","Uniformità"],"correct":0,"topic":"Fondamenti inclusione"},
+            {"question":"Il principio di normalizzazione afferma che:","options":["Le persone con disabilità hanno diritto a una vita normale","Devono vivere isolate","Devono essere separate","Non possono partecipare"],"correct":0,"topic":"Fondamenti inclusione"},
+            {"question":"Un documento chiave per l'inclusione in Europa è:","options":["Dichiarazione di Salamanca 1994","Carta di Nizza","Trattato di Maastricht","Convenzione di Lisbona"],"correct":0,"topic":"Fondamenti inclusione"},
+            {"question":"La Dichiarazione di Salamanca promuove:","options":["Educazione inclusiva per tutti","Scuole speciali","Selezione degli studenti","Esclusione sociale"],"correct":0,"topic":"Fondamenti inclusione"},
+            {"question":"L'UNESCO sostiene che l'inclusione sia:","options":["Strategia per l'educazione di qualità","Una scelta facoltativa","Una moda","Una selezione"],"correct":0,"topic":"Fondamenti inclusione"},
+            {"question":"L'approccio inclusivo riconosce:","options":["Dignità di ogni persona","Superiorità di alcuni","Uniformità culturale","Disuguaglianze"],"correct":0,"topic":"Fondamenti inclusione"},
+            {"question":"Una finalità dell'inclusione è:","options":["Migliorare la coesione sociale","Separare i gruppi","Rafforzare gerarchie","Isolare gli individui"],"correct":0,"topic":"Fondamenti inclusione"},
+            {"question":"La personalizzazione didattica significa:","options":["Adattare percorsi ai bisogni individuali","Offrire programmi identici","Negare differenze","Uniformare risultati"],"correct":0,"topic":"Fondamenti inclusione"},
+            {"question":"L'inclusione si fonda anche sul principio di:","options":["Partecipazione democratica","Esclusione gerarchica","Conformismo","Uniformità"],"correct":0,"topic":"Fondamenti inclusione"},
+            {"question":"Un ostacolo all'inclusione è:","options":["Pregiudizio e stereotipo","Collaborazione","Dialogo","Rispetto"],"correct":0,"topic":"Fondamenti inclusione"},
+            {"question":"La progettazione inclusiva deve:","options":["Prevedere strategie flessibili","Imporre programmi rigidi","Escludere attività","Negare strumenti"],"correct":0,"topic":"Fondamenti inclusione"},
+            {"question":"Un docente inclusivo è:","options":["Attento ai bisogni di ciascuno","Indifferente alle differenze","Rigido nelle regole","Centrato solo sul programma"],"correct":0,"topic":"Fondamenti inclusione"},
+            {"question":"La scuola inclusiva valorizza:","options":["Cooperative learning","Lezioni frontali esclusive","Competizione estrema","Passività"],"correct":0,"topic":"Fondamenti inclusione"},
+            {"question":"Un principio pedagogico dell'inclusione è:","options":["Equità","Esclusione","Disparità","Conformismo"],"correct":0,"topic":"Fondamenti inclusione"},
+            {"question":"L'inclusione promuove:","options":["Apprendimento collaborativo","Isolamento","Uniformità","Passività"],"correct":0,"topic":"Fondamenti inclusione"},
+            {"question":"Un modello inclusivo efficace prevede:","options":["Partecipazione di famiglie e territorio","Esclusione dei genitori","Ruolo solo dei docenti","Separazione"],"correct":0,"topic":"Fondamenti inclusione"},
+            {"question":"Il diritto all'educazione inclusiva è sancito da:","options":["Convenzione ONU sui diritti delle persone con disabilità","Codice napoleonico","Statuto Albertino","Legge Casati"],"correct":0,"topic":"Fondamenti inclusione"},
+            {"question":"L'articolo 24 della Convenzione ONU sottolinea:","options":["Diritto all'istruzione senza discriminazioni","Separazione scolastica","Obbligo di scuole speciali","Isolamento domestico"],"correct":0,"topic":"Fondamenti inclusione"},
+
+            // 2. Strumenti, PEI e progettazione inclusiva (40 domande)
+            {"question":"Il PEI è:","options":["Piano Educativo Individualizzato","Programma Educativo Istituzionale","Piano Europeo d'Istruzione","Percorso Educativo Integrale"],"correct":0,"topic":"Strumenti e PEI"},
+            {"question":"Il PEI riguarda:","options":["Studenti con disabilità","Solo studenti stranieri","Tutti indistintamente","Studenti eccellenti"],"correct":0,"topic":"Strumenti e PEI"},
+            {"question":"La redazione del PEI coinvolge:","options":["Docenti, famiglia, operatori sanitari","Solo il dirigente","Solo lo studente","Solo i docenti di sostegno"],"correct":0,"topic":"Strumenti e PEI"},
+            {"question":"Un principio guida del PEI è:","options":["Personalizzazione degli interventi","Uniformità dei percorsi","Separazione rigida","Standardizzazione"],"correct":0,"topic":"Strumenti e PEI"},
+            {"question":"Il PEI deve essere:","options":["Dinamico e aggiornabile","Rigido e immodificabile","Fisso per tutta la carriera scolastica","Solo teorico"],"correct":0,"topic":"Strumenti e PEI"},
+            {"question":"L'obiettivo del PEI è:","options":["Favorire lo sviluppo globale dell'alunno","Isolarlo dal gruppo classe","Valutare solo deficit","Ridurre il percorso scolastico"],"correct":0,"topic":"Strumenti e PEI"},
+            {"question":"La progettazione educativa inclusiva richiede:","options":["Analisi dei bisogni e risorse disponibili","Uniformità dei programmi","Esclusione degli alunni","Rigidità organizzativa"],"correct":0,"topic":"Strumenti e PEI"},
+            {"question":"Lo strumento per studenti con DSA è:","options":["PDP (Piano Didattico Personalizzato)","PEI","POF","PTOF"],"correct":0,"topic":"Strumenti e PEI"},
+            {"question":"Il PDP è previsto per:","options":["Disturbi specifici dell'apprendimento","Disabilità gravi","Tutti gli studenti","Bisogni economici"],"correct":0,"topic":"Strumenti e PEI"},
+            {"question":"Il PEI si differenzia dal PDP perché:","options":["Coinvolge la certificazione di disabilità","È solo temporaneo","È facoltativo","Non richiede diagnosi"],"correct":0,"topic":"Strumenti e PEI"},
+            {"question":"Il GLHO è:","options":["Gruppo di lavoro operativo per l'handicap","Gruppo linguistico omogeneo","Gruppo legale operativo","Gruppo laboratoriale"],"correct":0,"topic":"Strumenti e PEI"},
+            {"question":"Il GLHO è composto da:","options":["Docenti, famiglia, operatori sanitari","Solo studenti","Solo genitori","Solo il dirigente"],"correct":0,"topic":"Strumenti e PEI"},
+            {"question":"Il GLO (Gruppo di Lavoro Operativo) si occupa di:","options":["Elaborazione e verifica del PEI","Gestione delle assenze","Attività ricreative","Valutazione disciplinare"],"correct":0,"topic":"Strumenti e PEI"},
+            {"question":"Nella progettazione inclusiva è fondamentale:","options":["Collaborazione scuola-famiglia","Isolamento delle famiglie","Esclusione dei genitori","Ruolo unico del docente"],"correct":0,"topic":"Strumenti e PEI"},
+            {"question":"Gli strumenti compensativi servono a:","options":["Supportare l'apprendimento","Sostituire lo studio","Escludere lo studente","Eliminare il problema"],"correct":0,"topic":"Strumenti e PEI"},
+            {"question":"Un esempio di strumento compensativo è:","options":["Sintesi vocale","Punizione","Voto più basso","Riduzione delle ore"],"correct":0,"topic":"Strumenti e PEI"},
+            {"question":"Le misure dispensative permettono:","options":["Esenzione da alcune prestazioni non essenziali","Esclusione dalla classe","Minor diritto all'apprendimento","Nessun supporto"],"correct":0,"topic":"Strumenti e PEI"},
+            {"question":"Un esempio di misura dispensativa è:","options":["Non leggere ad alta voce in classe","Non fare attività motorie","Non partecipare ai laboratori","Non frequentare la scuola"],"correct":0,"topic":"Strumenti e PEI"},
+            {"question":"La didattica inclusiva si caratterizza per:","options":["Flessibilità e diversificazione","Rigidità","Uniformità assoluta","Esclusione"],"correct":0,"topic":"Strumenti e PEI"},
+            {"question":"La progettazione universale per l'apprendimento (UDL) punta a:","options":["Rendere accessibile l'apprendimento a tutti","Creare percorsi rigidi","Escludere studenti con difficoltà","Standardizzare"],"correct":0,"topic":"Strumenti e PEI"},
+            {"question":"L'UDL propone:","options":["Diversi modi di rappresentare e fruire contenuti","Un unico canale di apprendimento","Solo spiegazione orale","Solo compiti scritti"],"correct":0,"topic":"Strumenti e PEI"},
+            {"question":"Il principio dell'UDL è:","options":["Fornire molteplici modalità di accesso e partecipazione","Rendere tutti uguali","Eliminare la tecnologia","Imporre rigidità"],"correct":0,"topic":"Strumenti e PEI"},
+            {"question":"L'osservazione pedagogica serve a:","options":["Rilevare bisogni e potenzialità","Etichettare lo studente","Giudicare rigidamente","Ignorare differenze"],"correct":0,"topic":"Strumenti e PEI"},
+            {"question":"Il Profilo di Funzionamento sostituisce:","options":["La diagnosi funzionale e il profilo dinamico-funzionale","Il PEI","Il PDP","Il POF"],"correct":0,"topic":"Strumenti e PEI"},
+            {"question":"Il Profilo di Funzionamento si basa:","options":["Sui criteri ICF","Solo su parametri medici","Solo su valutazioni psicologiche","Solo su test cognitivi"],"correct":0,"topic":"Strumenti e PEI"},
+            {"question":"Il PEI deve essere redatto:","options":["Entro il 30 ottobre dell'anno scolastico","Solo a fine anno","Quando lo decide il dirigente","Dopo gli esami"],"correct":0,"topic":"Strumenti e PEI"},
+            {"question":"La verifica del PEI avviene:","options":["Periodicamente durante l'anno","Solo alla fine","Solo dopo le vacanze","Mai"],"correct":0,"topic":"Strumenti e PEI"},
+            {"question":"La valutazione inclusiva considera:","options":["Progressi rispetto alle potenzialità","Solo standard nazionali","Solo la media della classe","Solo il voto finale"],"correct":0,"topic":"Strumenti e PEI"},
+            {"question":"La progettazione educativa inclusiva deve essere:","options":["Individualizzata e personalizzata","Identica per tutti","Standardizzata","Escludente"],"correct":0,"topic":"Strumenti e PEI"},
+            {"question":"Il principio della corresponsabilità educativa coinvolge:","options":["Scuola, famiglia, servizi sanitari","Solo gli insegnanti","Solo i genitori","Solo lo studente"],"correct":0,"topic":"Strumenti e PEI"},
+            {"question":"L'ICF valuta non solo la salute, ma anche:","options":["Fattori ambientali e sociali","Solo i deficit","Solo i test cognitivos","Solo il rendimento"],"correct":0,"topic":"Strumenti e PEI"},
+            {"question":"La progettazione inclusiva valorizza:","options":["Talenti e punti di forza dello studente","Solo le difficoltà","Solo il deficit","Solo la diagnosi"],"correct":0,"topic":"Strumenti e PEI"},
+            {"question":"Il docente di sostegno è:","options":["Contitolare della classe","Insegnante separato","Tutor personale esclusivo","Non parte del consiglio"],"correct":0,"topic":"Strumenti e PEI"},
+            {"question":"Una funzione del docente di sostegno è:","options":["Favorire l'inclusione nella classe","Lavorare solo individualmente","Sostituire la famiglia","Valutare autonomamente"],"correct":0,"topic":"Strumenti e PEI"},
+            {"question":"La contitolarità significa che:","options":["Il docente di sostegno partecipa alle decisioni collegiali","Ha ruoli secondari","Non partecipa ai consigli","È solo osservatore"],"correct":0,"topic":"Strumenti e PEI"},
+            {"question":"La coprogettazione implica:","options":["Lavoro condiviso tra docenti curricolari e di sostegno","Separazione dei ruoli","Esclusione del sostegno","Autonomia totale"],"correct":0,"topic":"Strumenti e PEI"},
+            {"question":"La valutazione degli alunni con disabilità deve essere:","options":["Coerente con il PEI","Identica per tutti","Solo standardizzata","Solo disciplinare"],"correct":0,"topic":"Strumenti e PEI"},
+            {"question":"Il progetto individuale previsto dalla legge 328/2000 è:","options":["Piano globale di intervento socio-educativo","Documento puramente medico","Programma scolastico ministeriale","Scheda di valutazione"],"correct":0,"topic":"Strumenti e PEI"},
+            {"question":"Il progetto individuale coinvolge:","options":["Scuola, famiglia, enti locali, servizi","Solo i docenti","Solo il dirigente","Solo i compagni"],"correct":0,"topic":"Strumenti e PEI"},
+            {"question":"Una finalità del progetto individuale è:","options":["Promuovere l'autonomia e l'inclusione sociale","Isolare lo studente","Valutare solo deficit","Limitare le possibilità"],"correct":0,"topic":"Strumenti e PEI"},
+
+            // 3. Ruoli e figure professionali per l'inclusione (40 domande)
+            {"question":"Il docente curricolare in un contesto inclusivo ha il compito di:","options":["Favorire l'apprendimento di tutta la classe","Occuparsi solo dei migliori","Delegare al sostegno tutti i casi difficili","Ignorare le differenze"],"correct":0,"topic":"Ruoli e figure"},
+            {"question":"Il docente di sostegno è:","options":["Contitolare della classe","Un insegnante separato","Una figura esterna occasionale","Esclusivamente assistente personale"],"correct":0,"topic":"Ruoli e figure"},
+            {"question":"Un compito del docente di sostegno è:","options":["Promuovere l'inclusione e la partecipazione","Lavorare solo in individuale","Valutare separatamente","Non partecipare ai consigli"],"correct":0,"topic":"Ruoli e figure"},
+            {"question":"Gli assistenti educativi si occupano di:","options":["Supporto all'autonomia e alla comunicazione","Solo insegnamento disciplinare","Attività burocratiche","Gestione amministrativa"],"correct":0,"topic":"Ruoli e figure"},
+            {"question":"L'educatore professionale nelle scuole supporta:","options":["L'inclusione socio-educativa","Solo la disciplina","La segreteria","L'organizzazione interna"],"correct":0,"topic":"Ruoli e figure"},
+            {"question":"Il dirigente scolastico ha la responsabilità di:","options":["Garantire condizioni organizzative per l'inclusione","Lasciare autonomia totale ai docenti","Evitare la collaborazione","Escludere famiglie e territorio"],"correct":0,"topic":"Ruoli e figure"},
+            {"question":"La famiglia nel processo inclusivo ha un ruolo di:","options":["Parte attiva e corresponsabile","Osservatore esterno","Figura marginale","Solo spettatore"],"correct":0,"topic":"Ruoli e figure"},
+            {"question":"La collaborazione scuola-famiglia è:","options":["Fondamentale per l'inclusione","Facoltativa","Secondaria","Inutile"],"correct":0,"topic":"Ruoli e figure"},
+            {"question":"Il consiglio di classe nelle scuole secondarie:","options":["Condivide responsabilità educative verso tutti gli studenti","Decide solo per i migliori","Non considera studenti con disabilità","Esclude i docenti di sostegno"],"correct":0,"topic":"Ruoli e figure"},
+            {"question":"Il team docenti nella scuola primaria:","options":["Condivide la progettazione inclusiva","Lavora separatamente","Delega al sostegno","Si occupa solo del programma"],"correct":0,"topic":"Ruoli e figure"},
+            {"question":"I compagni di classe hanno un ruolo:","options":["Importante come risorsa inclusiva","Secondario e marginale","Da evitare nei percorsi inclusivi","Non significativo"],"correct":0,"topic":"Ruoli e figure"},
+            {"question":"La peer education sfrutta:","options":["L'apprendimento tra pari","Solo il docente","Solo il dirigente","La famiglia"],"correct":0,"topic":"Ruoli e figure"},
+            {"question":"Il territorio nel modello inclusivo:","options":["Partecipa alla rete educativa","È estraneo alla scuola","Non ha ruolo","Deve restare separato"],"correct":0,"topic":"Ruoli e figure"},
+            {"question":"I servizi sanitari collaborano con la scuola per:","options":["Supporto diagnostico e funzionale","Attività ricreative","Solo valutazioni economiche","Nessun intervento"],"correct":0,"topic":"Ruoli e figure"},
+            {"question":"I servizi sociali contribuiscono:","options":["Al benessere e alla protezione dello studente","Alla gestione delle verifiche","Alle attività disciplinari","Solo al bilancio"],"correct":0,"topic":"Ruoli e figure"},
+            {"question":"La rete territoriale educativa si basa su:","options":["Collaborazione tra enti e istituzioni","Separazione","Isolamento","Competizione"],"correct":0,"topic":"Ruoli e figure"},
+            {"question":"L'assistente alla comunicazione è previsto:","options":["Per studenti con disabilità sensoriali","Solo per studenti eccellenti","Per tutti gli alunni","Per studenti stranieri"],"correct":0,"topic":"Ruoli e figure"},
+            {"question":"L'assistente all'autonomia supporta:","options":["Le attività quotidiane dello studente","La valutazione disciplinare","La segreteria scolastica","La programmazione ministeriale"],"correct":0,"topic":"Ruoli e figure"},
+            {"question":"Gli enti locali contribuiscono a:","options":["Fornire servizi e risorse per l'inclusione","Imporre programmi rigidi","Sostituire i docenti","Eliminare la partecipazione"],"correct":0,"topic":"Ruoli e figure"},
+            {"question":"I CTS (Centri Territoriali di Supporto) hanno il compito di:","options":["Promuovere uso di tecnologie inclusive","Fornire libri cartacei","Organizzare attività sportive","Solo amministrazione"],"correct":0,"topic":"Ruoli e figure"},
+            {"question":"I CTI (Centri Territoriali per l'Inclusione) servono a:","options":["Coordinare azioni inclusive nelle scuole","Sostituire dirigenti","Gestire i voti","Solo valutare PEI"],"correct":0,"topic":"Ruoli e figure"},
+            {"question":"L'Ufficio scolastico regionale garantisce:","options":["Coordinamento delle politiche inclusive","Solo vigilanza sui programmi","Esclusione delle famiglie","Attività burocratiche"],"correct":0,"topic":"Ruoli e figure"},
+            {"question":"I GLI (Gruppi di Lavoro per l'Inclusione) operano:","options":["Nelle singole scuole per promuovere l'inclusione","Solo a livello nazionale","Solo tra famiglie","Nelle università"],"correct":0,"topic":"Ruoli e figure"},
+            {"question":"Il referente per l'inclusione in una scuola si occupa di:","options":["Coordinare pratiche e progetti inclusivi","Valutare singoli studenti","Fare segreteria","Tenere lezioni frontali"],"correct":0,"topic":"Ruoli e figure"},
+            {"question":"La formazione dei docenti è:","options":["Fondamentale per realizzare inclusione","Facoltativa e marginale","Non necessaria","Solo per i dirigenti"],"correct":0,"topic":"Ruoli e figure"},
+            {"question":"La didattica inclusiva richiede:","options":["Competenze specifiche dei docenti","Solo libri cartacei","Solo burocrazia","Nessuna preparazione"],"correct":0,"topic":"Ruoli e figure"},
+            {"question":"La figura del mediatore culturale supporta:","options":["Studenti stranieri e famiglie nell'inclusione","Solo docenti di sostegno","Solo studenti italiani","Nessuno"],"correct":0,"topic":"Ruoli e figure"},
+            {"question":"Il tutor scolastico può aiutare:","options":["Nella gestione dei percorsi individualizzati","Solo nella disciplina","Solo nella burocrazia","Solo nella segreteria"],"correct":0,"topic":"Ruoli e figure"},
+            {"question":"I docenti curricolari e di sostegno devono:","options":["Lavorare insieme in coprogettazione","Restare separati","Non condividere strategie","Agire indipendentemente"],"correct":0,"topic":"Ruoli e figure"},
+            {"question":"L'assistente educativo culturale (AEC) collabora in:","options":["Attività di autonomia e socializzazione","Attività di segreteria","Attività esclusivamente mediche","Attività burocratiche"],"correct":0,"topic":"Ruoli e figure"},
+            {"question":"I logopedisti supportano:","options":["Lo sviluppo del linguaggio","Le competenze motorie","L'insegnamento di matematica","Le verifiche disciplinare"],"correct":0,"topic":"Ruoli e figure"},
+            {"question":"Gli psicologi scolastici contribuiscono a:","options":["Benessere emotivo e relazionale","Solo gestione dei voti","Attività burocratiche","Programmi ministeriali"],"correct":0,"topic":"Ruoli e figure"},
+            {"question":"I neuropsichiatri infantili si occupano di:","options":["Diagnosi e trattamento di disturbi dello sviluppo","Attività sportive","Programmazione didattica","Organizzazione delle verifiche"],"correct":0,"topic":"Ruoli e figure"},
+            {"question":"I terapisti occupazionali lavorano su:","options":["Autonomia e abilità quotidiane","Lezioni frontali","Attività burocratiche","Compiti scritti"],"correct":0,"topic":"Ruoli e figure"},
+            {"question":"I fisioterapisti aiutano:","options":["Nello sviluppo motorio","Nella memoria","Nella matematica","Nella segreteria"],"correct":0,"topic":"Ruoli e figure"},
+            {"question":"I centri di riabilitazione collaborano con:","options":["Scuola e famiglie per piani inclusivi","Solo ospedali","Solo amministrazioni","Solo docenti"],"correct":0,"topic":"Ruoli e figure"},
+            {"question":"I volontari possono contribuire a:","options":["Progetti di inclusione scolastica e sociale","Solo disciplina","Burocrazia","Segreteria"],"correct":0,"topic":"Ruoli e figure"},
+            {"question":"La comunità scolastica deve essere:","options":["Collaborativa e partecipativa","Separata","Escludente","Competitiva"],"correct":0,"topic":"Ruoli e figure"},
+            {"question":"Il ruolo degli studenti nella scuola inclusiva è:","options":["Partecipare attivamente come protagonisti","Essere passivi","Subire regole","Restare marginali"],"correct":0,"topic":"Ruoli e figure"},
+            {"question":"L'inclusione scolastica è responsabilità di:","options":["Tutta la comunità educativa","Solo del sostegno","Solo del dirigente","Solo della famiglia"],"correct":0,"topic":"Ruoli e figure"},
+
+            // 4. Metodologie e strategie inclusive (40 domande)
+            {"question":"Il cooperative learning è efficace perché:","options":["Promuove collaborazione e responsabilità reciproca","Riduce la partecipazione","Aumenta l'isolamento","Favorisce la competizione"],"correct":0,"topic":"Metodologie inclusive"},
+            {"question":"Una tecnica del cooperative learning è:","options":["Jigsaw (a incastro)","Punizione collettiva","Ripetizione meccanica","Esclusione"],"correct":0,"topic":"Metodologie inclusive"},
+            {"question":"La peer tutoring prevede:","options":["Un alunno che aiuta un compagno nell'apprendimento","Un docente che lavora da solo","Isolamento degli studenti","Solo spiegazione frontale"],"correct":0,"topic":"Metodologie inclusive"},
+            {"question":"La peer education si basa su:","options":["Apprendimento tra pari","Controllo esterno","Lezione frontale","Esclusione"],"correct":0,"topic":"Metodologie inclusive"},
+            {"question":"La didattica laboratoriale favorisce:","options":["Apprendimento attivo ed esperienziale","Solo lezioni frontali","Ripetizione passiva","Isolamento"],"correct":0,"topic":"Metodologie inclusive"},
+            {"question":"Il circle time è:","options":["Attività di dialogo in cerchio","Lezione frontale","Momento disciplinare","Ripetizione mnemonica"],"correct":0,"topic":"Metodologie inclusive"},
+            {"question":"Una finalità del circle time è:","options":["Favorire l'ascolto e la comunicazione","Evitare la partecipazione","Rafforzare le gerarchie","Escludere studenti"],"correct":0,"topic":"Metodologie inclusive"},
+            {"question":"Il role playing permette di:","options":["Mettersi nei panni degli altri","Ripetere nozioni","Restare passivi","Evitare l'esperienza"],"correct":0,"topic":"Metodologie inclusive"},
+            {"question":"Una funzione del role playing è:","options":["Sviluppare empatia e comprensione","Ridurre la collaborazione","Escludere i compagni","Imporre silenzio"],"correct":0,"topic":"Metodologie inclusive"},
+            {"question":"Il brainstorming serve a:","options":["Generare idee liberamente","Limitare la creatività","Imporre soluzioni","Ripetere formule"],"correct":0,"topic":"Metodologie inclusive"},
+            {"question":"La didattica inclusiva usa:","options":["Strategie differenziate e flessibili","Metodi unici","Approcci rigidi","Tecniche punitive"],"correct":0,"topic":"Metodologie inclusive"},
+            {"question":"L'apprendimento cooperativo favorisce:","options":["Competenze sociali e cognitive","Isolamento","Conformismo","Passività"],"correct":0,"topic":"Metodologie inclusive"},
+            {"question":"Una strategia inclusiva è:","options":["Lavori di gruppo eterogenei","Divisione per livelli rigidi","Separazione costante","Isolamento"],"correct":0,"topic":"Metodologie inclusive"},
+            {"question":"Il tutoring reciproco si basa su:","options":["Scambio di ruoli tra studenti","Docente unico","Isolamento","Esclusione"],"correct":0,"topic":"Metodologie inclusive"},
+            {"question":"L'apprendimento esperienziale valorizza:","options":["Fare per capire","Ascoltare passivamente","Ripetere a memoria","Restare fermi"],"correct":0,"topic":"Metodologie inclusive"},
+            {"question":"La didattica metacognitiva stimola:","options":["Riflettere sui propri processi di apprendimento","Evitare consapevolezza","Copiare","Ripetere meccanicamente"],"correct":0,"topic":"Metodologie inclusive"},
+            {"question":"Una strategia metacognitiva è:","options":["Autovalutazione","Punizione","Copiatura","Silenzio"],"correct":0,"topic":"Metodologie inclusive"},
+            {"question":"L'apprendimento per scoperta è promosso da:","options":["Bruner","Piaget","Skinner","Vygotskij"],"correct":0,"topic":"Metodologie inclusive"},
+            {"question":"Il metodo della scoperta guidata implica:","options":["Docente come facilitatore","Docente autoritario","Studente passivo","Nessun confronto"],"correct":0,"topic":"Metodologie inclusive"},
+            {"question":"Il cooperative learning sviluppa anche:","options":["Solidarietà","Competizione esasperata","Isolamento","Paura"],"correct":0,"topic":"Metodologie inclusive"},
+            {"question":"Il lavoro di gruppo inclusivo deve essere:","options":["Strutturato con ruoli chiari","Caotico","Imposto","Senza obiettivi"],"correct":0,"topic":"Metodologie inclusive"},
+            {"question":"Il debate è:","options":["Discussione regolata su un tema","Scontro libero","Lezione frontale","Silenzio obbligato"],"correct":0,"topic":"Metodologie inclusive"},
+            {"question":"Una finalità del debate è:","options":["Sviluppare pensiero critico e argomentazione","Ridurre il dialogo","Imporre un'unica idea","Escludere"],"correct":0,"topic":"Metodologie inclusive"},
+            {"question":"L'apprendimento cooperativo si distingue dal collaborativo perché:","options":["Ha ruoli definiti e interdipendenza positiva","È meno strutturato","Non prevede interazione","Non è inclusivo"],"correct":0,"topic":"Metodologie inclusive"},
+            {"question":"Il cooperative learning può essere ostacolato da:","options":["Scarsa collaborazione tra studenti","Regole condivise","Ruoli chiari","Obiettivi comuni"],"correct":0,"topic":"Metodologie inclusive"},
+            {"question":"L'uso delle tecnologie inclusive consente:","options":["Accesso facilitato ai contenuti","Maggiori barriere","Riduzione delle possibilità","Esclusione"],"correct":0,"topic":"Metodologie inclusive"},
+            {"question":"Un esempio di tecnologia inclusiva è:","options":["Sintesi vocale","Punizione","Compiti aggiuntivi","Esclusione"],"correct":0,"topic":"Metodologie inclusive"},
+            {"question":"Le mappe concettuali servono a:","options":["Organizzare visivamente le informazioni","Confondere le idee","Escludere contenuti","Ripetere meccanicamente"],"correct":0,"topic":"Metodologie inclusive"},
+            {"question":"L'apprendimento cooperativo è favorito da:","options":["Gruppi eterogenei","Gruppi identici","Isolamento","Uniformità"],"correct":0,"topic":"Metodologie inclusive"},
+            {"question":"L'uso di giochi educativi stimola:","options":["Motivazione e partecipazione","Noia","Passività","Paura"],"correct":0,"topic":"Metodologie inclusive"},
+            {"question":"Il metodo Feuerstein si basa su:","options":["Educabilità cognitiva","Trasmissione rigida","Esclusione","Ripetizione"],"correct":0,"topic":"Metodologie inclusive"},
+            {"question":"Una tecnica del metodo Feuerstein è:","options":["Mediazione dell'adulto","Punizione","Copiatura","Silenzio"],"correct":0,"topic":"Metodologie inclusive"},
+            {"question":"L'approccio di Vygotskij è noto per:","options":["Zona di sviluppo prossimale","Condizionamento","Scoperta individuale","Punizione"],"correct":0,"topic":"Metodologie inclusive"},
+            {"question":"La zona di sviluppo prossimale indica:","options":["Potenziale di apprendimento con l'aiuto di altri","Capacità già acquisite","Competenze genetiche","Difficoltà permanenti"],"correct":0,"topic":"Metodologie inclusive"},
+            {"question":"L'apprendimento collaborativo si distingue perché:","options":["Meno strutturato del cooperativo","Ha ruoli fissi","Esclude la collaborazione","È passivo"],"correct":0,"topic":"Metodologie inclusive"},
+            {"question":"Il cooperative learning è stato sviluppato da:","options":["Johnson & Johnson","Skinner","Montessori","Bloom"],"correct":0,"topic":"Metodologie inclusive"},
+            {"question":"La differenziazione didattica implica:","options":["Adattare contenuti e metodi agli studenti","Programma identico","Nessun cambiamento","Solo rigidità"],"correct":0,"topic":"Metodologie inclusive"},
+            {"question":"Una strategia inclusiva è:","options":["Didattica multisensoriale","Lezione unica","Solo spiegazione orale","Nessuna variazione"],"correct":0,"topic":"Metodologie inclusive"},
+            {"question":"La didattica per competenze promuove:","options":["Uso delle conoscenze in contesti reali","Solo memorizzazione","Solo teoria","Isolamento"],"correct":0,"topic":"Metodologie inclusive"},
+            {"question":"Il cooperative learning sviluppa anche:","options":["Capacità di negoziazione","Obbedienza cieca","Passività","Isolamento"],"correct":0,"topic":"Metodologie inclusive"},
+
+            // 5. Valori, politiche e prospettive inclusive (40 domande)
+            {"question":"Un valore fondamentale dell'inclusione è:","options":["Dignità di ogni persona","Superiorità di alcuni","Uniformità culturale","Segregazione"],"correct":0,"topic":"Politiche inclusive"},
+            {"question":"La scuola inclusiva si fonda sul principio di:","options":["Equità","Esclusione","Selezione","Competizione"],"correct":0,"topic":"Politiche inclusive"},
+            {"question":"L'inclusione promuove:","options":["Giustizia sociale","Disuguaglianze","Isolamento","Segregazione"],"correct":0,"topic":"Politiche inclusive"},
+            {"question":"La solidarietà in ambito educativo significa:","options":["Supporto reciproco tra studenti","Competizione esasperata","Esclusione dei fragili","Individualismo"],"correct":0,"topic":"Politiche inclusive"},
+            {"question":"L'educazione inclusiva è coerente con:","options":["La Costituzione italiana","La selezione rigida","L'emarginazione","L'isolamento"],"correct":0,"topic":"Politiche inclusive"},
+            {"question":"L'articolo 3 della Costituzione italiana afferma:","options":["Uguaglianza di tutti i cittadini","Privilegio dei più forti","Esclusione dei fragili","Isolamento sociale"],"correct":0,"topic":"Politiche inclusive"},
+            {"question":"La legge 170/2010 riguarda:","options":["Disturbi specifici dell'apprendimento","Disabilità gravi","Educazione alla salute","Solo BES generici"],"correct":0,"topic":"Politiche inclusive"},
+            {"question":"I BES includono:","options":["Bisogni Educativi Speciali","Benefici Educativi Standard","Borse Educative Statali","Bonus Educativi Scolastici"],"correct":0,"topic":"Politiche inclusive"},
+            {"question":"La Direttiva Ministeriale del 2012 ha introdotto:","options":["Concetto di BES in senso ampio","Solo il PEI","Solo valutazioni standard","Isolamento"],"correct":0,"topic":"Politiche inclusive"},
+            {"question":"Un principio dei BES è:","options":["Tutti gli studenti possono avere bisogni speciali","Solo i disabili hanno bisogni","Solo i DSA rientrano","Nessuno"],"correct":0,"topic":"Politiche inclusive"},
+            {"question":"Il Piano Annuale per l'Inclusione (PAI) serve a:","options":["Pianificare azioni inclusive di istituto","Valutare voti","Fare bilanci economici","Sostituire il PEI"],"correct":0,"topic":"Politiche inclusive"},
+            {"question":"Il PAI è elaborato da:","options":["Collegio docenti","Solo il dirigente","Solo genitori","Solo studenti"],"correct":0,"topic":"Politiche inclusive"},
+            {"question":"L'inclusione scolastica italiana è riconosciuta come:","options":["Modello avanzato a livello europeo","Sistema arretrato","Pratica isolata","Secondaria"],"correct":0,"topic":"Politiche inclusive"},
+            {"question":"La prospettiva inclusiva contribuisce a:","options":["Coesione sociale","Divisone sociale","Esclusione","Disparità"],"correct":0,"topic":"Politiche inclusive"},
+            {"question":"L'Agenda 2030 dell'ONU prevede:","options":["Educazione di qualità, equa e inclusiva","Solo crescita economica","Educazione selettiva","Esclusione"],"correct":0,"topic":"Politiche inclusive"},
+            {"question":"L'Obiettivo 4 dell'Agenda 2030 riguarda:","options":["Istruzione inclusiva ed equa","Sviluppo militare","Tecnologia bellica","Esclusione sociale"],"correct":0,"topic":"Politiche inclusive"},
+            {"question":"L'educazione inclusiva è un diritto:","options":["Universale","Facoltativo","Riservato a pochi","Elitario"],"correct":0,"topic":"Politiche inclusive"},
+            {"question":"L'inclusione scolastica riduce:","options":["Rischio di abbandono","Partecipazione","Apprendimento","Dialogo"],"correct":0,"topic":"Politiche inclusive"},
+            {"question":"Una scuola inclusiva migliora:","options":["Clima relazionale","Isolamento","Conflitto","Disuguaglianza"],"correct":0,"topic":"Politiche inclusive"},
+            {"question":"L'inclusione favorisce:","options":["Successo formativo di tutti","Successo di pochi","Isolamento","Disparità"],"correct":0,"topic":"Politiche inclusive"},
+            {"question":"Una politica inclusiva efficace richiede:","options":["Formazione continua dei docenti","Nessuna formazione","Uniformità","Esclusione"],"correct":0,"topic":"Politiche inclusive"},
+            {"question":"La dimensione interculturale nell'inclusione promuove:","options":["Dialogo tra culture","Separazione","Assimilazione forzata","Indifferenza"],"correct":0,"topic":"Politiche inclusive"},
+            {"question":"L'inclusione linguistica riguarda:","options":["Studenti con background migratorio","Solo studenti italiani","Solo studenti con disabilità","Nessuno"],"correct":0,"topic":"Politiche inclusive"},
+            {"question":"Il bilinguismo può essere:","options":["Risorsa per l'inclusione","Ostacolo","Deficit","Problema"],"correct":0,"topic":"Politiche inclusive"},
+            {"question":"Una politica inclusiva efficace si basa su:","options":["Collaborazione istituzionale","Isolamento delle scuole","Uniformità rigida","Esclusione"],"correct":0,"topic":"Politiche inclusive"},
+            {"question":"Le Linee guida ministeriali promuovono:","options":["Didattica inclusiva e personalizzata","Standardizzazione","Selezione","Isolamento"],"correct":0,"topic":"Politiche inclusive"},
+            {"question":"Una scuola inclusiva deve essere:","options":["Attenta ai bisogni di tutti","Indifferente","Rigida","Elitaria"],"correct":0,"topic":"Politiche inclusive"},
+            {"question":"L'uso delle TIC nell'inclusione consente:","options":["Accesso facilitato ai contenuti","Barriere","Isolamento","Esclusione"],"correct":0,"topic":"Politiche inclusive"},
+            {"question":"L'inclusione scolastica è anche:","options":["Un investimento sociale","Uno spreco","Un limite","Una perdita"],"correct":0,"topic":"Politiche inclusive"},
+            {"question":"Una prospettiva inclusiva prepara a:","options":["Vita adulta e partecipazione attiva","Isolamento","Passività","Marginalità"],"correct":0,"topic":"Politiche inclusive"},
+            {"question":"L'educazione inclusiva rafforza:","options":["Diritti e cittadinanza","Esclusione","Ingiustizia","Disparità"],"correct":0,"topic":"Politiche inclusive"},
+            {"question":"La scuola inclusiva è in linea con:","options":["Convenzione ONU sui diritti delle persone con disabilità","Codice napoleonico","Statuto Albertino","Carta di Parigi"],"correct":0,"topic":"Politiche inclusive"},
+            {"question":"La qualità dell'inclusione dipende da:","options":["Collaborazione tra docenti, famiglie e territorio","Solo docenti","Solo studenti","Solo dirigenti"],"correct":0,"topic":"Politiche inclusive"},
+            {"question":"Una criticità dell'inclusione può essere:","options":["Carenza di risorse","Collaborazione","Motivazione","Partecipazione"],"correct":0,"topic":"Politiche inclusive"},
+            {"question":"Una prospettiva inclusiva efficace richiede:","options":["Innovazione metodologica","Ripetizione tradizionale","Rigidità","Esclusione"],"correct":0,"topic":"Politiche inclusive"},
+            {"question":"L'inclusione scolastica si collega a:","options":["Inclusione sociale","Esclusione lavorativa","Isolamento culturale","Passività"],"correct":0,"topic":"Politiche inclusive"},
+            {"question":"L'inclusione favorisce anche:","options":["Benessere emotivo","Stress","Isolamento","Ansia"],"correct":0,"topic":"Politiche inclusive"},
+            {"question":"Una politica scolastica inclusiva deve:","options":["Garantire risorse adeguate","Eliminare sostegni","Escludere famiglie","Limitare supporti"],"correct":0,"topic":"Politiche inclusive"},
+            {"question":"L'inclusione ha come prospettiva:","options":["Miglioramento continuo","Staticità","Immobilismo","Regressione"],"correct":0,"topic":"Politiche inclusive"},
+            {"question":"La scuola del futuro dovrebbe essere:","options":["Inclusiva, collaborativa, innovativa","Escludente","Rigida","Elitaria"],"correct":0,"topic":"Politiche inclusive"}
+        ];
+
+        // Funzione per mescolare un array (Fisher-Yates)
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+
+        // Seleziona domande casuali (gestisce anche il caso count > pool.length)
+        function getRandomQuestions(questions, count) {
+            const pool = [...questions];
+            const desired = Math.min(count, pool.length);
+            const shuffled = shuffleArray(pool);
+            const selected = shuffled.slice(0, desired);
+            return selected.map(q => {
+                const correctAnswer = q.options[q.correct];
+                const shuffledOptions = shuffleArray(q.options);
+                const newCorrectIndex = shuffledOptions.indexOf(correctAnswer);
+                return { ...q, options: shuffledOptions, correct: newCorrectIndex };
+            });
+        }
+
+        // Render del quiz
+        function renderQuiz(questions) {
+            const quizContainer = document.getElementById('quiz-container');
+            quizContainer.innerHTML = '';
+            questions.forEach((question, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question';
+                questionDiv.innerHTML = `
+                    <div class="question-number">Domanda ${index + 1}</div>
+                    <div class="topic">Argomento: ${question.topic}</div>
+                    <p>${question.question}</p>
+                    <div class="options">
+                        ${question.options.map((option, i) => `
+                            <div class="option">
+                                <input type="radio" id="q${index}_o${i}" name="q${index}" value="${i}">
+                                <label for="q${index}_o${i}">${option}</label>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                quizContainer.appendChild(questionDiv);
+            });
+            document.getElementById('current-topic').textContent = `Argomento: ${questions[0].topic}`;
+        }
+
+        // Calcolo punteggio e visualizzazione risultati
+        function calculateScore(questions) {
+            let score = 0;
+            const resultsContainer = document.getElementById('results');
+            resultsContainer.innerHTML = '<h2>Risultati</h2>';
+            resultsContainer.style.display = 'block';
+            questions.forEach((question, index) => {
+                const selectedOption = document.querySelector(`input[name="q${index}"]:checked`);
+                const userAnswer = selectedOption ? parseInt(selectedOption.value) : -1;
+                const isCorrect = userAnswer === question.correct;
+                if (isCorrect) score++;
+                const resultDiv = document.createElement('div');
+                resultDiv.className = `question-result ${isCorrect ? 'correct' : 'incorrect'}`;
+                resultDiv.innerHTML = `
+                    <p><strong>Domanda ${index + 1}:</strong> ${question.question}</p>
+                    <p>La tua risposta: ${userAnswer !== -1 ? question.options[userAnswer] : 'Nessuna risposta'}</p>
+                    <p class="correct">Risposta corretta: ${question.options[question.correct]}</p>
+                    <div class="topic">Argomento: ${question.topic}</div>
+                `;
+                resultsContainer.appendChild(resultDiv);
+            });
+
+            const scoreDiv = document.createElement('div');
+            scoreDiv.className = 'score';
+            scoreDiv.innerHTML = `Hai totalizzato ${score} punti su ${questions.length}`;
+            resultsContainer.prepend(scoreDiv);
+
+            const retryDiv = document.createElement('div');
+            retryDiv.className = 'retry-btn';
+            retryDiv.innerHTML = '<button onclick="location.reload()">Ripeti il Quiz con altre 15 domande</button>';
+            resultsContainer.appendChild(retryDiv);
+
+            resultsContainer.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Inizializzazione
+        document.addEventListener('DOMContentLoaded', function() {
+            const selectedQuestions = getRandomQuestions(questionsPool, 15);
+            renderQuiz(selectedQuestions);
+            document.getElementById('total').textContent = '15';
+            document.getElementById('submit-btn').addEventListener('click', function() {
+                calculateScore(selectedQuestions);
+            });
+
+            // osservatore per aggiornare topic e progresso
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const topic = entry.target.querySelector('.topic').textContent.replace('Argomento: ', '');
+                        document.getElementById('current-topic').textContent = `Argomento: ${topic}`;
+                        const questionNumber = entry.target.querySelector('.question-number').textContent.replace('Domanda ', '');
+                        document.getElementById('current').textContent = questionNumber;
+                    }
+                });
+            }, { threshold: 0.6 });
+
+            // osserva le domande create
+            const questions = document.querySelectorAll('.question');
+            questions.forEach(q => observer.observe(q));
+        });
+    </script>
+</body>
+</html>
