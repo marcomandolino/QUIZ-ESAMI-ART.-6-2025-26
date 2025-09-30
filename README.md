@@ -16,3 +16,5 @@ Benvenuto! Qui trovi i quiz suddivisi per materia:
 - ════════════════════════════
 - [LEGISLAZIONE PRIMARIA E SECONDARIA RIFERITA ALL’INCLUSIONE SCOLASTICA - pool 75 domande](https://marcomandolino.github.io/QUIZ-ESAMI-ART.-6-2025-26/QUIZZES/LEGISLAZIONE_2025)
 - [LEGISLAZIONE PRIMARIA E SECONDARIA RIFERITA ALL’INCLUSIONE SCOLASTICA – pool 200 domande](https://marcomandolino.github.io/QUIZ-ESAMI-ART.-6-2025-26/QUIZZES/LEGISLAZIONE_2025/pool200)
+- ════════════════════════════
+- [NEUROPSICHIATRIA INFANTILE – pool 200 domande](https://marcomandolino.github.io/QUIZ-ESAMI-ART.-6-2025-26/QUIZZES//NEUROPSICHIATRIA_2025/)
