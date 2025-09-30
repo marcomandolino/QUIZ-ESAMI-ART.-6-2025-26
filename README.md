@@ -21,7 +21,7 @@ Benvenuto! Qui trovi i quiz suddivisi per materia:
 - ════════════════════════════
 - [PROGETTAZIONE DIDATTICA, INCLUSIVITÀ E PEI – pool 200 domande](https://marcomandolino.github.io/QUIZ-ESAMI-ART.-6-2025-26/QUIZZES//PROGETTAZIONE_DIDATTICA_2025/)
 
-Dispense in formato TXT ottimizzate per TTS-Text To Speech (https://drive.google.com/drive/folders/1uMZ8Fbu_fTxlGfE4dntGf7VHHO5Ie1S6?usp=sharing)
+[Dispense in formato TXT ottimizzate per TTS - Text To Speech] (https://drive.google.com/drive/folders/1uMZ8Fbu_fTxlGfE4dntGf7VHHO5Ie1S6?usp=sharing)
 
-App TTS Android(https://play.google.com/store/apps/details?id=com.ReadTheTextForMe&hl=it)
-App TTS iPhone(https://apps.apple.com/it/app/tts-lettore-di-testo-a-voce/id1527382078)
+[App TTS Android](https://play.google.com/store/apps/details?id=com.ReadTheTextForMe&hl=it)
+[App TTS iPhone](https://apps.apple.com/it/app/tts-lettore-di-testo-a-voce/id1527382078)
