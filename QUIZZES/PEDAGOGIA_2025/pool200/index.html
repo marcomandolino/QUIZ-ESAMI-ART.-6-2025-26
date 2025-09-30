@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz di Pedagogia Speciale</title>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            line-height: 1.6; 
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%); 
+            color: #333; 
+            min-height: 100vh; 
+            padding: 20px; 
+            margin: 0;
+        }
+        .container { 
+            max-width: 900px; 
+            margin: 0 auto; 
+            background-color: white; 
+            padding: 30px; 
+            border-radius: 15px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15); 
+        }
+        header { 
+            text-align: center; 
+            margin-bottom: 30px; 
+        }
+        h1 { 
+            color: #2c3e50; 
+            margin-bottom: 10px; 
+            font-size: 2.2rem; 
+        }
+        .description { 
+            color: #7f8c8d; 
+            margin-bottom: 20px; 
+        }
+        .stats { 
+            display: flex; 
+            justify-content: space-between; 
+            margin-bottom: 20px; 
+            background: #f8f9fa; 
+            padding: 15px; 
+            border-radius: 10px; 
+            font-weight: bold; 
+        }
+        .question { 
+            margin-bottom: 25px; 
+            padding: 20px; 
+            border: 1px solid #e0e0e0; 
+            border-radius: 10px; 
+            background: #f8f9fa; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05); 
+        }
+        .question-number { 
+            font-weight: bold; 
+            color: #3498db; 
+            margin-bottom: 10px; 
+            font-size: 1.1rem; 
+        }
+        .options { 
+            margin-left: 10px; 
+        }
+        .option { 
+            margin: 12px 0; 
+            display: flex; 
+            align-items: flex-start; 
+        }
+        .option input { 
+            margin-top: 5px; 
+            margin-right: 12px; 
+            cursor: pointer; 
+        }
+        .option label { 
+            cursor: pointer; 
+            flex: 1; 
+        }
+        button { 
+            display: block; 
+            margin: 30px auto; 
+            padding: 14px 35px; 
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%); 
+            color: white; 
+            border: none; 
+            border-radius: 50px; 
+            cursor: pointer; 
+            font-size: 1.1rem; 
+            font-weight: bold; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2); 
+            transition: all .3s ease; 
+        }
+        button:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 6px 20px rgba(0,0,0,0.25); 
+        }
+        .results { 
+            margin-top: 30px; 
+            padding: 25px; 
+            border: 1px solid #e0e0e0; 
+            border-radius: 10px; 
+            background: #e7f3fe; 
+            display: none; 
+        }
+        .results h2 { 
+            text-align: center; 
+            color: #2c3e50; 
+            margin-bottom: 20px; 
+        }
+        .question-result { 
+            margin-bottom: 20px; 
+            padding: 15px; 
+            border-radius: 8px; 
+            background: white; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05); 
+        }
+        .correct { 
+            color: #27ae60; 
+            font-weight: bold; 
+        }
+        .incorrect { 
+            color: #e74c3c; 
+        }
+        .score { 
+            font-size: 1.4rem; 
+            font-weight: bold; 
+            text-align: center; 
+            margin: 25px 0; 
+            color: #2c3e50; 
+        }
+        .topic { 
+            font-size: 0.9rem; 
+            color: #7f8c8d; 
+            font-style: italic; 
+            margin-top: 5px; 
+        }
+        .retry-btn { 
+            text-align: right; 
+            margin-top: 20px; 
+        }
+        .retry-btn button { 
+            margin: 0; 
+            padding: 10px 25px; 
+            font-size: 1rem; 
+        }
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Quiz di Pedagogia Speciale</h1>
+            <p class="description">15 domande estratte casualmente da un pool di 40</p>
+        </header>
+
+        <div class="stats">
+            <div id="current-topic">Argomento: -</div>
+            <div id="progress">Domanda: <span id="current">1</span> di <span id="total">15</span></div>
+        </div>
+
+        <div id="quiz-container"></div>
+        <button id="submit-btn">Invia risposte</button>
+
+        <div id="results" class="results"></div>
+
+        <footer>
+            <p>Quiz preparato sulla pedagogia speciale</p>
+        </footer>
+    </div>
+
+    <script>
+        // Pool di 40 domande sulla pedagogia speciale
+        const questionsPool = [
+            {"question":"La finalità principale dell'educazione è:","options":["Formare la persona nella sua globalità","Trasmettere solo nozioni","Addestrare al lavoro","Mantenere la disciplina"],"correct":0,"topic":"Valori e finalità"},
+            {"question":"L'educazione mira a sviluppare:","options":["Conoscenze, competenze e valori","Solo abilità mnemoniche","Solo destrezza tecnica","Solo obbedienza"],"correct":0,"topic":"Valori e finalità"},
+            {"question":"Una finalità della scuola democratica è:","options":["Formare cittadini consapevoli","Evitare la partecipazione","Limitare la libertà","Esaltare l'autorità"],"correct":0,"topic":"Valori e finalità"},
+            {"question":"L'educazione alla cittadinanza implica:","options":["Conoscenza di diritti e doveri","Obbedienza cieca","Isolamento sociale","Tecniche meccaniche"],"correct":0,"topic":"Valori e finalità"},
+            {"question":"L'educazione interculturale promuove:","options":["Dialogo e rispetto tra culture","Uniformità culturale","Isolamento etnico","Rifiuto delle differenze"],"correct":0,"topic":"Valori e finalità"},
+            {"question":"L'educazione inclusiva sostiene:","options":["Valorizzazione delle diversità","Esclusione dei più deboli","Omogeneità assoluta","Selezione severa"],"correct":0,"topic":"Valori e finalità"},
+            {"question":"Una competenza chiave europea è:","options":["Competenza digitale","Competenza agricola","Competenza militare","Competenza esclusiva"],"correct":0,"topic":"Valori e finalità"},
+            {"question":"Le competenze chiave europee sono:","options":["Otto","Tre","Cinque","Dieci"],"correct":0,"topic":"Valori e finalità"},
+            {"question":"Una di queste è competenza chiave europea:","options":["Imparare a imparare","Ripetere a memoria","Obbedire senza pensare","Isolarsi"],"correct":0,"topic":"Valori e finalità"},
+            {"question":"La scuola come comunità educante significa:","options":["Coinvolgere studenti, famiglie e territorio","Escludere i genitori","Lavorare in isolamento","Valorizzare solo i docenti"],"correct":0,"topic":"Valori e finalità"},
+            {"question":"L'educazione permanente indica:","options":["Apprendimento lungo tutto l'arco della vita","Solo durante la scuola","Solo all'università","Solo da giovani"],"correct":0,"topic":"Valori e finalità"},
+            {"question":"Il concetto di lifelong learning è:","options":["Apprendimento continuo","Studio scolastico limitato","Ripetizione meccanica","Educazione religiosa"],"correct":0,"topic":"Valori e finalità"},
+            {"question":"L'educazione formale avviene:","options":["In istituzioni scolastiche e riconosciute","In contesti informali","In famiglia","Per caso"],"correct":0,"topic":"Valori e finalità"},
+            {"question":"L'educazione non formale è:","options":["Organizzata fuori dalle scuole","Solo autodidattica","Solo scolastica","Casuale"],"correct":0,"topic":"Valori e finalità"},
+            {"question":"L'educazione informale è:","options":["Apprendimento spontaneo nella vita quotidiana","Rigidamente programmata","Solo scolastica","Limitata ai corsi"],"correct":0,"topic":"Valori e finalità"},
+            {"question":"Una finalità della scuola contemporanea è:","options":["Preparare al cambiamento e alla complessità","Trasmettere solo tradizioni","Isolare gli studenti","Ripetere regole fisse"],"correct":0,"topic":"Valori e finalità"},
+            {"question":"L'educazione ambientale promuove:","options":["Rispetto e sostenibilità verso la natura","Sfruttamento intensivo","Indifferenza","Negazione dei problemi"],"correct":0,"topic":"Valori e finalità"},
+            {"question":"L'educazione alla pace mira a:","options":["Risoluzione non violenta dei conflitti","Preparazione militare","Esaltazione della forza","Conflitto permanente"],"correct":0,"topic":"Valori e finalità"},
+            {"question":"L'educazione alla salute incoraggia:","options":["Stili di vita sani","Rischi costanti","Abitudini nocive","Passività"],"correct":0,"topic":"Valori e finalità"},
+            {"question":"L'educazione economica sviluppa:","options":["Consapevolezza nell'uso delle risorse","Consumismo acritico","Spreco","Indifferenza"],"correct":0,"topic":"Valori e finalità"},
+            {"question":"L'educazione emotiva aiuta a:","options":["Riconoscere e gestire le emozioni","Reprimerle sempre","Ignorarle","Negarle"],"correct":0,"topic":"Valori e finalità"},
+            {"question":"L'educazione estetica valorizza:","options":["Sensibilità al bello e all'arte","Solo tecnica","Solo disciplina","Solo memoria"],"correct":0,"topic":"Valori e finalità"},
+            {"question":"L'educazione etica sviluppa:","options":["Senso di responsabilità e valori morali","Obbedienza cieca","Rifiuto delle norme","Ripetizione"],"correct":0,"topic":"Valori e finalità"},
+            {"question":"L'educazione digitale deve:","options":["Promuovere uso critico delle tecnologie","Escludere internet","Favorire dipendenze","Negare i media"],"correct":0,"topic":"Valori e finalità"},
+            {"question":"L'educazione ai media mira a:","options":["Decodificare messaggi e comunicazioni","Accettare passivamente","Evitare la critica","Escludere i media"],"correct":0,"topic":"Valori e finalità"},
+            {"question":"L'educazione al lavoro prepara:","options":["Integrazione tra sapere e fare","Solo teoria","Solo gioco","Solo disciplina"],"correct":0,"topic":"Valori e finalità"},
+            {"question":"L'educazione alla legalità insegna:","options":["Rispetto delle regole condivise","Rifiuto delle leggi","Violenza","Arbitrio"],"correct":0,"topic":"Valori e finalità"},
+            {"question":"La scuola deve promuovere:","options":["Competenze per la cittadinanza attiva","Isolamento sociale","Obbedienza cieca","Conformismo"],"correct":0,"topic":"Valori e finalità"},
+            {"question":"L'autonomia scolastica consente:","options":["Flessibilità organizzativa e didattica","Uniformità rigida","Centralizzazione totale","Immobilismo"],"correct":0,"topic":"Valori e finalità"},
+            {"question":"Il POF (ora PTOF) è:","options":["Documento di pianificazione educativa della scuola","Una legge statale","Una circolare","Una valutazione"],"correct":0,"topic":"Valori e finalità"},
+            {"question":"Il PTOF definisce:","options":["Identità culturale e progettuale della scuola","Solo i voti","Solo l'orario","Solo i docenti"],"correct":0,"topic":"Valori e finalità"},
+            {"question":"La valutazione formativa serve a:","options":["Orientare e migliorare l'apprendimento","Giudicare senza spiegare","Punire","Classificare rigidamente"],"correct":0,"topic":"Valori e finalità"},
+            {"question":"La valutazione sommativa certifica:","options":["Risultati finali","Progressi intermedi","Competenze sociali","Processi in corso"],"correct":0,"topic":"Valori e finalità"},
+            {"question":"Il portfolio dello studente raccoglie:","options":["Esperienze, riflessioni e progressi","Solo i voti","Solo le assenze","Solo i rimproveri"],"correct":0,"topic":"Valori e finalità"},
+            {"question":"Una finalità della scuola inclusiva è:","options":["Dare successo formativo a tutti","Premiare solo i migliori","Selezionare i più forti","Escludere i deboli"],"correct":0,"topic":"Valori e finalità"},
+            {"question":"L'educazione personalizzata risponde a:","options":["Bisogni e potenzialità individuali","Programmi rigidi","Regole uniche","Uniformità"],"correct":0,"topic":"Valori e finalità"},
+            {"question":"Il concetto di curricolo indica:","options":["Insieme delle esperienze di apprendimento progettate","Solo il programma ministeriale","Solo i libri di testo","Solo le verifiche"],"correct":0,"topic":"Valori e finalità"},
+            {"question":"L'orientamento scolastico aiuta a:","options":["Scegliere percorsi in base a interessi e capacità","Seguire scelte casuali","Obbedire senza pensare","Copiare gli altri"],"correct":0,"topic":"Valori e finalità"},
+            {"question":"Una competenza trasversale è:","options":["Comunicazione efficace","Memoria meccanica","Ripetizione passiva","Obbedienza cieca"],"correct":0,"topic":"Valori e finalità"},
+            {"question":"La scuola del futuro dovrebbe essere:","options":["Innovativa, inclusiva, attenta ai bisogni degli studenti","Rigida e uniforme","Solo trasmissiva","Autoritaria"],"correct":0,"topic":"Valori e finalità"}
+        ];
+
+        // Funzione per mescolare un array (Fisher-Yates)
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+
+        // Seleziona domande casuali (gestisce anche il caso count > pool.length)
+        function getRandomQuestions(questions, count) {
+            const pool = [...questions];
+            const desired = Math.min(count, pool.length);
+            const shuffled = shuffleArray(pool);
+            const selected = shuffled.slice(0, desired);
+            return selected.map(q => {
+                const correctAnswer = q.options[q.correct];
+                const shuffledOptions = shuffleArray(q.options);
+                const newCorrectIndex = shuffledOptions.indexOf(correctAnswer);
+                return { ...q, options: shuffledOptions, correct: newCorrectIndex };
+            });
+        }
+
+        // Render del quiz
+        function renderQuiz(questions) {
+            const quizContainer = document.getElementById('quiz-container');
+            quizContainer.innerHTML = '';
+            questions.forEach((question, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question';
+                questionDiv.innerHTML = `
+                    <div class="question-number">Domanda ${index + 1}</div>
+                    <div class="topic">Argomento: ${question.topic}</div>
+                    <p>${question.question}</p>
+                    <div class="options">
+                        ${question.options.map((option, i) => `
+                            <div class="option">
+                                <input type="radio" id="q${index}_o${i}" name="q${index}" value="${i}">
+                                <label for="q${index}_o${i}">${option}</label>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                quizContainer.appendChild(questionDiv);
+            });
+            document.getElementById('current-topic').textContent = `Argomento: ${questions[0].topic}`;
+        }
+
+        // Calcolo punteggio e visualizzazione risultati
+        function calculateScore(questions) {
+            let score = 0;
+            const resultsContainer = document.getElementById('results');
+            resultsContainer.innerHTML = '<h2>Risultati</h2>';
+            resultsContainer.style.display = 'block';
+            questions.forEach((question, index) => {
+                const selectedOption = document.querySelector(`input[name="q${index}"]:checked`);
+                const userAnswer = selectedOption ? parseInt(selectedOption.value) : -1;
+                const isCorrect = userAnswer === question.correct;
+                if (isCorrect) score++;
+                const resultDiv = document.createElement('div');
+                resultDiv.className = `question-result ${isCorrect ? 'correct' : 'incorrect'}`;
+                resultDiv.innerHTML = `
+                    <p><strong>Domanda ${index + 1}:</strong> ${question.question}</p>
+                    <p>La tua risposta: ${userAnswer !== -1 ? question.options[userAnswer] : 'Nessuna risposta'}</p>
+                    <p class="correct">Risposta corretta: ${question.options[question.correct]}</p>
+                    <div class="topic">Argomento: ${question.topic}</div>
+                `;
+                resultsContainer.appendChild(resultDiv);
+            });
+
+            const scoreDiv = document.createElement('div');
+            scoreDiv.className = 'score';
+            scoreDiv.innerHTML = `Hai totalizzato ${score} punti su ${questions.length}`;
+            resultsContainer.prepend(scoreDiv);
+
+            const retryDiv = document.createElement('div');
+            retryDiv.className = 'retry-btn';
+            retryDiv.innerHTML = '<button onclick="location.reload()">Ripeti il Quiz con altre 15 domande</button>';
+            resultsContainer.appendChild(retryDiv);
+
+            resultsContainer.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Inizializzazione
+        document.addEventListener('DOMContentLoaded', function() {
+            const selectedQuestions = getRandomQuestions(questionsPool, 15);
+            renderQuiz(selectedQuestions);
+            document.getElementById('total').textContent = '15';
+            document.getElementById('submit-btn').addEventListener('click', function() {
+                calculateScore(selectedQuestions);
+            });
+
+            // osservatore per aggiornare topic e progresso
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const topic = entry.target.querySelector('.topic').textContent.replace('Argomento: ', '');
+                        document.getElementById('current-topic').textContent = `Argomento: ${topic}`;
+                        const questionNumber = entry.target.querySelector('.question-number').textContent.replace('Domanda ', '');
+                        document.getElementById('current').textContent = questionNumber;
+                    }
+                });
+            }, { threshold: 0.6 });
+
+            // osserva le domande create
+            const questions = document.querySelectorAll('.question');
+            questions.forEach(q => observer.observe(q));
+        });
+    </script>
+</body>
+</html>
