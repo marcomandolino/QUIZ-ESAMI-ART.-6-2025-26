@@ -22,6 +22,9 @@ Benvenuto! Qui trovi i quiz suddivisi per materia:
 - [PROGETTAZIONE DIDATTICA, INCLUSIVITÀ E PEI – pool 200 domande](https://marcomandolino.github.io/QUIZ-ESAMI-ART.-6-2025-26/QUIZZES//PROGETTAZIONE_DIDATTICA_2025/)
 - ════════════════════════════
 - [PEDAGOGIA DELLA RELAZIONE D'AIUTO – pool 200 domande](https://marcomandolino.github.io/QUIZ-ESAMI-ART.-6-2025-26/QUIZZES/PEDAGOGIA_RELAZIONE_AIUTO/)
+- ════════════════════════════
+- [DIDATTICA SPECIALE E APPRENDIMENTO PER LE DISABILITÀ SENSORIALI – pool 200 domande](https://marcomandolino.github.io/QUIZ-ESAMI-ART.-6-2025-26/QUIZZES/DIDATTICA_SPEC_DIS_SENSORIALI_2025/)
+- ════════════════════════════
 
 [Dispense in formato TXT ottimizzate per TTS - Text To Speech](https://drive.google.com/drive/folders/1uMZ8Fbu_fTxlGfE4dntGf7VHHO5Ie1S6?usp=sharing)
 
