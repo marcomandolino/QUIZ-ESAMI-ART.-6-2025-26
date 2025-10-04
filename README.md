@@ -1,4 +1,4 @@
-# QUIZ-ESAMI-ART.-6-2025-26
+# QUIZ-ESAMI-ART.-6-2025
 Raccolta di quiz generati sulle dispense degli esami Ecampus Art.6 TFA Indire 2025-26
 
 by Marco Giai-Levra
@@ -20,6 +20,8 @@ Benvenuto! Qui trovi i quiz suddivisi per materia:
 - [NEUROPSICHIATRIA INFANTILE – pool 200 domande](https://marcomandolino.github.io/QUIZ-ESAMI-ART.-6-2025-26/QUIZZES//NEUROPSICHIATRIA_2025/)
 - ════════════════════════════
 - [PROGETTAZIONE DIDATTICA, INCLUSIVITÀ E PEI – pool 200 domande](https://marcomandolino.github.io/QUIZ-ESAMI-ART.-6-2025-26/QUIZZES//PROGETTAZIONE_DIDATTICA_2025/)
+- ════════════════════════════
+- [PEDAGOGIA DELLA RELAZIONE D'AIUTO – pool 200 domande](https://marcomandolino.github.io/QUIZ-ESAMI-ART.-6-2025-26/QUIZZES/PEDAGOGIA_RELAZIONE_AIUTO/)
 
 [Dispense in formato TXT ottimizzate per TTS - Text To Speech](https://drive.google.com/drive/folders/1uMZ8Fbu_fTxlGfE4dntGf7VHHO5Ie1S6?usp=sharing)
 
