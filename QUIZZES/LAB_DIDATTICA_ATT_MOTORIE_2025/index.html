@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz - Laboratori di Didattica per le Attività Motorie e le Disabilità Sensoriali</title>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            line-height: 1.6; 
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%); 
+            color: #333; 
+            min-height: 100vh; 
+            padding: 20px; 
+            margin: 0;
+        }
+        .container { 
+            max-width: 900px; 
+            margin: 0 auto; 
+            background-color: white; 
+            padding: 30px; 
+            border-radius: 15px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15); 
+        }
+        header { 
+            text-align: center; 
+            margin-bottom: 30px; 
+        }
+        h1 { 
+            color: #2c3e50; 
+            margin-bottom: 10px; 
+            font-size: 2.2rem; 
+        }
+        .description { 
+            color: #7f8c8d; 
+            margin-bottom: 20px; 
+        }
+        .stats { 
+            display: flex; 
+            justify-content: space-between; 
+            margin-bottom: 20px; 
+            background: #f8f9fa; 
+            padding: 15px; 
+            border-radius: 10px; 
+            font-weight: bold; 
+        }
+        .question { 
+            margin-bottom: 25px; 
+            padding: 20px; 
+            border: 1px solid #e0e0e0; 
+            border-radius: 10px; 
+            background: #f8f9fa; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05); 
+        }
+        .question-number { 
+            font-weight: bold; 
+            color: #3498db; 
+            margin-bottom: 10px; 
+            font-size: 1.1rem; 
+        }
+        .options { 
+            margin-left: 10px; 
+        }
+        .option { 
+            margin: 12px 0; 
+            display: flex; 
+            align-items: flex-start; 
+        }
+        .option input { 
+            margin-top: 5px; 
+            margin-right: 12px; 
+            cursor: pointer; 
+        }
+        .option label { 
+            cursor: pointer; 
+            flex: 1; 
+        }
+        button { 
+            display: block; 
+            margin: 30px auto; 
+            padding: 14px 35px; 
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%); 
+            color: white; 
+            border: none; 
+            border-radius: 50px; 
+            cursor: pointer; 
+            font-size: 1.1rem; 
+            font-weight: bold; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2); 
+            transition: all .3s ease; 
+        }
+        button:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 6px 20px rgba(0,0,0,0.25); 
+        }
+        .results { 
+            margin-top: 30px; 
+            padding: 25px; 
+            border: 1px solid #e0e0e0; 
+            border-radius: 10px; 
+            background: #e7f3fe; 
+            display: none; 
+        }
+        .results h2 { 
+            text-align: center; 
+            color: #2c3e50; 
+            margin-bottom: 20px; 
+        }
+        .question-result { 
+            margin-bottom: 20px; 
+            padding: 15px; 
+            border-radius: 8px; 
+            background: white; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05); 
+        }
+        .correct { 
+            color: #27ae60; 
+            font-weight: bold; 
+        }
+        .incorrect { 
+            color: #e74c3c; 
+        }
+        .score { 
+            font-size: 1.4rem; 
+            font-weight: bold; 
+            text-align: center; 
+            margin: 25px 0; 
+            color: #2c3e50; 
+        }
+        .topic { 
+            font-size: 0.9rem; 
+            color: #7f8c8d; 
+            font-style: italic; 
+            margin-top: 5px; 
+        }
+        .retry-btn { 
+            text-align: right; 
+            margin-top: 20px; 
+        }
+        .retry-btn button { 
+            margin: 0; 
+            padding: 10px 25px; 
+            font-size: 1rem; 
+        }
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Quiz - Laboratori di Didattica per le Attività Motorie e le Disabilità Sensoriali</h1>
+            <p class="description">15 domande estratte casualmente da un pool di 200</p>
+        </header>
+
+        <div class="stats">
+            <div id="current-topic">Argomento: -</div>
+            <div id="progress">Domanda: <span id="current">1</span> di <span id="total">15</span></div>
+        </div>
+
+        <div id="quiz-container"></div>
+        <button id="submit-btn">Invia risposte</button>
+
+        <div id="results" class="results"></div>
+
+        <footer>
+            <p>Quiz sui Laboratori di Didattica per le Attività Motorie e le Disabilità Sensoriali</p>
+        </footer>
+    </div>
+
+    <script>
+        // Pool di 200 domande specifiche per LABORATORI DI DIDATTICA PER LE ATTIVITÀ MOTORIE E LE DISABILITÀ SENSORIALI
+        const questionsPool = [
+            // Blocco 1: Definizioni e classificazioni della disabilità visiva (1-20)
+            {"question":"Secondo l'OMS, un soggetto è considerato cieco quando:","options":["l'acuità visiva corretta nell'occhio migliore è inferiore a 1/10","l'acuità visiva corretta nell'occhio migliore è inferiore a 1/20","la percezione del campo visivo è inferiore a 10 gradi in entrambi gli occhi","non è in grado di distinguere i colori primari anche con correzione"],"correct":1,"topic":"Definizioni e classificazioni della disabilità visiva"},
+            {"question":"La L. 138/2001 e l'ICD-10 definiscono i livelli di capacità visiva come:","options":["visione normale, ipovisione lieve, ipovisione grave, cecità totale","visione normale, ipovisione media, ipovisione grave, cecità","visione eccellente, visione sufficiente, ipovisione, cecità assoluta","visione totale, visione parziale, ipovisione, cecità con percezione luminosa"],"correct":1,"topic":"Definizioni e classificazioni della disabilità visiva"},
+            {"question":"Un soggetto è considerato ipovedente secondo l'OMS quando l'acuità visiva corretta è:","options":["compresa tra 3/10 e 1/20","compresa tra 2/10 e 1/10 con restringimento campimetrico","inferiore a 1/20 in almeno un occhio","superiore a 5/10 ma con deficit della visione periferica"],"correct":0,"topic":"Definizioni e classificazioni della disabilità visiva"},
+            {"question":"La L. 138/2001 sottolinea che la condizione di cecità:","options":["corrisponde sempre alla completa assenza di capacità visiva","non sempre corrisponde alla completa assenza di capacità visiva","è definita esclusivamente dalla mancanza di percezione della luce","può essere determinata solo con esami oculistici approfonditi"],"correct":1,"topic":"Definizioni e classificazioni della disabilità visiva"},
+            {"question":"La valutazione accurata delle minorazioni visive comprende:","options":["esclusivamente l'acuità visiva centrale con tabelle standardizzate","la quantità del visus residuo e la percentuale di percezione del campo perimetrico","la capacità di lettura a diverse distanze e in condizioni di illuminazione variabile","la risposta pupillare alla luce e la sensibilità al contrasto cromatico"],"correct":1,"topic":"Definizioni e classificazioni della disabilità visiva"},
+            {"question":"Il campo perimetrico in una persona normovedente è circa:","options":["90 gradi","120 gradi","180 gradi","360 gradi"],"correct":2,"topic":"Definizioni e classificazioni della disabilità visiva"},
+            {"question":"La L. 138/2001 ha come titolo completo:","options":["Classificazione delle disabilità sensoriali e norme per l'accessibilità","Classificazione e quantificazione delle minorazioni visive e norme in materia di accertamenti oculistici","Norme per la prevenzione della cecità e l'integrazione sociale","Disposizioni per la riabilitazione visiva e l'uso di ausili tecnologici"],"correct":1,"topic":"Definizioni e classificazioni della disabilità visiva"},
+            {"question":"Per l'OMS, l'ipovisione grave rientra in una acuità visiva corretta:","options":["superiore a 3/10 ma con limitazioni funzionali","inferiore a 1/20 con assenza di percezione luminosa","tra 3/10 e 1/20, ma con specifici limiti","solo se associata a restringimento campimetrico superiore al 50%"],"correct":2,"topic":"Definizioni e classificazioni della disabilità visiva"},
+            {"question":"La definizione di cecità secondo la L. 138/2001 tiene conto:","options":["solo della acuità visiva misurata con tabelle ottotipiche","della acuità visiva e del campo visivo","della capacità di orientamento in spazi noti","della percezione cromatica e della visione notturna"],"correct":1,"topic":"Definizioni e classificazioni della disabilità visiva"},
+            {"question":"Una disabilità visiva aumenta sensibilmente le difficoltà di:","options":["interazione tra la persona e l'ambiente","apprendimento mnemonico e concettuale","socializzazione con i coetanei in contesti informali","comprensione dei linguaggi astratti e simbolici"],"correct":0,"topic":"Definizioni e classificazioni della disabilità visiva"},
+            {"question":"La minorazione visiva viene definita come:","options":["un danno cognitive legato alla elaborazione delle informazioni visive","un danno sensoriale a carico delle diverse componenti della funzione visiva","una incapacità di utilizzare ausili ottici e tecnologici","una condizione esclusivamente congenita e non progressiva"],"correct":1,"topic":"Definizioni e classificazioni della disabilità visiva"},
+            {"question":"L'ICD-10 è menzionato come:","options":["un sistema di classificazione internazionale delle malattie","un protocollo terapeutico per il trattamento dell'ipovisione","un dispositivo per la misurazione della acuità visiva a distanza","una legge italiana sulla disabilità sensoriale"],"correct":0,"topic":"Definizioni e classificazioni della disabilità visiva"},
+            {"question":"La percezione del campo perimetrico si riferisce a:","options":["la porzione di spazio che l'occhio è in grado di vedere, a capo fermo, davanti a sé","la capacità di percepire movimento laterale e periferico","la visione notturna e in condizioni di scarsa illuminazione","la sensibilità al contrasto e ai colori in diverse condizioni"],"correct":0,"topic":"Definizioni e classificazioni della disabilità visiva"},
+            {"question":"In condizioni normali, il campo visivo è circa:","options":["180 gradi","270 gradi","360 gradi","120 gradi"],"correct":0,"topic":"Definizioni e classificazioni della disabilità visiva"},
+            {"question":"La L. 138/2001 è stata emanata nel:","options":["2001","2006","1992","2025"],"correct":0,"topic":"Definizioni e classificazioni della disabilità visiva"},
+            {"question":"Per 'visus residuo' si intende:","options":["la visione corretta con lenti oftalmiche o contact lens","la visione periferica utile per l'orientamento","la quantità di visione residua","la acuità visiva non corretta in condizioni standard"],"correct":2,"topic":"Definizioni e classificazioni della disabilità visiva"},
+            {"question":"La cecità viene definita in base all'occhio:","options":["peggiore","migliore","entrambi gli occhi","nessuno dei due"],"correct":1,"topic":"Definizioni e classificazioni della disabilità visiva"},
+            {"question":"L'ipovisione media è un livello di:","options":["cecità","visione normale","capacità visiva tra normale e grave","capacità visiva solo con ausili ingrandenti"],"correct":2,"topic":"Definizioni e classificazioni della disabilità visiva"},
+            {"question":"La classificazione delle minorazioni visive serve per:","options":["solo per statistiche epidemiologiche e ricerca","accertamenti oculistici e norme correlate","la prescrizione di lenti e dispositivi ottici","l'accesso al sostegno scolastico e alle risorse educative"],"correct":1,"topic":"Definizioni e classificazioni della disabilità visiva"},
+            {"question":"La L. 138/2001 riguarda:","options":["la classificazione e quantificazione delle minorazioni visive","l'integrazione scolastica degli alunni con disabilità sensoriali","la prevenzione delle malattie oculari e la promozione della salute visiva","la fornitura di ausili tecnologici e sussidi tiflodidattici"],"correct":0,"topic":"Definizioni e classificazioni della disabilità visiva"},
+
+            // Blocco 2: Strategie didattiche per disabilità visiva (21-40)
+            {"question":"Per una persona con disabilità visiva, la conoscenza di uno spazio presuppone:","options":["una rappresentazione mentale attraverso l'esplorazione tattile","l'utilizzo esclusivo della memoria uditiva e verbale","la visione di mappe dettagliate e planimetrie","l'assistenza costante di un educatore o guida"],"correct":0,"topic":"Strategie didattiche per disabilità visiva"},
+            {"question":"Le azioni fondamentali per rendere accessibili gli spazi scolastici includono:","options":["consentire l'esplorazione anticipata degli spazi","modificare frequentemente l'arredamento e le postazioni","utilizzare solo codici verbali e descrizioni orali","evitare l'illuminazione naturale per ridurre abbagliamenti"],"correct":0,"topic":"Strategie didattiche per disabilità visiva"},
+            {"question":"Per limitare le difficoltà di orientamento, è importante:","options":["limitare gli ostacoli al movimento e all'orientamento","aumentare la numerosità degli arredi per punti di riferimento","utilizzare pavimenti riflettenti e superfici lucide","creare percorsi obbligati e delimitati con barriere"],"correct":0,"topic":"Strategie didattiche per disabilità visiva"},
+            {"question":"I codici simbolici condivisi per l'accessibilità possono essere:","options":["solo iconici e pittografici per semplicità","solo scritti in nero con caratteri standard","iconici o scritti (Braille e/o ingranditi)","esclusivamente audio e registrati"],"correct":2,"topic":"Strategie didattiche per disabilità visiva"},
+            {"question":"In caso di ipovisione, è fondamentale considerare:","options":["le condizioni d'illuminazione naturale e artificiale","la temperatura ambientale e il livello di umidità","il colore delle pareti e degli arredi per contrasto","l'acustica dell'aula e la riduzione dei rumori"],"correct":0,"topic":"Strategie didattiche per disabilità visiva"},
+            {"question":"La principale strategia didattica per la disabilità visiva è:","options":["una prospettiva di tipo esperienziale","l'insegnamento teorico astratto e concettuale","la ripetizione sistematica e mnemonica","l'uso di materiale digitale complesso e interattivo"],"correct":0,"topic":"Strategie didattiche per disabilità visiva"},
+            {"question":"La didattica esperienziale parte da:","options":["l'esperienza per poi muoversi verso altre direzioni","la teoria per applicazioni pratiche successive","i concetti astratti per concretizzarli con esempi","le verifiche scritte per passare alla oralità"],"correct":0,"topic":"Strategie didattiche per disabilità visiva"},
+            {"question":"Per arricchire il bagaglio di conoscenze dell'alunno non vedente:","options":["occorre limitare le occasioni di esperienza per evitare confusione","più occasioni vengono date, più si arricchisce","è sufficiente la lezione frontale e le spiegazioni verbali","bisogna evitare esperienze multisensoriali per focalizzare l'attenzione"],"correct":1,"topic":"Strategie didattiche per disabilità visiva"},
+            {"question":"Occorre prestare attenzione a non generare stress:","options":["aumentando le spiegazioni orali e le istruzioni dettagliate","evitando qualsiasi stimolo nuovo e non familiare","con un bombardamento di informazioni e spiegazioni","proponendo attività individuali e isolate dai compagni"],"correct":2,"topic":"Strategie didattiche per disabilità visiva"},
+            {"question":"Il materiale didattico deve consentire allo studente di:","options":["sentirsi dentro grazie all'immediatezza percettiva","apprendere nozioni complesse rapidamente e efficientemente","socializzare con i compagni attraverso il lavoro di gruppo","utilizzare solo il canale uditivo per l'apprendimento"],"correct":0,"topic":"Strategie didattiche per disabilità visiva"},
+            {"question":"L'esplorazione tattile è fondamentale per:","options":["la costruzione della rappresentazione mentale dello spazio","lo sviluppo della motricità fine e della coordinazione","la percezione dei colori e delle texture ambientali","l'apprendimento musicale e ritmico"],"correct":0,"topic":"Strategie didattiche per disabilità visiva"},
+            {"question":"Per una persona con disabilità visiva, la conoscenza di uno spazio si basa su:","options":["un processo complesso di raccolta e rielaborazione di dati acquisiti soprattutto attraverso l'esplorazione tattile","l'osservazione diretta e immediata con visione residua","le descrizioni verbali degli insegnanti e dei compagni","la simulazione al computer e realtà virtuale"],"correct":0,"topic":"Strategie didattiche per disabilità visiva"},
+            {"question":"Nell'ambiente scolastico, per la disabilità visiva, non è consigliabile:","options":["modificare arredamento e postazioni","utilizzare contrasti cromatici per evidenziare percorsi","avere spazi ampi e privi di ostacoli","usare segnali acustici per l'orientamento"],"correct":0,"topic":"Strategie didattiche per disabilità visiva"},
+            {"question":"La didattica esperienziale è importante perché:","options":["la scuola deve ritrovare un contatto più diretto con la realtà","è più facile da valutare e misurare oggettivamente","richiede meno risorse e materiali specifici","è tradizionale nella scuola italiana e consolidata"],"correct":0,"topic":"Strategie didattiche per disabilità visiva"},
+            {"question":"Un eccesso di informazioni può portare l'alunno a:","options":["mettere in atto meccanismi di difesa","migliorare l'attenzione e la concentrazione","aumentare la curiosità e la motivazione","sviluppare autonomia e iniziativa personale"],"correct":0,"topic":"Strategie didattiche per disabilità visiva"},
+            {"question":"L'immediatezza percettiva del materiale didattico significa che deve essere:","options":["immediatamente comprensibile attraverso i sensi","di facile produzione e a basso costo economico","a costi contenuti e accessibile a tutti gli studenti","standardizzato per tutti e non personalizzato"],"correct":0,"topic":"Strategie didattiche per disabilità visiva"},
+            {"question":"Per 'setting' si intende:","options":["la definizione dell'ambiente di apprendimento accessibile","il programma didattico individuale e personalizzato","la disposizione dei banchi in classe per favorire la socializzazione","il rapporto insegnante-alunno e la relazione educativa"],"correct":0,"topic":"Strategie didattiche per disabilità visiva"},
+            {"question":"Nella disabilità visiva, la scuola deve rendere accessibili:","options":["solo le aule dove si svolgono le lezioni","solo gli spazi comuni e di ritrovo","gli spazi in generale","principalmente la palestra e i laboratori"],"correct":2,"topic":"Strategie didattiche per disabilità visiva"},
+            {"question":"La rappresentazione mentale dello spazio viene costruita con:","options":["l'esplorazione tattile principalmente","l'ascolto passivo di descrizioni e audio guide","la visione di video e rappresentazioni grafiche","l'imitazione di movimenti e gesti degli altri"],"correct":0,"topic":"Strategie didattiche per disabilità visiva"},
+            {"question":"Per evitare stress, le spiegazioni devono essere:","options":["numerose e dettagliate per coprire tutti gli aspetti","limitate e concise per non sovraccaricare","solo scritte e fornite in formato cartaceo","solo orali e con tono di voce monotono"],"correct":1,"topic":"Strategie didattiche per disabilità visiva"},
+
+            // Blocco 3: Sistema Braille e tecnologie assistive (41-60)
+            {"question":"Il sistema Braille è:","options":["l'unico codice di letto-scrittura usato dalle persone non vedenti","un codice sostituito dalla tecnologia digitale e sintesi vocale","utilizzato solo per la matematica e le scienze","un linguaggio universale identico in tutti i paesi"],"correct":0,"topic":"Sistema Braille e tecnologie assistive"},
+            {"question":"L'apprendimento del Braille richiede:","options":["l'acquisizione di schemi immaginativi e motori mediante percezione ed esplorazione tattile","solo la memorizzazione di simboli e sequenze","l'uso della vista residua per riconoscere i puntini","l'assistenza costante di un insegnante specializzato"],"correct":0,"topic":"Sistema Braille e tecnologie assistive"},
+            {"question":"La condivisione del Braille da parte di chi sta accanto alla persona con disabilità visiva:","options":["è superfluosa e non influisce sull'apprendimento","accresce la motivazione all'apprendimento","confonde l'alunno con input multipli","è obbligatoria per legge e normativa scolastica"],"correct":1,"topic":"Sistema Braille e tecnologie assistive"},
+            {"question":"Il Braille è stato ideato da:","options":["Louis Braille","Antonio Maglio","l'OMS","un team di ricercatori internazionali"],"correct":0,"topic":"Sistema Braille e tecnologie assistive"},
+            {"question":"Le applicazioni moderne del Braille includono:","options":["solo libri cartacei e materiale stampato","display Braille elettronici","realtà virtuale e ambienti immersivi","ologrammi e proiezioni tridimensionali"],"correct":1,"topic":"Sistema Braille e tecnologie assistive"},
+            {"question":"Il Focus 14 Blue permette:","options":["di leggere testi digitali in Braille grazie a perni mobili","di ingrandire i caratteri a 14 punti per ipovedenti","di convertire testo in audio con sintesi vocale","di riconoscere volti e oggetti con telecamera"],"correct":0,"topic":"Sistema Braille e tecnologie assistive"},
+            {"question":"I tablet Braille sono esempio di:","options":["tecnologie obsolete e non più utilizzate","integrazione con la tecnologia digitale","dispositivi solo per ipovedenti con residuo visivo","strumenti per la visione notturna e a infrarossi"],"correct":1,"topic":"Sistema Braille e tecnologie assistive"},
+            {"question":"L'integrazione del Braille con l'intelligenza artificiale:","options":["è irrealistica e non ancora sperimentata","sta rivoluzionando l'accessibilità","è limitata alla sintesi vocale e al riconoscimento vocale","sostituisce completamente il Braille cartaceo"],"correct":1,"topic":"Sistema Braille e tecnologie assistive"},
+            {"question":"Per una persona ipovedente, la funzionalità visiva va valutata attraverso:","options":["solo l'acuità visiva con tabelle ottotipiche","l'osservazione dell'interazione tra individuo e ambiente","esami strumentali complessi e costosi","la capacità di lettura e scrittura in nero"],"correct":1,"topic":"Sistema Braille e tecnologie assistive"},
+            {"question":"L'alunno ipovedente può leggere e scrivere in nero se:","options":["in possesso di adeguato residuo visivo e capacità di usarlo funzionalmente","utilizza sempre il Braille come codice principale","ha un insegnante di sostegno che lo assiste","evita l'affaticamento visivo con pause frequenti"],"correct":0,"topic":"Sistema Braille e tecnologie assistive"},
+            {"question":"Gli accorgimenti per l'ipovedente includono:","options":["uso di caratteri ingranditi e con spessore","testi in corsivo per una migliore fluidità","carta lucida per aumentare il contrasto","illuminazione soffusa e indiretta"],"correct":0,"topic":"Sistema Braille e tecnologie assistive"},
+            {"question":"I sussidi tiflodidattici sono menzionati per:","options":["l'alunno ipovedente","solo per non vedenti totali","disabilità uditive e comunicative","disturbi dell'apprendimento e attentivi"],"correct":0,"topic":"Sistema Braille e tecnologie assistive"},
+            {"question":"La multimodalità dei documenti elettronici permette:","options":["la fruizione attraverso diverse modalità","solo la stampa in nero con caratteri standard","l'accesso solo tramite sintesi vocale e audio","la modifica dei contenuti e l'adattamento libero"],"correct":0,"topic":"Sistema Braille e tecnologie assistive"},
+            {"question":"Un documento elettronico multimodale può essere consultato con:","options":["diverse modalità sensoriali","solo modalità visive e grafiche","solo modalità uditive e sonore","solo modalità tattili e Braille"],"correct":0,"topic":"Sistema Braille e tecnologie assistive"},
+            {"question":"La multimodalità differisce dalla multimedialità perché:","options":["la multimedialità usa canali congiunti, non alternativi","la multimodalità è solo per persone con disabilità","la multimedialità è obsoleta e non più utilizzata","la multimodalità non include il testo e i caratteri"],"correct":0,"topic":"Sistema Braille e tecnologie assistive"},
+            {"question":"Un prodotto multimediale prevede:","options":["l'uso integrato di immagini, suoni e voci","solo testo e immagini statiche","solo audio e video sequenziali","solo elementi tattili e manipolativi"],"correct":0,"topic":"Sistema Braille e tecnologie assistive"},
+            {"question":"La multimodalità può diventare una barriera se:","options":["mal gestita e senza alternative communicative","utilizzata in ambienti rumorosi e confusi","non si hanno dispositivi moderni e aggiornati","i contenuti sono semplici e lineari"],"correct":0,"topic":"Sistema Braille e tecnologie assistive"},
+            {"question":"Un documento elettronico non è sempre multimodale, come nel caso di:","options":["una fotocamera digitale che fissa una pagina di libro","un file di testo formattato e strutturato","un PDF accessibile con tag e metadati","un e-book con audio incorporato e sincronizzato"],"correct":0,"topic":"Sistema Braille e tecnologie assistive"},
+            {"question":"I display Braille elettronici come Focus 14 Blue utilizzano:","options":["perni mobili che si alzano e abbassano","schermi LCD ad alta definizione e contrasto","proiezioni olografiche e light field","inchiostro elettronico e tecnologia e-paper"],"correct":0,"topic":"Sistema Braille e tecnologie assistive"},
+            {"question":"Per gli ipovedenti, la valutazione funzionale visiva osserva:","options":["come la persona utilizza la vista nell'interazione con l'ambiente","solo l'acuità visiva con tabelle standardizzate","la percezione cromatica e la discriminazione dei colori","la velocità di lettura e il numero di errori"],"correct":0,"topic":"Sistema Braille e tecnologie assistive"},
+
+            // Blocco 4: Disabilità uditiva: tipologie e livelli (61-80)
+            {"question":"Il deficit uditivo è caratterizzato da:","options":["perdita totale o parziale dell'udito","incapacità di produrre suoni e parole","disturbi del linguaggio e della comunicazione","problemi di equilibrio e coordinazione"],"correct":0,"topic":"Disabilità uditiva: tipologie e livelli"},
+            {"question":"I tipi di sordità includono:","options":["trasmissiva, neurosensoriale, mista, centrale","congenita e acquisita per cause esterne","lieve, media, grave, profonda","percettiva e cognitiva con elaborazione alterata"],"correct":0,"topic":"Disabilità uditiva: tipologie e livelli"},
+            {"question":"La sordità trasmissiva riguarda:","options":["malformazioni congenite, infezioni dell'orecchio","danni al nervo acustico e alle vie neurali","problemi cerebrali e corticali","trauma psicologico e stress emotivo"],"correct":0,"topic":"Disabilità uditiva: tipologie e livelli"},
+            {"question":"La sordità neurosensoriale può essere causata da:","options":["trauma acustico, rosolia, parotite, meningite","otite media e accumulo di fluidi","corpi estranei nel condotto uditivo","iperacusia e sensibilità ai suoni"],"correct":0,"topic":"Disabilità uditiva: tipologie e livelli"},
+            {"question":"La sordità mista è:","options":["trasmissiva + neurosensoriale","centrale + percettiva","congenita + acquisita","lieve + grave"],"correct":0,"topic":"Disabilità uditiva: tipologie e livell
