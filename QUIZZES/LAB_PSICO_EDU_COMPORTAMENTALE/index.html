@@ -1,1 +1,248 @@
-aaa
+
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz di Laboratorio Psico-educativo per Disturbi Comportamentali e Relazionali</title>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            line-height: 1.6; 
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%); 
+            color: #333; 
+            min-height: 100vh; 
+            padding: 20px; 
+            margin: 0;
+        }
+        .container { 
+            max-width: 900px; 
+            margin: 0 auto; 
+            background-color: white; 
+            padding: 30px; 
+            border-radius: 15px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15); 
+        }
+        header { 
+            text-align: center; 
+            margin-bottom: 30px; 
+        }
+        h1 { 
+            color: #2c3e50; 
+            margin-bottom: 10px; 
+            font-size: 2.2rem; 
+        }
+        .description { 
+            color: #7f8c8d; 
+            margin-bottom: 20px; 
+        }
+        .stats { 
+            display: flex; 
+            justify-content: space-between; 
+            margin-bottom: 20px; 
+            background: #f8f9fa; 
+            padding: 15px; 
+            border-radius: 10px; 
+            font-weight: bold; 
+        }
+        .question { 
+            margin-bottom: 25px; 
+            padding: 20px; 
+            border: 1px solid #e0e0e0; 
+            border-radius: 10px; 
+            background: #f8f9fa; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05); 
+        }
+        .question-number { 
+            font-weight: bold; 
+            color: #3498db; 
+            margin-bottom: 10px; 
+            font-size: 1.1rem; 
+        }
+        .options { 
+            margin-left: 10px; 
+        }
+        .option { 
+            margin: 12px 0; 
+            display: flex; 
+            align-items: flex-start; 
+        }
+        .option input { 
+            margin-top: 5px; 
+            margin-right: 12px; 
+            cursor: pointer; 
+        }
+        .option label { 
+            cursor: pointer; 
+            flex: 1; 
+        }
+        button { 
+            display: block; 
+            margin: 30px auto; 
+            padding: 14px 35px; 
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%); 
+            color: white; 
+            border: none; 
+            border-radius: 50px; 
+            cursor: pointer; 
+            font-size: 1.1rem; 
+            font-weight: bold; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2); 
+            transition: all .3s ease; 
+        }
+        button:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 6px 20px rgba(0,0,0,0.25); 
+        }
+        .results { 
+            margin-top: 30px; 
+            padding: 25px; 
+            border: 1px solid #e0e0e0; 
+            border-radius: 10px; 
+            background: #e7f3fe; 
+            display: none; 
+        }
+        .results h2 { 
+            text-align: center; 
+            color: #2c3e50; 
+            margin-bottom: 20px; 
+        }
+        .question-result { 
+            margin-bottom: 20px; 
+            padding: 15px; 
+            border-radius: 8px; 
+            background: white; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05); 
+        }
+        .correct { 
+            color: #27ae60; 
+            font-weight: bold; 
+        }
+        .incorrect { 
+            color: #e74c3c; 
+        }
+        .score { 
+            font-size: 1.4rem; 
+            font-weight: bold; 
+            text-align: center; 
+            margin: 25px 0; 
+            color: #2c3e50; 
+        }
+        .topic { 
+            font-size: 0.9rem; 
+            color: #7f8c8d; 
+            font-style: italic; 
+            margin-top: 5px; 
+        }
+        .retry-btn { 
+            text-align: right; 
+            margin-top: 20px; 
+        }
+        .retry-btn button { 
+            margin: 0; 
+            padding: 10px 25px; 
+            font-size: 1rem; 
+        }
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Quiz di Laboratorio Psico-educativo per Disturbi Comportamentali e Relazionali</h1>
+            <p class="description">15 domande estratte casualmente da un pool di 200</p>
+        </header>
+
+        <div class="stats">
+            <div id="current-topic">Argomento: -</div>
+            <div id="progress">Domanda: <span id="current">1</span> di <span id="total">15</span></div>
+        </div>
+
+        <div id="quiz-container"></div>
+        <button id="submit-btn">Invia risposte</button>
+
+        <div id="results" class="results"></div>
+
+        <footer>
+            <p>Quiz sul laboratorio psico-educativo per il trattamento di disturbi comportamentali e relazionali</p>
+        </footer>
+    </div>
+
+    <script>
+        // Pool di 200 domande sul Laboratorio Psico-educativo per il trattamento di disturbi comportamentali e relazionali
+        const questionsPool = [
+            // Blocco 1: Introduzione e Finalità del Percorso (10 domande)
+            {"question":"Secondo l'introduzione, la scuola oggi è considerata principalmente:","options":["l'unico luogo per l'acquisizione di conoscenze disciplinari","un contesto di crescita personale, sociale ed emotiva oltre che di trasmissione del sapere","un ambiente finalizzato esclusivamente alla preparazione per il mondo del lavoro","un'istituzione il cui scopo primario è identificare e correggere i comportamenti disfunzionali"],"correct":1,"topic":"Introduzione e Finalità del Percorso"},
+            {"question":"Qual è il fine del percorso formativo descritto nell'introduzione?","options":["Fornire ricette immediate e standardizzate per la gestione della classe","Stimolare una riflessione critica e proporre strumenti per costruire una prospettiva inclusiva","Addestrare gli insegnanti all'uso di tecniche per contenere e reprimere le condotte inadeguate","Sostituire le competenze professionali degli insegnanti con protocolli predefiniti"],"correct":1,"topic":"Introduzione e Finalità del Percorso"},
+            {"question":"La gestione dei disturbi del comportamento, secondo il testo, deve essere vista come:","options":["un dovere gravoso che mette a prova le competenze relazionali del docente","un'occasione di crescita per lo studente e per il docente all'interno della relazione educativa","un compito che richiede l'intervento esclusivo di figure specialistiche esterne alla scuola","un processo il cui obiettivo principale è il mantenimento dell'ordine e della disciplina in classe"],"correct":1,"topic":"Introduzione e Finalità del Percorso"},
+            {"question":"L'obiettivo primario nella gestione dei disturbi del comportamento è:","options":["promuovere negli studenti competenze relazionali, sociali ed emotive","isolare gli studenti con comportamenti problematici per non disturbare la classe","assicurarsi che tutti gli studenti rispettino le regole attraverso un sistema di punizioni severe","diagnosticare in autonomia il disturbo specifico per cui lo studente manifesta il comportamento"],"correct":0,"topic":"Introduzione e Finalità del Percorso"},
+            {"question":"Il testo afferma che gli insegnanti si trovano spesso ad affrontare comportamenti disfunzionali che:","options":["sono sempre riconducibili a una diagnosi clinica precisa e specifica","interferiscono con il processo di insegnamento-apprendimento","possono essere risolti esclusivamente con misure di carattere disciplinare","sono diminuiti significativamente grazie all'uso delle nuove tecnologie"],"correct":1,"topic":"Introduzione e Finalità del Percorso"},
+            {"question":"Secondo l'introduzione, un approccio inclusivo nella gestione dei disturbi del comportamento mira a:","options":["migliorare il clima di classe e il benessere collettivo","uniformare i comportamenti di tutti gli studenti a uno standard predefinito","delegare la gestione dei casi complessi ai servizi socio-sanitari","concentrare le risorse solo sugli studenti con diagnosi certificata"],"correct":0,"topic":"Introduzione e Finalità del Percorso"},
+            {"question":"Il percorso presentato non intende offrire agli insegnanti:","options":["strumenti concettuali e pratici per la gestione della classe","una riflessione critica sul proprio ruolo educativo","ricette immediate e standardizzate per risolvere i problemi","una prospettiva di crescita attraverso la relazione educativa"],"correct":2,"topic":"Introduzione e Finalità del Percorso"},
+            {"question":"La gestione dei disturbi del comportamento, secondo il testo, è un processo:","options":["statico, che una volta definito non deve essere modificato","dinamico, che si realizza all'interno delle relazioni educative","lineare, che parte dalla diagnosi e arriva all'applicazione di un protocollo","autonomo dello studente, in cui l'insegnante ha un ruolo marginale"],"correct":1,"topic":"Introduzione e Finalità del Percorso"},
+            {"question":"L'obiettivo di 'promuovere competenze' negli studenti si contrappone all'idea di:","options":["'contenere o reprimere' semplicemente le condotte poco adeguate","'osservare e documentare' in modo neutrale i comportamenti","'collaborare con la famiglia' per un intervento congiunto","'valorizzare i punti di forza' di ciascun alunno"],"correct":0,"topic":"Introduzione e Finalità del Percorso"},
+            {"question":"Il benessere collettivo in classe, menzionato nell'introduzione, è presentato come:","options":["un obiettivo secondario rispetto al successo formativo individuale","una conseguenza diretta dell'aumento del numero di ore di lezione","un miglioramento che consegue alla promozione di competenze sociali ed emotive","un risultato ottenibile solo in assenza di studenti con disturbi del comportamento"],"correct":2,"topic":"Introduzione e Finalità del Percorso"},
+
+            // Blocco 2: Cambiamenti Ambientali e Sociali (15 domande)
+            {"question":"Le trasformazioni sociali degli ultimi decenni hanno modificato radicalmente:","options":["solo la struttura della famiglia tradizionale, lasciando inalterate le modalità di apprendimento","esclusivamente l'accesso alle informazioni, senza influenzare le relazioni interpersonali","il modo di crescere e di apprendere dei ragazzi in molteplici aspetti","principalmente il ruolo degli insegnanti, riducendone l'importanza come mediatori del sapere"],"correct":2,"topic":"Cambiamenti Ambientali e Sociali"},
+            {"question":"Rispetto al passato, l'accesso al sapere per i giovani di oggi è caratterizzato da:","options":["una mediazione esclusiva da parte di genitori e insegnanti","la possibilità di entrare direttamente in contatto con conoscenze e informazioni","una minore quantità di informazioni disponibili, ma di qualità più controllata","la scomparsa delle figure di riferimento adulte nel processo di apprendimento"],"correct":1,"topic":"Cambiamenti Ambientali e Sociali"},
+            {"question":"Secondo il testo, un rischio associato all'accesso diretto alle informazioni è:","options":["la totale assenza di opportunità di crescita personale e culturale","la mancanza di filtri educativi adeguati per l'elaborazione critica","l'impossibilità di utilizzare le nuove tecnologie in ambito scolastico","la diminuzione della curiosità e dell'interesse per la conoscenza"],"correct":1,"topic":"Cambiamenti Ambientali e Sociali"},
+            {"question":"Il contesto socio-culturale attuale favorisce, secondo la dispensa:","options":["un passaggio immediato dall'emozione all'azione, senza spazi di riflessione","una maggiore capacità di astrazione e di pensiero critico nei giovani","lo sviluppo di un dialogo interiore profondo e di una spiccata empatia","la prevalenza della parola scritta sulle immagini nella comunicazione"],"correct":0,"topic":"Cambiamenti Ambientali e Sociali"},
+            {"question":"Una conseguenza del 'predominio delle immagini sulla parola scritta' è:","options":["la gratificazione immediata a scapito della capacità di attesa","un potenziamento generale della memoria storica e delle capacità mnemoniche","una minore impulsività e una migliore gestione delle relazioni interpersonali","la scomparsa di qualsiasi forma di comunicazione verbale e testuale"],"correct":0,"topic":"Cambiamenti Ambientali e Sociali"},
+            {"question":"La fragilità delle relazioni interpersonali tra i ragazzi è messa in relazione, nel testo, con:","options":["un eccessivo investimento sulle relazioni virtuali a discapito di quelle reali","la difficoltà a rimandare la gratificazione e una percezione del tempo schiacciata sul presente","la mancanza di interesse per le relazioni sociali causata dalle nuove tecnologie","l'incapacità genetica di alcuni individui di stabilire legami significativi"],"correct":1,"topic":"Cambiamenti Ambientali e Sociali"},
+            {"question":"Sul piano cognitivo, le trasformazioni descritte possono portare a:","options":["difficoltà di astrazione, di memoria storica e di comprensione profonda","un potenziamento delle capacità logico-matematiche e di problem solving","una maggiore attenzione ai dettagli e una migliore memoria a breve termine","l'incapacità di utilizzare strumenti tecnologici per l'apprendimento"],"correct":0,"topic":"Cambiamenti Ambientali e Sociali"},
+            {"question":"La percezione del tempo descritta come tipica di questo contesto è:","options":["proiettata verso il futuro, con una spiccata capacità di pianificazione","ancorata al passato, con un forte senso della tradizione e della storia","schiacciata sul presente, con difficoltà a proiettarsi nel futuro","ciclica, simile a quella delle società pre-moderne"],"correct":2,"topic":"Cambiamenti Ambientali e Sociali"},
+            {"question":"Secondo il testo, la famiglia tradizionale:","options":["è scomparsa, lasciando un vuoto educativo incolmabile","ha lasciato spazio a forme più fluide e diversificate di convivenza","rimane l'unico modello familiare efficace per la crescita dei ragazzi","non ha mai avuto ruoli ben definiti al suo interno"],"correct":1,"topic":"Cambiamenti Ambientali e Sociali"},
+            {"question":"L'elaborazione critica delle informazioni risulta difficile per i giovani a causa di:","options":["una presunta minore intelligenza delle generazioni più giovani","la complessità eccessiva dei programmi scolastici attuali","la mancanza di filtri educativi adeguati nell'accesso alle informazioni","uno scarso utilizzo delle immagini e dei supporti visivi a scuola"],"correct":2,"topic":"Cambiamenti Ambientali e Sociali"},
+            {"question":"La capacità di sviluppare empatia e di gestire le emozioni in modo equilibrato viene limitata da:","options":["un eccesso di razionalità e di controllo emotivo","la mancanza di spazi adeguati alla riflessione e al dialogo interiore","l'assenza di modelli emotivi di riferimento nella società odierna","la troppa importanza data all'educazione emotiva nelle scuole"],"correct":1,"topic":"Cambiamenti Ambientali e Sociali"},
+            {"question":"Il testo collega il predominio delle immagini a:","options":["un miglioramento delle capacità narrative e descrittive","un aumento della capacità di attenzione prolungata","una difficoltà nella gestione delle emozioni e delle relazioni","una diminuzione dei comportamenti impulsivi e disfunzionali"],"correct":2,"topic":"Cambiamenti Ambientali e Sociali"},
+            {"question":"La 'memoria storica' viene indicata come una capacità che:","options":["risulta potenziata dalle nuove modalità di apprendimento","non è più necessaria nell'era dell'informazione immediata","risulta compromessa dal nuovo contesto socio-culturale","può essere sviluppata solo attraverso lo studio mnemonico"],"correct":2,"topic":"Cambiamenti Ambientali e Sociali"},
+            {"question":"I cambiamenti sociali hanno reso l'apprendimento un processo:","options":["più lento e meditato rispetto al passato","identico a come era cinquant'anni fa","radicalmente modificato nelle sue modalità di base","totalmente autonomo e indipendente dal contesto"],"correct":2,"topic":"Cambiamenti Ambientali e Sociali"},
+            {"question":"Secondo il testo, l'immediato contatto con modelli di comportamento attraverso le tecnologie:","options":["rappresenta esclusivamente un'opportunità, senza alcun rischio associato","è un fenomeno irrilevante per lo sviluppo della personalità","comporta sia grandi opportunità che dei rischi specifici","è la causa principale dell'aumento dei disturbi dell'apprendimento"],"correct":2,"topic":"Cambiamenti Ambientali e Sociali"},
+
+            // Blocco 3: Nature vs. Nurture e il Ruolo dell'Ambiente (15 domande)
+            {"question":"Secondo il testo, riguardo allo sviluppo dei disturbi del comportamento, è ormai accettato che:","options":["genetica e ambiente sono variabili interdipendenti che interagiscono","i fattori genetici (nature) sono di gran lunga più importanti di quelli ambientali","i fattori ambientali (nurture) sono i soli responsabili dei disturbi del comportamento","è possibile stabilire con certezza quale dei due elementi sia più importante"],"correct":0,"topic":"Nature vs. Nurture e il Ruolo dell'Ambiente"},
+            {"question":"Nell'ADHD, il peso dei fattori genetici in termini di ereditarietà è stimato:","options":["fino al 70-80%","non superiore al 20-30%","esattamente al 50%","totalmente irrilevante"],"correct":0,"topic":"Nature vs. Nurture e il Ruolo dell'Ambiente"},
+            {"question":"Rispetto all'ADHD, il testo afferma che l'ambiente:","options":["può modulare l'espressione del disturbo","non ha alcuna influenza sull'espressione del disturbo","è l'unica causa scatenante del disturbo","può completamente annullare la predisposizione genetica"],"correct":0,"topic":"Nature vs. Nurture e il Ruolo dell'Ambiente"},
+            {"question":"Un contesto educativo stabile e supportivo, in caso di predisposizione all'ADHD, può:","options":["ridurre l'impatto della predisposizione biologica","aumentare l'impatto della predisposizione biologica","avere un effetto del tutto neutro sull'espressione del disturbo","sostituire la necessità di un intervento di tipo farmacologico"],"correct":0,"topic":"Nature vs. Nurture e il Ruolo dell'Ambiente"},
+            {"question":"Al contrario, un ambiente ostile o incoerente per un bambino con predisposizione all'ADHD:","options":["può amplificare l'espressione del disturbo","mitiga gli effetti della componente genetica","favorisce lo sviluppo di un attaccamento sicuro","non produce effetti significativi sul comportamento"],"correct":0,"topic":"Nature vs. Nurture e il Ruolo dell'Ambiente"},
+            {"question":"Il ruolo cruciale degli insegnanti, pur non intervenendo sugli aspetti biologici, è:","options":["plasmare l'ambiente scolastico in modo che diventi un fattore di protezione","diagnosticare i disturbi del comportamento di origine genetica","prescrivere interventi specifici di tipo terapeutico","sostituirsi alla famiglia nella gestione dei fattori ambientali"],"correct":0,"topic":"Nature vs. Nurture e il Ruolo dell'Ambiente"},
+            {"question":"La domanda fondamentale riguardo a 'nature' e 'nurture' non è quale sia più importante, ma:","options":["comprenderne l'interazione","dimostrare la superiorità dei fattori genetici","escludere l'influenza dei fattori ambientali","individuare il gene responsabile di ogni disturbo"],"correct":0,"topic":"Nature vs. Nurture e il Ruolo dell'Ambiente"},
+            {"question":"Secondo il testo, un ambiente stabile, affettivamente sicuro e coerente è in grado di:","options":["attenuare l'impatto di una predisposizione biologica ai disturbi","peggiorare le manifestazioni di qualsiasi disturbo del comportamento","essere efficace solo in assenza totale di fattori di rischio genetici","curare completamente i disturbi del comportamento a base genetica"],"correct":0,"topic":"Nature vs. Nurture e il Ruolo dell'Ambiente"},
+            {"question":"Il dibattito 'nature vs. nurture' viene presentato come superato dall'idea che:","options":["i due fattori non sono contrapposti ma interdipendenti","il fattore 'nurture' ha definitivamente prevalso su 'nature'","il fattore 'nature' ha definitivamente prevalso su 'nurture'","entrambi i fattori sono privi di reale influenza sullo sviluppo"],"correct":0,"topic":"Nature vs. Nurture e il Ruolo dell'Ambiente"},
+            {"question":"L'insegnante, in relazione all'ADHD, agisce principalmente su:","options":["fattori ambientali e contestuali per modulare l'espressione del disturbo","fattori genetici ed ereditari per ridurre l'impatto del disturbo","aspetti neurobiologici attraverso specifici training cognitivi","l'ereditarietà del disturbo attraverso il counseling familiare"],"correct":0,"topic":"Nature vs. Nurture e il Ruolo dell'Ambiente"},
+            {"question":"Un contesto ostile, secondo il testo, può:","options":["esacerbare le difficoltà di uno studente con predisposizione","avere un effetto positivo sull'autoregolazione emotiva","rendere irrilevante l'influenza di qualsiasi fattore genetico","essere compensato solo da un intervento di tipo farmacologico"],"correct":0,"topic":"Nature vs. Nurture e il Ruolo dell'Ambiente"},
+            {"question":"L'ambiente scolastico, se ben strutturato, può configurarsi come:","options":["un fattore di protezione per lo studente","l'unico elemento in grado di modificare il corredo genetico","una variabile del tutto secondaria nello sviluppo","un potenziale moltiplicatore degli effetti dei geni"],"correct":0,"topic":"Nature vs. Nurture e il Ruolo dell'Ambiente"},
+            {"question":"Il testo suggerisce che l'azione educativa sull'ambiente è:","options":["fondamentale per il suo potenziale effetto modulatore","inutile se il disturbo ha una forte base genetica","da evitare per non interferire con le predisposizioni naturali","necessaria solo per i disturbi privi di base biologica"],"correct":0,"topic":"Nature vs. Nurture e il Ruolo dell'Ambiente"},
+            {"question":"La coerenza dell'ambiente educativo è importante perché:","options":["fornisce stabilità e può attenuare l'impatto di un disturbo","è l'unico modo per modificare il patrimonio genetico di un alunno","aumenta esclusivamente le performance accademiche","è necessaria solo per gli studenti senza alcuna difficoltà"],"correct":0,"topic":"Nature vs. Nurture e il Ruolo dell'Ambiente"},
+            {"question":"Il compito dell'insegnante non include, secondo il testo:","options":["intervenire direttamente sugli aspetti biologici del disturbo","creare un ambiente di apprendimento supportivo e prevedibile","comprendere l'interazione tra fattori individuali e contesto","adattare le proprie strategie per sostenere l'alunno"],"correct":0,"topic":"Nature vs. Nurture e il Ruolo dell'Ambiente"},
+
+            // Blocco 4: Definizione e Classificazione dei Disturbi del Comportamento (15 domande)
+            {"question":"Con l'espressione 'disturbi del comportamento' il testo indica:","options":["un insieme eterogeneo di condizioni con comportamenti persistenti e dirompenti","una categoria diagnostica unica e ben definita con criteri rigidi","esclusivamente comportamenti di aggressività fisica verso gli altri","solo quelle condizioni che compaiono esclusivamente in età adolescenziale"],"correct":0,"topic":"Definizione e Classificazione dei Disturbi del Comportamento"},
+            {"question":"I comportamenti nei disturbi del comportamento sono definiti come:","options":["persistenti e dirompenti, e interferiscono con il funzionamento personale, scolastico e sociale","temporanei e situazionali, legati a momenti specifici di stress","lievi e transitori, rientranti nella normale variabilità del comportamento","osservabili solo in contesti extrascolastici e familiari"],"correct":0,"topic":"Definizione e Classificazione dei Disturbi del Comportamento"},
+            {"question":"I disturbi del comportamento possono manifestarsi lungo un:","options":["continuum dalla vivacità normale a forme più gravi come il Disturbo della Condotta","spettro limitato a comportamenti internalizzanti come l'ansia","percorso obbligato che parte sempre dal Disturbo Oppositivo Provocatorio","insieme di categorie tra loro completamente scollegate e indipendenti"],"correct":0,"topic":"Definizione e Classificazione dei Disturbi del Comportamento"},
+            {"question":"La letteratura distingue tradizionalmente tra disturbi:","options":["esternalizzanti e internalizzanti","cognitivi e motori","primari e secondari","acuti e cronici"],"correct":0,"topic":"Definizione e Classificazione dei Disturbi del Comportamento"},
+            {"question":"I disturbi esternalizzanti comprendono tipicamente:","options":["comportamenti osservabili come oppositività, aggressività e impulsività","condizioni caratterizzate principalmente da ansia, depressione e ritiro sociale","esclusivamente comportamenti di autolesionismo e ritiro","difficoltà legate esclusivamente all'apprendimento scolastico"],"correct":0,"topic":"Definizione e Classificazione dei Disturbi del Comportamento"},
+            {"question":"I disturbi internalizzanti comprendono tipicamente:","options":["ansia, depressione e ritiro sociale","oppositività, aggressività verbale e fisica","iperattività motoria e incapacità di stare seduti","menzogne patologiche e comportamenti vandalici"],"correct":0,"topic":"Definizione e Classificazione dei Disturbi del Comportamento"},
+            {"question":"I dati epidemiologici mostrano una prevalenza maggiore dei disturbi del comportamento:","options":["nei maschi rispetto alle femmine","nelle femmine rispetto ai maschi","in egual misura tra maschi e femmine","esclusivamente in specifiche aree geografiche"],"correct":0,"topic":"Definizione e Classificazione dei Disturbi del Comportamento"},
+            {"question":"L'aumento della prevalenza dei disturbi del comportamento evidenzia la necessità di:","options":["un impegno educativo strutturato e un lavoro integrato tra scuola, famiglia e servizi","un intervento esclusivamente clinico e farmacologico per tutti i casi","delegare la gestione di questi disturbi alle sole famiglie","ridurre l'offerta formativa per concentrarsi solo sulle discipline fondamentali"],"correct":0,"topic":"Definizione e Classificazione dei Disturbi del Comportamento"},
+            {"question":"La distinzione tra internalizzanti ed esternalizzanti è utile per:","options":["individuare le strategie di intervento più adeguate","stabilire con certezza l'origine genetica del disturbo","definire la gravità assoluta di una condizione","escludere la necessità di un lavoro di rete con la famiglia"],"correct":0,"topic":"Definizione e Classificazione dei Disturbi del Comportamento"},
+            {"question":"Il termine 'disturbo del comportamento' è definito come un termine:","options":["ombrello che indica vari disturbi che riguardano il comportamento","tecnico che si riferisce esclusivamente all'ADHD","sinonimo di 'maleducazione' o 'svogliatezza'","desueto e non più utilizzato in ambito clinico"],"correct":0,"topic":"Definizione e Classificazione dei Disturbi del Comportamento"},
+            {"question":"Rispetto all'ADHD, il testo specifica che gli altri disturbi del comportamento sono:","options":["veri e propri disturbi dirompenti","sempre meno gravi dell'ADHD","privi di qualsiasi base biologica o genetica","indistinguibili dall'ADHD per sintomatologia"],"correct":0,"topic":"Definizione e Classificazione dei Disturbi del Comportamento"},
+            {"question":"L'eterogeneità dei disturbi del comportamento implica che:","options":["si manifestano in modi diversi e con diverse intensità","hanno tutti la stessa identica sintomatologia e decorso","sono causati tutti dallo stesso identico fattore","colpiscono tutti con la stessa frequenza maschi e femmine"],"correct":0,"topic":"Definizione e Classificazione dei Disturbi del Comportamento"},
+            {"question":"L'interferenza del disturbo del comportamento riguarda il funzionamento:","options":["personale, scolastico e sociale","esclusivamente scolastico e dell'apprendimento","principalmente familiare, con minore impatto a scuola","motorio e coordinativo, ma non relazionale"],"correct":0,"topic":"Definizione e Classificazione dei Disturbi del Comportamento"},
+            {"question":"Il 'continuum' di manifestazione indica che:","options":["non esiste una netta linea di separazione tra normalità e disturbo","tutti i disturbi hanno un esordio improvviso e ben preciso","la vivacità normale è sempre un precursore di un disturbo","i disturbi più gravi non hanno alcuna relazione con tratti comportamentali comuni"],"correct":0,"topic":"Definizione e Classificazione dei Disturbi del Comportamento"},
+            {"question":"La necessità di interrogarsi sui cambiamenti sociali e culturali nasce da:","options":["l'osservazione di un aumento dei disturbi nell'ultimo decennio","la constatazione che i disturbi del comportamento sono in diminuzione","l'idea che questi disturbi siano invariati nel tempo e nella cultura","la prova che i fattori biologici sono gli unici responsabili dell'aumento"],"correct":0,"topic":"Definizione e Classificazione dei Disturbi del Comportamento"},
+
+            // Blocco 5: ADHD - Disturbo da Deficit di Attenzione e Iperattività (20 domande)
+            {"question":"L'ADHD è presentato nel testo come:","options":["il disturbo del comportamento più diffuso","un disturbo raro e poco conosciuto","una semplice variante del temperamento","sinonimo di disturbo oppositivo provocatorio"],"correct":0,"topic":"ADHD - Disturbo da Deficit di Attenzione e Iperattività"},
+            {"question":"I sintomi principali dell'ADHD sono:","options":["disattenzione, iperattività e impulsività","ansia, ritiro sociale e depressione","aggressività fisica, vandalismo e menzogne","ossessioni, compulsioni e rituali"],"correct":0,"topic":"ADHD - Disturbo da Deficit di Attenzione e Iperattività"},
+            {"question":"Il testo sottolinea che l'ADHD non è:","options":["semplice svogliatezza o maleducazione, ma un disturbo riconosciuto a livello clinico","un disturbo grave che preclude qualsiasi forma di apprendimento","una condizione che colpisce esclusivamente i bambini in età prescolare","curabile esclusivamente con terapie farmacologiche intensive"],"correct":0,"topic":"ADHD - Disturbo da Deficit di Attenzione e Iperattività"},
+            {"question":"La disattenzione nell'ADHD può manifestarsi con:","options":["errori di distrazione e difficoltà a seguire le istruzioni","un'attenzione ossessiva verso dettagli irrilevanti","un rifiuto totale di qualsiasi stimolo ambientale","la capacità di mantenere l'attenzione per tempi molto prolungati"],"correct":0,"topic":"ADHD - Disturbo da Deficit di Attenzione e Iperattività"},
+            {"question":"L'iperattività si manifesta spesso con:","options":["il bisogno di muoversi continuamente e la difficoltà a stare seduti","una costante stanchezza e apatia durante le attività scolastiche","un livello di energia sempre basso e costante durante la giornata","movimenti solo fini e circoscritti alle mani"],"correct":0,"topic":"ADHD - Disturbo da Deficit di Attenzione e Iperattività"},
+            {"question":"L'impulsività nell'ADHD si traduce in:","options":["difficoltà ad aspettare il proprio turno e frequenti interruzioni","una riflessione eccessiva prima di compiere qualsiasi azione","un comportamento sempre remissivo e poco assert
