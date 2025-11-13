@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz di Laboratorio di didattica speciale</title>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            line-height: 1.6; 
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%); 
+            color: #333; 
+            min-height: 100vh; 
+            padding: 20px; 
+            margin: 0;
+        }
+        .container { 
+            max-width: 900px; 
+            margin: 0 auto; 
+            background-color: white; 
+            padding: 30px; 
+            border-radius: 15px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15); 
+        }
+        header { 
+            text-align: center; 
+            margin-bottom: 30px; 
+        }
+        h1 { 
+            color: #2c3e50; 
+            margin-bottom: 10px; 
+            font-size: 2.2rem; 
+        }
+        .description { 
+            color: #7f8c8d; 
+            margin-bottom: 20px; 
+        }
+        .stats { 
+            display: flex; 
+            justify-content: space-between; 
+            margin-bottom: 20px; 
+            background: #f8f9fa; 
+            padding: 15px; 
+            border-radius: 10px; 
+            font-weight: bold; 
+        }
+        .question { 
+            margin-bottom: 25px; 
+            padding: 20px; 
+            border: 1px solid #e0e0e0; 
+            border-radius: 10px; 
+            background: #f8f9fa; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05); 
+        }
+        .question-number { 
+            font-weight: bold; 
+            color: #3498db; 
+            margin-bottom: 10px; 
+            font-size: 1.1rem; 
+        }
+        .options { 
+            margin-left: 10px; 
+        }
+        .option { 
+            margin: 12px 0; 
+            display: flex; 
+            align-items: flex-start; 
+        }
+        .option input { 
+            margin-top: 5px; 
+            margin-right: 12px; 
+            cursor: pointer; 
+        }
+        .option label { 
+            cursor: pointer; 
+            flex: 1; 
+        }
+        button { 
+            display: block; 
+            margin: 30px auto; 
+            padding: 14px 35px; 
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%); 
+            color: white; 
+            border: none; 
+            border-radius: 50px; 
+            cursor: pointer; 
+            font-size: 1.1rem; 
+            font-weight: bold; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2); 
+            transition: all .3s ease; 
+        }
+        button:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 6px 20px rgba(0,0,0,0.25); 
+        }
+        .results { 
+            margin-top: 30px; 
+            padding: 25px; 
+            border: 1px solid #e0e0e0; 
+            border-radius: 10px; 
+            background: #e7f3fe; 
+            display: none; 
+        }
+        .results h2 { 
+            text-align: center; 
+            color: #2c3e50; 
+            margin-bottom: 20px; 
+        }
+        .question-result { 
+            margin-bottom: 20px; 
+            padding: 15px; 
+            border-radius: 8px; 
+            background: white; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05); 
+        }
+        .correct { 
+            color: #27ae60; 
+            font-weight: bold; 
+        }
+        .incorrect { 
+            color: #e74c3c; 
+        }
+        .score { 
+            font-size: 1.4rem; 
+            font-weight: bold; 
+            text-align: center; 
+            margin: 25px 0; 
+            color: #2c3e50; 
+        }
+        .topic { 
+            font-size: 0.9rem; 
+            color: #7f8c8d; 
+            font-style: italic; 
+            margin-top: 5px; 
+        }
+        .retry-btn { 
+            text-align: right; 
+            margin-top: 20px; 
+        }
+        .retry-btn button { 
+            margin: 0; 
+            padding: 10px 25px; 
+            font-size: 1rem; 
+        }
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Quiz di Laboratorio di didattica speciale</h1>
+            <p class="description">15 domande estratte casualmente da un pool di 200</p>
+        </header>
+
+        <div class="stats">
+            <div id="current-topic">Argomento: -</div>
+            <div id="progress">Domanda: <span id="current">1</span> di <span id="total">15</span></div>
+        </div>
+
+        <div id="quiz-container"></div>
+        <button id="submit-btn">Invia risposte</button>
+
+        <div id="results" class="results"></div>
+
+        <footer>
+            <p>Quiz sul laboratorio di didattica speciale</p>
+        </footer>
+    </div>
+
+    <script>
+        // Pool di 200 domande sul Laboratorio di didattica speciale
+        const questionsPool = [
+            // B1: Antropologia e il suo ruolo nella professione docente (18 Domande)
+            {"question":"Cosa studia l'antropologia secondo la definizione fornita?","options":["L'uomo nei suoi aspetti sociali, culturali e fisici.","Esclusivamente le strutture sociali delle comunità primitive.","Le origini biologiche dell'essere umano e la sua evoluzione.","I sistemi educativi e le metodologie didattiche nelle diverse culture."],"correct":0,"topic":"Antropologia e il suo ruolo nella professione docente"},
+            {"question":"Da quali parole greche deriva il termine \"antropologia\"?","options":["\"Anthropos\" (uomo) e \"logos\" (discorso/studio).","\"Antropos\" (società) e \"logia\" (scienza).","\"Animus\" (spirito) e \"logia\" (dottrina).","\"Anthos\" (fiore) e \"logos\" (parola)."],"correct":0,"topic":"Antropologia e il suo ruolo nella professione docente"},
+            {"question":"Come si configura l'antropologia secondo il testo?","options":["Come insieme di concezioni, teorie e programmi di ricerca volti a comprendere l'uomo nella sua totalità.","Come una disciplina filosofica che indaga il senso dell'esistenza umana.","Come una scienza esatta che fornisce risposte definitive sul comportamento umano.","Come un ramo della sociologia che si occupa di statistiche e rilevazioni demografiche."],"correct":0,"topic":"Antropologia e il suo ruolo nella professione docente"},
+            {"question":"Quale approccio caratterizza l'antropologia?","options":["Un approccio integrato e comparativo.","Un approccio esclusivamente quantitativo e sperimentale.","Un approccio basato sull'introspezione psicologica individuale.","Un approccio puramente storico-filologico."],"correct":0,"topic":"Antropologia e il suo ruolo nella professione docente"},
+            {"question":"In quale anno l'antropologia è stata indicata tra i requisiti di base per diventare docenti in Italia?","options":["Nel 2017.","Nel 2003 con la Riforma Moratti.","Nel 2015 con la Legge \"Buona Scuola\".","Nel 2022 con il D.M. 328."],"correct":0,"topic":"Antropologia e il suo ruolo nella professione docente"},
+            {"question":"Quale decreto ha stabilito che l'antropologia è uno dei quattro ambiti disciplinari per la professione docente?","options":["Il DLgs n. 59 del 13 aprile 2017.","Il D.M. 328 del 22 dicembre 2022.","La Legge 107 del 2015.","Il DPR 275 del 1999."],"correct":0,"topic":"Antropologia e il suo ruolo nella professione docente"},
+            {"question":"Cosa ci offre l'antropologia, secondo il testo?","options":["Uno sguardo verso l'esterno e verso gli altri, ma anche l'insegnamento a guardare noi stessi.","Esclusivamente tecniche avanzate per l'osservazione delle società complesse.","Un metodo infallibile per risolvere i conflitti interculturali in classe.","Un repertorio di conoscenze enciclopediche sulle culture del mondo."],"correct":0,"topic":"Antropologia e il suo ruolo nella professione docente"},
+            {"question":"Cosa significa \"fare antropologia\" per un docente?","options":["Sviluppare capacità di autoanalisi e imparare a osservare con gli occhi di un estraneo.","Viaggiare in paesi lontani per studiare culture diverse dalla propria.","Raccontare agli studenti le usanze e i riti di popolazioni esotiche.","Applicare protocolli standardizzati per l'analisi dei gruppi sociali."],"correct":0,"topic":"Antropologia e il suo ruolo nella professione docente"},
+            {"question":"Cosa studia in particolare l'antropologia culturale?","options":["I processi di interculturazione e gli aspetti socio-culturali che influiscono sulla formazione della soggettività.","Le leggi e le norme che regolano i sistemi giuridici delle diverse culture.","Le forme artistiche e le produzioni materiali delle civiltà umane.","L'evoluzione genetica e le caratteristiche fisiche delle diverse popolazioni."],"correct":0,"topic":"Antropologia e il suo ruolo nella professione docente"},
+            {"question":"Quale prospettiva ha scelto di adottare la scuola italiana?","options":["La prospettiva interculturale.","La prospettiva assimilazionista.","La prospettiva multiculturalista separatista.","La prospettiva esclusivamente nazionale."],"correct":0,"topic":"Antropologia e il suo ruolo nella professione docente"},
+            {"question":"Quale è il primo passo da compiere, secondo la prospettiva antropologica, entrando in classe?","options":["Conoscere i propri studenti, chiamarli per nome e guardarli negli occhi.","Distribuire immediatamente il programma didattico annuale.","Effettuare un test d'ingresso per valutare il livello di preparazione.","Stabilire in modo autoritario le regole di comportamento."],"correct":0,"topic":"Antropologia e il suo ruolo nella professione docente"},
+            {"question":"Cosa è importante analizzare prima di concentrarsi sulle attività didattiche?","options":["La composizione del gruppo di lavoro e le eventuali dinamiche conflittuali.","Esclusivamente i documenti di valutazione degli anni precedenti.","Il curriculum vitae dei genitori degli alunni.","Le linee guida ministeriali in modo dettagliato e approfondito."],"correct":0,"topic":"Antropologia e il suo ruolo nella professione docente"},
+            {"question":"Cosa occorre ascoltare con attenzione, secondo il testo?","options":["Le parole degli alunni, anche quelle dette per gioco.","Solo le risposte fornite durante le interrogazioni formali.","Principalmente i pareri e le direttive del dirigente scolastico.","Esclusivamente le comunicazioni ufficiali delle famiglie."],"correct":0,"topic":"Antropologia e il suo ruolo nella professione docente"},
+            {"question":"Cosa si può proporre per ridurre il pregiudizio verso la diversità?","options":["Riflessioni sui temi delle discriminazioni e dell'inclusione.","Lezioni frontali sulla storia dei diritti umani.","Test psicologici per misurare il livello di apertura mentale degli studenti.","L'assegnazione di punizioni per comportamenti discriminatori."],"correct":0,"topic":"Antropologia e il suo ruolo nella professione docente"},
+            {"question":"Cosa si deve definire nell'ambito del percorso didattico?","options":["Insieme agli insegnanti, i ruoli e le regole del lavoro sul gruppo classe.","Un sistema di premi per gli studenti più meritevoli.","Un calendario rigido e immodificabile di tutte le attività.","Le modalità di esclusione temporanea per gli elementi problematici."],"correct":0,"topic":"Antropologia e il suo ruolo nella professione docente"},
+            {"question":"Cosa deve fare un docente se un alunno non comprende la lingua o non è a suo agio?","options":["Cercare aiuto tra i compagni o fare ricorso agli strumenti digitali.","Sospendere immediatamente l'attività e segnalare il caso al dirigente.","Insistere affinché l'alunno si sforzi di comprendere autonomamente.","Assegnare all'alunno compiti più semplici e isolati."],"correct":0,"topic":"Antropologia e il suo ruolo nella professione docente"},
+            {"question":"Quale delle seguenti NON è indicata come una strada per creare un ambiente inclusivo?","options":["Focalizzare la progettazione sullo studente medio.","Lavorare in ambito interculturale.","Promuovere lo sviluppo di competenze differenziate.","Rendere lo studente attivo e al centro del processo di apprendimento."],"correct":0,"topic":"Antropologia e il suo ruolo nella professione docente"},
+            {"question":"Cosa significa per un docente inclusivo \"mettersi sempre in discussione\"?","options":["Sviluppare capacità di autoanalisi e osservare sé stessi e il prossimo con attenzione.","Cambiare frequentemente opinione in base alle richieste degli studenti.","Delegare tutte le decisioni didattiche al gruppo classe.","Abbandonare i propri metodi di insegnamento a ogni difficoltà."],"correct":0,"topic":"Antropologia e il suo ruolo nella professione docente"},
+
+            // B2: La Prospettiva Interculturale a Scuola (16 Domande)
+            {"question":"Su cosa si basa la prospettiva interculturale?","options":["Su una prospettiva globale, il dialogo, la dinamicità culturale e la coesione sociale.","Su misure speciali e temporanee riservate agli alunni con background migratorio.","Sull'insegnamento della religione cattolica come base per il dialogo.","Sull'omogeneizzazione culturale per favorire la coesione nazionale."],"correct":0,"topic":"La Prospettiva Interculturale a Scuola"},
+            {"question":"Cosa intende il testo per \"Prospettiva Globale\"?","options":["Che l'intercultura non si limita agli alunni migranti, ma riguarda tutti gli alunni e tutti i livelli.","Che la scuola deve preparare gli studenti a competere nel mercato del lavoro globale.","Che è necessario studiare la geografia e le relazioni internazionali in modo approfondito.","Che tutte le cultures del mondo devono essere trattate in egual misura nel curriculum."],"correct":0,"topic":"La Prospettiva Interculturale a Scuola"},
+            {"question":"Cosa promuove la prospettiva interculturale?","options":["Il dialogo e il confronto tra culture e persone.","La separazione temporanea per un migliore apprendimento della lingua italiana.","La superiorità della cultura occidentale come fondamento della scuola.","L'assegnazione di tutor specializzati solo per gli studenti stranieri."],"correct":0,"topic":"La Prospettiva Interculturale a Scuola"},
+            {"question":"Come viene vista la diversità nella scuola interculturale?","options":["Come paradigma dell'identità della scuola.","Come un problema da superare attraverso l'integrazione.","Come un fattore marginale che riguarda una minoranza di studenti.","Come un ostacolo al raggiungimento degli obiettivi didattici standard."],"correct":0,"topic":"La Prospettiva Interculturale a Scuola"},
+            {"question":"Cosa unisce la prospettiva interculturale?","options":["L'apprezzamento delle differenze alla ricerca della coesione sociale.","L'attenzione alle differenze all'eliminazione di ogni conflitto ideologico.","La valorizzazione delle tradizioni locali al rifiuto della globalizzazione.","Lo studio delle lingue straniere all'abbandono della lingua madre."],"correct":0,"topic":"La Prospettiva Interculturale a Scuola"},
+            {"question":"Cosa NON prevede l'educazione interculturale?","options":["Divisioni, bensì la moltiplicazione delle appartenenze.","La creazione di classi separate per livello di lingua italiana.","Il riconoscimento dei diritti fondamentali di ogni individuo.","La collaborazione tra scuola, famiglia e territorio."],"correct":0,"topic":"La Prospettiva Interculturale a Scuola"},
+            {"question":"Cosa deve comprendere l'insegnante secondo il ruolo descritto?","options":["Le diversità culturali e creare un ambiente di apprendimento inclusivo.","Esclusivamente le tecniche didattiche più innovative e tecnologiche.","Le strategie per uniformare il comportamento degli studenti.","I meccanismi psicologici alla base dell'apprendimento mnemonico."],"correct":0,"topic":"La Prospettiva Interculturale a Scuola"},
+            {"question":"Cosa deve favorire l'insegnante?","options":["Il dialogo tra studenti con background culturali diversi.","La competizione individuale per stimolare il rendimento.","L'uso esclusivo della lingua italiana in ogni contesto scolastico.","La libera scelta di non partecipare alle attività interculturali."],"correct":0,"topic":"La Prospettiva Interculturale a Scuola"},
+            {"question":"Cosa deve sviluppare e far sviluppare l'insegnante?","options":["Una capacità di analisi critica delle dinamiche sociali.","Un'attitudine all'obbedienza verso le autorità costituite.","Una conoscenza enciclopedica di tutte le culture presenti in classe.","Un senso di colpa per le ingiustizie storiche commesse."],"correct":0,"topic":"La Prospettiva Interculturale a Scuola"},
+            {"question":"Come deve progettare l'insegnante?","options":["Non focalizzandosi sullo studente medio, ma rivolgendosi a tutti fin da subito.","Progettando per lo studente medio e aggiungendo poi percorsi personalizzati.","Aspettando di conoscere le specificità di ogni alunno prima di progettare.","Utilizzando esclusivamente modelli predefiniti validati a livello nazionale."],"correct":0,"topic":"La Prospettiva Interculturale a Scuola"},
+            {"question":"Quale compito ha l'insegnante rispetto alla società complessa?","options":["Fornire le chiavi di lettura e comprensione per affrontarla.","Proteggere gli studenti isolandoli dalle influenze esterne.","Insegnare solo le competenze tecniche richieste dal mercato.","Ignorare le influenze sociales per concentrarsi sui programmi ministeriali."],"correct":0,"topic":"La Prospettiva Interculturale a Scuola"},
+            {"question":"Cosa è chiamato a fare l'insegnante rispetto all'inclusione?","options":["Intraprendere un lavoro quotidiano i cui obiettivi sono rendere gli alunni consapevoli, promuovere il superamento dei pregiudizi e sviluppare apertura al dialogo.","Applicare rigorosamente il PEI solo per gli alunni con disabilità certificate.","Organizzare eventi speciali una volta all'anno per celebrare le diversità.","Delegare il lavoro sull'inclusione all'insegnante di sostegno e agli specialisti."],"correct":0,"topic":"La Prospettiva Interculturale a Scuola"},
+            {"question":"Cosa deve aiutare a comprendere l'insegnante?","options":["Che nessuna cultura è migliore o più efficace di un'altra.","Che la cultura italiana è il fondamento necessario per l'integrazione.","Che le culture sono entità statiche e immutabili da preservare.","Che esiste una gerarchia di valori culturali universalmente riconosciuta."],"correct":0,"topic":"La Prospettiva Interculturale a Scuola"},
+            {"question":"Da cosa parte un insegnante inclusivo?","options":["Dalla considerazione che l'inclusione riguarda tutti, nessuno escluso.","Dall'identificazione precoce degli alunni con Bisogni Educativi Speciali.","Dall'applicazione di protocolli standardizzati per l'accoglienza.","Dalla richiesta di risorse aggiuntive per gli alunni disabili."],"correct":0,"topic":"La Prospettiva Interculturale a Scuola"},
+            {"question":"Cosa fa un docente inclusivo riguardo alle peculiarità degli alunni?","options":["Cerca di comprenderle e si addentra nella pluralità delle interazioni tra differenze.","Le ignora per non creare etichette o aspettative diverse.","Le segnala immediatamente ai servizi socio-sanitari.","Le considera un fattore privato che non influisce sulla vita scolastica."],"correct":0,"topic":"La Prospettiva Interculturale a Scuola"},
+            {"question":"In cosa risiede l'approccio fondamentale di un insegnante inclusivo?","options":["Nella comprensione della grande complessità delle differenze.","Nell'abilità di semplificare i contenuti per tutti gli studenti.","Nell'avere una vasta conoscenza di tutte le possibili disabilità.","Nell'ottenere sempre il rispetto e l'attenzione di tutta la classe."],"correct":0,"topic":"La Prospettiva Interculturale a Scuola"},
+
+            // B3: Fondamenti e Quadro Normativo dell'Orientamento (18 Domande)
+            {"question":"Come si configura l'orientamento secondo il testo?","options":["Come un processo continuo che accompagna la persona lungo l'intero percorso di apprendimento.","Come un servizio di consulenza attivo solo nei momenti di scelta scolastica.","Come un'attività extracurricolare facoltativa per gli studenti indecisi.","Come un insieme di test attitudinali somministrati alla fine di ogni ciclo."],"correct":0,"topic":"Fondamenti e Quadro Normativo dell'Orientamento"},
+            {"question":"Su cosa si fonda l'orientamento?","options":["Su forme di orientamento permanente (lifelong guidance) e professionale (career guidance).","Esclusivamente sull'analisi delle richieste del mercato del lavoro.","Sulle preferenze espresse dalle famiglie degli studenti.","Sui risultati ottenuti negli studi dalle eccellenze della classe."],"correct":0,"topic":"Fondamenti e Quadro Normativo dell'Orientamento"},
+            {"question":"Quale decreto ha introdotto le Linee Guida per l'Orientamento con un approccio sistemico e permanente?","options":["Il Decreto Ministeriale n. 328 del 22 dicembre 2022.","Il DPR 275 del 1999.","La Legge 53 del 2003.","La Legge 107 del 2015."],"correct":0,"topic":"Fondamenti e Quadro Normativo dell'Orientamento"},
+            {"question":"Cosa sanciva il DPR 275 del 1999 riguardo all'orientamento?","options":["Lo riconosceva come parte integrante dell'offerta formativa, lasciando piena libertà operativa alle scuole.","Lo rendeva obbligatorio e strutturato con un monte ore minimo nazionale.","Lo demandava esclusivamente alle agenzie private del territorio.","Lo limitava agli ultimi anni di ciascun ciclo di studi."],"correct":0,"topic":"Fondamenti e Quadro Normativo dell'Orientamento"},
+            {"question":"Cosa prevedeva la Legge 53 del 2003 (Riforma Moratti) in materia di orientamento?","options":["Rafforzava il concetto di orientamento lungo tutto il percorso scolastico.","Aboliva l'obbligo di orientamento nelle scuole primarie.","Introduceva per la prima volta l'alternanza scuola-lavoro.","Centralizzava la gestione dell'orientamento a livello ministeriale."],"correct":0,"topic":"Fondamenti e Quadro Normativo dell'Orientamento"},
+            {"question":"Cosa introdussero le Indicazioni nazionali e Linee guida (2010-2012) per l'orientamento?","options":["La prospettiva delle competenze trasversali e dei percorsi personalizzati.","L'obbligo di svolgere almeno 200 ore di tirocinio per gli studenti.","Un sistema nazionale di test standardizzati per l'orientamento.","La figura del docente tutor specializzato in orientamento."],"correct":0,"topic":"Fondamenti e Quadro Normativo dell'Orientamento"},
+            {"question":"Come collegava la Legge 107 del 2015 (Buona Scuola) l'orientamento al mondo del lavoro?","options":["Attraverso l'Alternanza scuola-lavoro, poi ridenominata PCTO.","Attraverso l'assunzione obbligatoria di consulenti del lavoro nelle scuole.","Attraverso la creazione di portali online per la ricerca del lavoro.","Attraverso l'insegnamento obbligatorio dell'economia politica."],"correct":0,"topic":"Fondamenti e Quadro Normativo dell'Orientamento"},
+            {"question":"Cosa sottolineavano le Linee guida per l'orientamento permanente del MIUR del 2014?","options":["Il valore del tutoraggio e del portfolio delle competenze.","L'importanza di scegliere un percorso di studi universitario fin dalla scuola media.","La necessità di ridurre il numero di indirizzi di studio nella scuola secondaria.","L'inefficacia degli open day come strumento di orientamento."],"correct":0,"topic":"Fondamenti e Quadro Normativo dell'Orientamento"},
+            {"question":"Quale era la situazione dell'orientamento prima del D.M. 328 del 2022?","options":["Era presente nella normativa, ma non aveva strumenti vincolanti e strutturati.","Era completamente assente dal quadro normativo italiano.","Era gestito in modo identico e centralizzato in tutte le regioni.","Era considerato un optional non essenziale per la formazione."],"correct":0,"topic":"Fondamenti e Quadro Normativo dell'Orientamento"},
+            {"question":"Con il D.M. 328 del 2022, cosa diventa l'orientamento?","options":["Parte obbligatoria e sistematica dell'azione educativa.","Un'attività delegabile a enti esterni senza supervisione scolastica.","Un percorso riservato solo agli studenti in difficoltà.","Un modulo didattico da svolgere esclusivamente online."],"correct":0,"topic":"Fondamenti e Quadro Normativo dell'Orientamento"},
+            {"question":"Quale delle seguenti è una finalità principale dell'orientamento scolastico?","options":["Supportare la scelta consapevole aiutando gli studenti a valutare opzioni.","Indirizzare gli studenti verso le professioni con il più alto stipendio.","Sostituirsi alla famiglia nel processo decisionale dello studente.","Garantire che tutti gli studenti scelgano un percorso universitario."],"correct":0,"topic":"Fondamenti e Quadro Normativo dell'Orientamento"},
+            {"question":"Cosa favorisce l'orientamento in termini di crescita personale?","options":["La costruzione dell'identità e la riflessione su \"chi voglio diventare\".","L'adesione acritica ai modelli di successo proposti dai social media.","L'isolamento dello studente per una riflessione individuale approfondita.","La specializzazione precoce in un'unica area disciplinare."],"correct":0,"topic":"Fondamenti e Quadro Normativo dell'Orientamento"},
+            {"question":"Cosa promuove l'orientamento riguardo all'autonomia decisionale?","options":["La capacità di scegliere in modo indipendente, superando condizionamenti esterni.","La dipendenza dai consigli degli esperti di orientamento.","La scelta del percorso di studi più facile e meno impegnativo.","L'allineamento delle scelte personali alle tendenze del momento."],"correct":0,"topic":"Fondamenti e Quadro Normativo dell'Orientamento"},
+            {"question":"Qual è la definizione di orientamento ripresa dal D.M. 328 del 2022?","options":["Un processo volto a facilitare la conoscenza di sé e del contesto per definire obiettivi e un progetto di vita.","Un servizio di informazione sulle università e sui corsi di formazione professionale.","Una tecnica di coaching per massimizzare il successo negli studi.","Un insieme di procedure per l'assegnazione degli studenti agli indirizzi di studio."],"correct":0,"topic":"Fondamenti e Quadro Normativo dell'Orientamento"},
+            {"question":"Secondo questa definizione, l'orientamento favorisce la maturazione di cosa?","options":["Delle competenze necessarie per definire e ridefinire autonomamente obiettivi.","Di un atteggiamento di sfiducia verso le proprie capacità iniziali.","Di un senso di competizione con i compagni di classe.","Di un rifiuto per tutto ciò che non rientra nei propri interessi immediati."],"correct":0,"topic":"Fondamenti e Quadro Normativo dell'Orientamento"},
+            {"question":"Cosa è diventato l'orientamento, superando i limiti del passato?","options":["Parte integrante del processo di crescita e di apprendimento, non più limitato alla scelta del percorso.","Un mero strumento burocratico per compilare i moduli di iscrizione.","Un'attività sostitutiva della didattica tradizionale nelle ore curriculari.","Un optional da attivare solo in presenza di studenti con profili complessi."],"correct":0,"topic":"Fondamenti e Quadro Normativo dell'Orientamento"},
+            {"question":"Quale ruolo assumono gli insegnanti nell'orientamento moderno?","options":["Figure chiave nell'accompagnare gli studenti a conoscere se stessi e a prendere decisioni consapevoli.","Semplici trasmettitori di informazioni su corsi e professioni.","Controlori delle scelte effettuate dalle famiglie per gli studenti.","Valutatori esterni delle capacità decisionali degli allievi."],"correct":0,"topic":"Fondamenti e Quadro Normativo dell'Orientamento"},
+            {"question":"Cosa garantisce il D.M. 328/2022 all'orientamento che prima mancava?","options":["Obiettivi e strumenti operativi comuni per tutte le scuole.","Un budget illimitato per finanziare viaggi di orientamento.","L'esonero dalla valutazione per gli studenti impegnati in attività di orientamento.","La sostituzione dei docenti con figure professionali esterne specializzate."],"correct":0,"topic":"Fondamenti e Quadro Normativo dell'Orientamento"},
+
+            // B4: Ambiti, Strumenti e Valore Educativo dell'Orientamento (22 Domande)
+            {"question":"Quali sono i tre principali ambiti di intervento dell'orientamento?","options":["Orientamento informativo, formativo e professionale.","Orientamento scolastico, universitario e aziendale.","Orientamento individuale, di gruppo e multimediale.","Orientamento cognitivo, comportamentale e emotivo."],"correct":0,"topic":"Ambiti, Strumenti e Valore Educativo dell'Orientamento"},
+            {"question":"Cosa fornisce l'orientamento informativo?","options":["Conoscenze aggiornate sui percorsi di studio e sulle opportunità professionali.","Un percorso di psicoterapia per affrontare l'ansia da scelta.","Un servizio di tutoring per il recupero delle materie scolastiche.","Corsi intensivi per preparare i test di ammissione all'università."],"correct":0,"topic":"Ambiti, Strumenti e Valore Educativo dell'Orientamento"},
+            {"question":"Attraverso quali mezzi si realizza l'orientamento informativo?","options":["Open day, guide pratiche e piattaforme digitali.","Esclusivamente attraverso colloqui individuali con esperti.","Somministrazione obbligatoria di test psico-attitudinali.","Lettura e commento di biografie di personaggi famosi."],"correct":0,"topic":"Ambiti, Strumenti e Valore Educativo dell'Orientamento"},
+            {"question":"Cosa sviluppa l'orientamento formativo?","options":["Competenze trasversali e metacognitive come l'autovalutazione.","Esclusivamente le abilità manuali e tecniche per un mestiere.","La capacità di superare esami e test standardizzati.","Un atteggiamento di scetticismo verso il mondo del lavoro."],"correct":0,"topic":"Ambiti, Strumenti e Valore Educativo dell'Orientamento"},
+            {"question":"Cosa comprende l'orientamento formativo?","options":["Laboratori di riflessione, simulazioni e portfolio delle competenze.","Solo lezioni frontali su come scrivere un curriculum vitae.","Stage aziendali obbligatori di lunga durata.","Corsi di formazione politica e civica."],"correct":0,"topic":"Ambiti, Strumenti e Valore Educativo dell'Orientamento"},
+            {"question":"Come viene definito il portfolio delle competenze?","options":["Come una raccolta delle competenze personali e scolastiche.","Come un documento segreto consultabile solo dai docenti.","Come una lista dei voti ottenuti negli scrutini finali.","Come un diario delle esperienze emotive dello studente."],"correct":0,"topic":"Ambiti, Strumenti e Valore Educativo dell'Orientamento"},
+            {"question":"Cosa collega l'orientamento professionale?","options":["La scuola al mondo del lavoro.","La scuola primaria alla scuola secondaria.","Le famiglie agli psicologi dell'orientamento.","Gli studenti italiani a quelli di altri paesi."],"correct":0,"topic":"Ambiti, Strumenti e Valore Educativo dell'Orientamento"},
+            {"question":"Attraverso quali esperienze si realizza l'orientamento professionale?","options":["PCTO, visite aziendali e incontri con professionisti.","Esclusivamente attraverso corsi di formazione specifici.","Gare e competizioni tra studenti di diverse scuole.","Analisi di casi giudiziari legati al diritto del lavoro."],"correct":0,"topic":"Ambiti, Strumenti e Valore Educativo dell'Orientamento"},
+            {"question":"Quale degli obiettivi delle Linee Guida del 2022 mira a migliorare il passaggio tra scuole medie e superiori?","options":["Rafforzare il raccordo tra primo e secondo ciclo d'istruzione.","Contrastare la dispersione scolastica.","Favorire l'accesso all'istruzione terziaria.","Valorizzare i talenti e le potenzialità individuali."],"correct":0,"topic":"Ambiti, Strumenti e Valore Educativo dell'Orientamento"},
+            {"question":"Quale obiettivo delle Linee Guida è direttamente legato alla riduzione dell'abbandono scolastico?","options":["Contrastare la dispersione scolastica.","Rafforzare il raccordo tra primo e secondo ciclo d'istruzione.","Favorire l'accesso all'istruzione terziaria.","Definire un monte ore obbligatorio per l'orientamento."],"correct":0,"topic":"Ambiti, Strumenti e Valore Educativo dell'Orientamento"},
+            {"question":"Cosa sottolineano le Linee Guida riguardo al bisogno di orientamento?","options":["Che ogni persona necessita di continuo orientamento e ri-orientamento.","Che l'orientamento è necessario solo in tre momenti precisi della vita.","Che l'orientamento è un bisogno che scompare dopo i 25 anni.","Che l'orientamento è un lusso per i paesi economicamente avanzati."],"correct":0,"topic":"Ambiti, Strumenti e Valore Educativo dell'Orientamento"},
+            {"question":"Cosa è condizione essenziale per promuovere il merito e la motivazione?","options":["Il riconoscimento dei talenti individuali.","L'uniformità dei percorsi didattici per tutti gli studenti.","La soppressione di qualsiasi forma di valutazione.","L'assegnazione casuale degli studenti agli indirizzi di studio."],"correct":0,"topic":"Ambiti, Strumenti e Valore Educativo dell'Orientamento"},
+            {"question":"Di chi è responsabilità l'orientamento secondo il testo?","options":["È responsabilità condivisa tra scuola, famiglia e comunità educante.","È responsabilità esclusiva dello studente, che deve scegliere in autonomia.","È responsabilità del solo consiglio di classe.","È responsabilità dei servizi sociali del comune di residenza."],"correct":0,"topic":"Ambiti, Strumenti e Valore Educativo dell'Orientamento"},
+            {"question":"Cosa valorizza l'attività didattica in ottica orientativa?","options":["Esperienze, laboratori e autonomia, superando la trasmissione nozionistica.","Esclusivamente lo studio mnemonico dei contenuti disciplinari.","L'utilizzo di libri di testo identici per tutti gli studenti.","La valutazione selettiva basata su prove standardizzate."],"correct":0,"topic":"Ambiti, Strumenti e Valore Educativo dell'Orientamento"},
+            {"question":"Da quale livello scolastico l'orientamento sostiene fiducia e autostima?","options":["Già dalla scuola dell'infanzia.","Solo a partire dalla scuola secondaria di primo grado.","Esclusivamente negli ultimi due anni della scuola superiore.","Solo dopo il diploma, nel passaggio all'università o al lavoro."],"correct":0,"topic":"Ambiti, Strumenti e Valore Educativo dell'Orientamento"},
+            {"question":"Quale importante strumento per l'orientamento è previsto dall'ordinamento vigente?","options":["La Certificazione delle competenze.","Il Patentino per l'uso del computer.","L'Attestato di frequenza obbligatoria.","La Licenza elementare."],"correct":0,"topic":"Ambiti, Strumenti e Valore Educativo dell'Orientamento"},
+            {"question":"A partire dall'a.s. 2023/2024, quando è possibile richiedere il rilascio della Certificazione delle competenze nel secondo ciclo?","options":["Al termine di ciascuna annualità.","Solo al termine del quinto anno.","Solo in caso di passaggio ad altro percorso.","Solo per gli studenti con disabilità."],"correct":0,"topic":"Ambiti, Strumenti e Valore Educativo dell'Orientamento"},
+            {"question":"Quale è il monte ore annuale dedicato all'orientamento nella Scuola Secondaria di I grado e nel primo biennio della Secondaria di II grado?","options":["30 ore.","33 ore.","50 ore.","20 ore."],"correct":0,"topic":"Ambiti, Strumenti e Valore Educativo dell'Orientamento"},
+            {"question":"Quante ore devono constare i moduli di orientamento formativo per il triennio della Secondaria di II grado?","options":["Almeno 30 ore per anno scolastico.","Almeno 33 ore per anno scolastico.","Almeno 20 ore per l'intero triennio.","Non è previsto un monte ore minimo."],"correct":0,"topic":"Ambiti, Strumenti e Valore Educativo dell'Orientamento"},
+            {"question":"Cosa possono includere queste ore di orientamento?","options":["Laboratori di peer tutoring e sperimentazioni di didattica orientativa.","Solo lezioni frontali tenute da docenti universitari.","Esclusivamente simulazioni di test di ammissione.","Attività sportive e ricreative non strutturate."],"correct":0,"topic":"Ambiti, Strumenti e Valore Educativo dell'Orientamento"},
+            {"question":"Come è considerato l'orientamento all'interno del curricolo?","options":["Non come una nuova disciplina separata, ma come uno strumento per fare sintesi dell'esperienza scolastica.","Come una materia a sé stante con un proprio voto in pagella.","Come un'attività sostitutiva dell'educazione civica.","Come un corso opzionale pomeridiano."],"correct":0,"topic":"Ambiti, Strumenti e Valore Educativo dell'Orientamento"},
+            {"question":"Quale modulo di orientamento riguarda l'esplorazione di interessi e capacità?","options":["Conoscenza di sé e delle proprie attitudini.","Esplorazione delle opportunità formative e professionali.","Sviluppo competenze trasversali.","Attività laboratoriali e PCTO."],"correct":0,"topic":"Ambiti, Strumenti e Valore Educativo dell'Orientamento"},
+            {"question":"Cosa viene rilasciato alla fine del primo ciclo?","options":["Un consiglio di orientamento personalizzato.","Il Curriculum dello studente.","L'E-Portfolio in formato digitale.","Un attestato di partecipazione ai corsi di orientamento."],"correct":0,"topic":"Ambiti, Strumenti e Valore Educativo dell'Orientamento"},
+            {"question":"Cosa accompagna il diploma finale nel secondo ciclo?","options":["Il Curriculum dello studente.","Il consiglio di orientamento personalizzato.","La Certificazione delle competenze della scuola primaria.","Un punteggio per l'accesso all'università."],"correct":0,"topic":"Ambiti, Strumenti e Valore Educativo dell'Orientamento"},
+            {"question":"Cosa rappresenta l'E-Portfolio dello studente?","options":["Una mappa dinamica del percorso formativo individuale.","Un registro digitale delle assenze e dei ritardi.","Una raccolta dei soli voti delle prove scritte.","Un profilo social privato dello studente."],"correct":0,"topic":"Ambiti, Strumenti e Valore Educativo dell'Orientamento"},
+
+            // B5: Didattica Orientativa e Prospettiva Inclusiva (24 Domande)
+            {"question":"Cosa significa orientare a scuola secondo il testo?","options":["Sostenere gli studenti nei momenti decisionali, accompagnandoli nella costruzione di un percorso personale.","Fornire un elenco di professioni adatte al loro profitto scolastico.","Correggere le scelte considerate sbagliate dalle famiglie.","Imporre il percorso di studi in base ai risultati dei test."],"correct":0,"topic":"Didattica Orientativa e Prospettiva Inclusiva"},
+            {"question":"Cosa consente un orientamento efficace?","options":["Promuovere la crescita personale e prevenire abbandoni.","Garantire che tutti gli studenti scelgano l'università.","Ridurre il numero di insegnanti necessari nelle classi.","Sostituire la valutazione formativa con quella sommativa."],"correct":0,"topic":"Didattica Orientativa e Prospettiva Inclusiva"},
+            {"question":"A quale teoria motivazionale richiama il testo parlando di orientamento?","options":["La teoria di Abraham Maslow.","La teoria dell'attaccamento di Bowlby.","La teoria delle intelligenze multiple di Gardner.","La teoria comportamentista di Skinner."],"correct":0,"topic":"Didattica Orientativa e Prospettiva Inclusiva"},
+            {"question":"Secondo Maslow, qual è il bisogno fondamentale dell'essere umano?","options":["L'autorealizzazione.","L'appartenenza a un gruppo sociale.","La sicurezza fisica e psicologica.","La soddisfazione dei bisogni fisiologici."],"correct":0,"topic":"Didattica Orientativa e Prospettiva Inclusiva"},
+            {"question":"Come si configura la didattica orientativa?","options":["Come una pratica di insegnamento che mette al centro lo studente.","Come una metodologia riservata agli studenti con BES.","Come un insieme di tecniche per velocizzare l'apprendimento.","Come un approccio che privilegia la lezione frontale."],"correct":0,"topic":"Didattica Orientativa e Prospettiva Inclusiva"},
+            {"question":"Qual è l'obiettivo principale della didattica orientativa?","options":["Fornire strumenti per la conoscenza di sé, del proprio contesto e delle prospettive personali.","Completare il programma ministeriale in anticipo rispetto alla fine dell'anno.","Preparare gli studenti al superamento dei test INVALSI.","Sviluppare esclusivamente competenze digitali avanzate."],"correct":0,"topic":"Didattica Orientativa e Prospettiva Inclusiva"},
+            {"question":"Qual è il fine ultimo della didattica orientativa?","options":["Promuovere una consapevolezza più ampia, tramite la conoscenza di contenuti.","La mera conoscenza dei contenuti disciplinari.","L'iscrizione alla piattaforma di orientamento regionale.","L'ottenimento del massimo voto in tutte le discipline."],"correct":0,"topic":"Didattica Orientativa e Prospettiva Inclusiva"},
+            {"question":"Perché oggi la didattica orientativa è un tema centrale?","options":["Per l'istituzione dei Docenti Tutor e per le quote preoccupanti di abbandono scolastico.","Perché è un requisito richiesto dall'Unione Europea per ottenere fondi.","Perché i genitori non sono più in grado di orientare i propri figli.","Perché ha sostituito l'insegnamento della storia nella scuola moderna."],"correct":0,"topic":"Didattica Orientativa e Prospettiva Inclusiva"},
+            {"question":"Cosa si intende per \"abbandono passivo\"?","options":["Studenti che frequentano fisicamente ma hanno bassa motivazione e interesse.","Studenti che vengono espulsi per reiterati comportamenti scorretti.","Studenti che si trasferiscono in un'altra scuola senza preavviso.","Studenti che scelgono di non iscriversi all'università dopo il diploma."],"correct":0,"topic":"Didattica Orientativa e Prospettiva Inclusiva"},
+            {"question":"Cosa significa l'acronimo NEET?","options":["Not Engaged in Education, Employment or Training.","New Education and Employment Treaty.","National Entry Exam for Teaching.","Non Eligible for Educational Training."],"correct":0,"topic":"Didattica Orientativa e Prospettiva Inclusiva"},
+            {"question":"Quale ruolo strategico assume il docente nella didattica orientativa?","options":["Ascolto attivo e osservazione per comprendere risorse e attitudini degli studenti.","Controllore assiduo dei profili social dei propri studenti.","Fornitore esclusivo di materiale didattico standardizzato.","Giudice imparziale durante le dispute tra studenti."],"correct":0,"topic":"Didattica Orientativa e Prospettiva Inclusiva"},
+            {"question":"Cosa deve favorire il docente attraverso la didattica orientativa?","options":["La metacognizione e la consapevolezza delle proprie modalità di apprendere.","La dipendenza dagli strumenti compensativi digitali.","L'omologazione delle strategie di studio di tutta la classe.","La rinuncia a percorsi troppo ambiziosi per le proprie capacità."],"correct":0,"topic":"Didattica Orientativa e Prospettiva Inclusiva"},
+            {"question":"Quale ambito della didattica orientativa prevede open day e micro-stage?","options":["Orientamento in ingresso.","Orientamento in itinere.","Orientamento in uscita.","Orientamento permanente."],"correct":0,"topic":"Didattica Orientativa e Prospettiva Inclusiva"},
+            {"question":"Cosa caratterizza l'orientamento in itinere?","options":["Attività nel primo biennio per sostenere motivazione e metodo di studio.","Presentazione dell'offerta formativa delle scuole superiori.","Percorsi di accompagnamento alla scelta post-diploma.","Incontri con università ed enti di formazione."],"correct":0,"topic":"Didattica Orientativa e Prospettiva Inclusiva"},
+            {"question":"Quando interviene il riorientamento?","options":["Quando la scelta iniziale si rivela inadeguata.","Prima ancora che lo studente compia una scelta.","Solo dopo la conclusione del percorso di studi.","Esclusivamente per gli studenti con disabilità certificata."],"correct":0,"topic":"Didattica Orientativa e Prospettiva Inclusiva"},
+            {"question":"Cosa comprende l'orientamento in uscita?","options":["Percorsi di accompagnamento alla scelta post-diploma o post-qualifica.","Attività di open day per le scuole medie.","Corsi di recupero per le materie insufficienti.","Laboratori di autovalutazione degli interessi."],"correct":0,"topic":"Didattica Orientativa e Prospettiva Inclusiva"},
+            {"question":"Secondo Andrea Canevaro, l'insegnante è una figura di...","options":["Accompagnamento fondamentale.","Controllo disciplinare costante.","Istruzione tecnica specialistica.","Sostegno psicologico clinico."],"correct":0,"topic":"Didattica Orientativa e Prospettiva Inclusiva"},
+            {"question":"Cosa occorre allontanare per una formazione personalizzata e autodeterminata?","options":["Schemi standardizzati.","Il confronto con i compagni di classe.","L'uso delle tecnologie digitali.","I progetti di vita individuali."],"correct":0,"topic":"Didattica Orientativa e Prospettiva Inclusiva"},
+            {"question":"Cosa si deve evitare negli studenti con disabilità per favorire l'autodeterminazione?","options":["L'infantilizzazione.","La responsabilizzazione.","La socializzazione.","La valutazione formativa."],"correct":0,"topic":"Didattica Orientativa e Prospettiva Inclusiva"},
+            {"question":"Quale degli seguenti NON è un obiettivo della didattica orientativa inclusiva?","options":["Aumentare il numero di studenti che scelgono facoltà scientifiche.","Favorire l'autodeterminazione e la costruzione di un futuro possibile.","Creare connessioni tra attività scolastiche ed extrascolastiche.","Promuovere il dialogo scuola-famiglia-territorio."],"correct":0,"topic":"Didattica Orientativa e Prospettiva Inclusiva"},
+            {"question":"Quale criticità persiste nonostante i progressi normativi?","options":["Scarsa integrazione tra sistema scolastico e sociosanitario.","Eccessiva presenza di insegnanti di sostegno nelle classi.","Mancanza di libri di testo per gli studenti con BES.","Obbligo di redigere il PEI per tutti gli alunni."],"correct":0,"topic":"Didattica Orientativa e Prospettiva Inclusiva"},
+            {"question":"Cosa si intende per \"delega eccessiva al solo insegnante di sostegno\"?","options":["Che l'inclusione è considerata un compito solo del docente di sostegno e non di tutti.","Che l'insegnante di sostegno è l'unico a poter firmare il PEI.","Che il docente curriculare non può interagire con l'alunno con disabilità.","Che l'insegnante di sostegno deve svolgere anche funzioni amministrative."],"correct":0,"topic":"Didattica Orientativa e Prospettiva Inclusiva"},
+            {"question":"Cosa prevede la strategia \"Valutazione individuale dei bisogni\"?","options":["Una analisi personalizzata delle necessità di ogni studente con disabilità.","Un test standardizzato uguale per tutti gli studenti con BES.","Una valutazione comparativa con i compagni di classe.","Una diagnosi medica effettuata direttamente dalla scuola."],"correct":0,"topic":"Didattica Orientativa e Prospettiva Inclusiva"},
+            {"question":"Cosa è il PEI nel percorso di orientamento dell'alunno?","options":["Una bussola.","Un optional.","Un vincolo.","Un ostacolo."],"correct":0,"topic":"Didattica Orientativa e Prospettiva Inclusiva"},
+
+            // B6: Teoria dell'Autodeterminazione e Integrazione PEI-Progetto di Vita (16 Domande)
+            {"question":"Chi sono gli autori della Teoria dell'Autodeterminazione?","options":["Deci e Ryan (1985).","Bandura e Vygotskij.","Piaget e Bruner.","Maslow e Rogers."],"correct":0,"topic":"Teoria dell'Autodeterminazione e Integrazione PEI-Progetto di Vita"},
+            {"question":"Quali sono i tre bisogni psicologici fondamentali secondo Deci e Ryan?","options":["Autonomia, competenza, relazioni.","Sicurezza, stima, appartenenza.","Sopravvivenza, riproduzione, socializzazione.","Affetto, protezione, istruzione."],"correct":0,"topic":"Teoria dell'Autodeterminazione e Integrazione PEI-Progetto di Vita"},
+            {"question":"Cosa significa \"autonomia\" in questo contesto?","options":["Sentirsi liberi e responsabili delle proprie scelte.","Non aver bisogno di aiuto da parte di nessuno.","Poter ignorare le regole della comunità.","Saper svolgere tutte le attività in completa solitudine."],"correct":0,"topic":"Teoria dell'Autodeterminazione e Integrazione PEI-Progetto di Vita"},
+            {"question":"Cosa favorisce la soddisfazione di questi bisogni?","options":["Comportamenti autoregolati e motivazione intrinseca.","L'assegnazione di compiti molto facili e privi di sfida.","La presenza costante di un tutor che guida ogni azione.","La competizione con i pari per ottenere riconoscimenti."],"correct":0,"topic":"Teoria dell'Autodeterminazione e Integrazione PEI-Progetto di Vita"},
+            {"question":"Cosa deve superare l'educazione orientativa secondo questa visione?","options":["L'approccio assistenzialistico.","L'uso di strumenti compensativi.","La redazione del PEI.","La collaborazione con la famiglia."],"correct":0,"topic":"Teoria dell'Autodeterminazione e Integrazione PEI-Progetto di Vita"},
+            {"question":"Cosa sintetizza l'espressione \"Pensami adulto\" di Mario Tortello?","options":["Pensare lo studente come futuro adulto capace di autodeterminarsi.","Considerare lo studente già completamente autonomo e responsabile.","Trattare tutti gli studenti come se avessero la stessa età mentale.","Ignorare le difficoltà degli studenti per responsabilizzarli."],"correct":0,"topic":"Teoria dell'Autodeterminazione e Integrazione PEI-Progetto di Vita"},
+            {"question":"Secondo Dario Ianes (2009), un buon PEI deve sfociare in...","options":["Un Progetto di Vita.","Un Piano Didattico Personalizzato.","Una Certificazione delle competenze.","Un rapporto di fine anno per la famiglia."],"correct":0,"topic":"Teoria dell'Autodeterminazione e Integrazione PEI-Progetto di Vita"},
+            {"question":"Come deve essere pensata la persona con disabilità nel Progetto di Vita?","options":["Non solo in quanto disabile, ma come appartenente a contesti diversi.","Esclusivamente in relazione al suo deficit clinico principale.","Principalmente come un soggetto da assistere in ambito familiare.","Come un paziente da cui non ci si possono aspettare progetti ambiziosi."],"correct":0,"topic":"Teoria dell'Autodeterminazione e Integrazione PEI-Progetto di Vita"},
+            {"question":"Cosa non deve fare il Progetto di Vita rispetto al PEI?","options":["Sostituirsi ad esso.","Integrarsi ad esso.","Completarlo.","Arricchirlo."],"correct":0,"topic":"Teoria dell'Autodeterminazione e Integrazione PEI-Progetto di Vita"},
+            {"question":"Cosa intende Ianes con \"pensiero doppio\"?","options":["Un pensiero \"caldo\" per immaginare e un pensiero \"freddo\" per progettare.","Un pensiero razionale e un pensiero emotivo in contrapposizione.","Un pensiero collettivo e un pensiero individuale alternati.","Un pensiero astratto e un pensiero concreto separati."],"correct":0,"topic":"Teoria dell'Autodeterminazione e Integrazione PEI-Progetto di Vita"},
+            {"question":"Cosa permette il pensiero \"caldo\"?","options":["All'educatore di immaginare, desiderare e fantasticare sul futuro della persona.","Di calcolare i costi economici di un intervento educativo.","Di applicare rigidamente i protocolli diagnostici.","Di valutare solo i comportamenti osservabili e misurabili."],"correct":0,"topic":"Teoria dell'Autodeterminazione e Integrazione PEI-Progetto di Vita"},
+            {"question":"Cosa permette il pensiero \"freddo\"?","options":["Di ricercare e progettare azioni specifiche, gestendo tempistiche e mezzi.","Di lasciare spazio all'improvvisazione e alla creatività pura.","Di assecondare ogni desiderio senza valutare la fattibilità.","Di emettere giudizi di valore sul potenziale della persona."],"correct":0,"topic":"Teoria dell'Autodeterminazione e Integrazione PEI-Progetto di Vita"},
+            {"question":"Quali sono i tre punti di vista per integrare il Progetto di Vita al PEI secondo Ianes?","options":["Tecnico-didattico, psicologico e relazionale.","Medico, legale e pedagogico.","Familiare, scolastico e sociale.","Cognitivo, comportamentale e emotivo."],"correct":0,"topic":"Teoria dell'Autodeterminazione e Integrazione PEI-Progetto di Vita"},
+            {"question":"Cosa prevede il punto di vista tecnico-didattico?","options":["Scegliere obiettivi orientati alla vita adulta e usare modalità adulte di lavoro.","Analizzare esclusivamente i risultati dei test standardizzati.","Ignorare les preferenze dello studente per concentrarsi sulle sue carenze.","Adottare un linguaggio infantile per facilitare la comprensione."],"correct":0,"topic":"Teoria dell'Autodeterminazione e Integrazione PEI-Progetto di Vita"},
+            {"question":"A cosa è legata l'appartenenza all'adultità dal punto di vista psicologico?","options":["Alla costruzione di un'identità solida e stabile.","Al raggiungimento di un'età anagrafica precisa.","All'acquisizione di un diploma di scuola superiore.","All'autonomia economica dalla famiglia di origine."],"correct":0,"topic":"Teoria dell'Autodeterminazione e Integrazione PEI-Progetto di Vita"},
+            {"question":"Cosa è fondamentale secondo il punto di vista relazionale?","options":["Coinvolgere tutte le risorse relazionali a disposizione (lavoro di rete).","Lasciare che la famiglia gestisca da sola il progetto al di fuori della scuola.","Limitare le interazioni sociali per non stressare la persona.","Affidare la persona a una sola figura di riferimento stabile."],"correct":0,"topic":"Teoria dell'Autodeterminazione e Integrazione PEI-Progetto di Vita"},
+
+            // B7: Bisogni Educativi Speciali (BES) - Direttiva 27/12/2012 (22 Domande)
+            {"question":"Con quale documento l'acronimo BES è entrato nel vasto uso in Italia?","options":["La Direttiva ministeriale del 27 dicembre 2012.","La Legge 104 del 1992.","La Legge 170 del 2010.","La Circolare Ministeriale n. 8 del 6 marzo 2013."],"correct":0,"topic":"Bisogni Educativi Speciali (BES) - Direttiva 27/12/2012"},
+            {"question":"Cosa precisa la Direttiva sull'area dello svantaggio scolastico?","options":["Che è molto più ampia di quella riferibile esplicitamente alla presenza di deficit.","Che coincide perfettamente con l'area della disabilità certificata.","Che riguarda solo gli alunni con disturbi specifici di apprendimento.","Che è un'area di competenza esclusiva dei servizi sociali."],"correct":0,"topic":"Bisogni Educativi Speciali (BES) - Direttiva 27/12/2012"},
+            {"question":"Quale acronimo inglese è stato accolto dalla Direttiva BES?","options":["SEN (Special Educational Needs).","IEP (Individualized Education Program).","UDL (Universal Design for Learning).","ICF (International Classification of Functioning)."],"correct":0,"topic":"Bisogni Educativi Speciali (BES) - Direttiva 27/12/2012"},
+            {"question":"Quale modello si accompagna efficacemente alla visione globale della persona del BES?","options":["Il modello ICF dell'OMS.","Il modello medico della disabilità.","Il modello comportamentista dell'apprendimento.","Il modello socio-costruttivista di Vygotskij."],"correct":0,"topic":"Bisogni Educativi Speciali (BES) - Direttiva 27/12/2012"},
+            {"question":"Cosa introduce la Direttiva BES del 27 dicembre 2012?","options":["Strumenti d'intervento per alunni con BES e organizzazione territoriale per l'inclusione scolastica.","L'obbligo di assumere uno psicologo in ogni istituto scolastico.","La riduzione del numero di alunni per classe in presenza di BES.","L'assegnazione automatica dell'insegnante di sostegno per tutti i BES."],"correct":0,"topic":"Bisogni Educativi Speciali (BES) - Direttiva 27/12/2012"},
+            {"question":"Quale è l'aspetto di novità introdotto dalla Direttiva riguardo all'uso del termine \"bisogni\"?","options":["Sposta la prospettiva dallo constatare le difficoltà al rispondere alle necessità.","Introduce per la prima volta il concetto di difficoltà di apprendimento.","Sostituisce il termine \"disabilità\" con un eufemismo più accettabile.","Definisce un elenco chiuso e tassativo di bisogni riconosciuti."],"correct":0,"topic":"Bisogni Educativi Speciali (BES) - Direttiva 27/12/2012"},
+            {"question":"Cosa recita la Circolare Ministeriale n. 8 del 6 marzo 2013?","options":["Per gli alunni con diagnosi di DSA, adottare preventivamente le misure della Legge 170/2010.","Tutti gli alunni con BES hanno diritto all'insegnante di sostegno.","Il PDP è obbligatorio solo per gli alunni con disabilità.","La diagnosi di BES può essere effettuata direttamente dalla scuola."],"correct":0,"topic":"Bisogni Educativi Speciali (BES) - Direttiva 27/12/2012"},
+            {"question":"Chi delibera l'attivazione di un percorso individualizzato per un alunno con BES non certificato?","options":["Il Consiglio di classe.","Il solo insegnante di sostegno.","La famiglia dell'alunno.","Il dirigente scolastico in autonomia."],"correct":0,"topic":"Bisogni Educativi Speciali (BES) - Direttiva 27/12/2012"},
+            {"question":"Cosa devono fare i docenti in assenza di certificazione clinica?","options":["Motivare opportunamente le decisioni assunte con considerazioni pedagogiche e didattiche.","Rifiutarsi di attivare qualsiasi percorso personalizzato.","Richiedere obbligatoriamente una valutazione psicologica.","Attendere che la famiglia provveda a una diagnosi privata."],"correct":0,"topic":"Bisogni Educativi Speciali (BES) - Direttiva 27/12/2012"},
+            {"question":"Cosa rappresentano i BES secondo Dario Ianes?","options":["Una situazione, momentanea o permanente, di difficoltà.","Una patologia medica da curare con farmaci specifici.","Una classificazione rigida e permanente degli alunni.","Un sinonimo di disabilità intellettiva lieve."],"correct":0,"topic":"Bisogni Educativi Speciali (BES) - Direttiva 27/12/2012"},
+            {"question":"I bisogni educativi speciali possono essere...","options":["Stabili nel tempo o transitori.","Esclusivamente permanenti e irreversibili.","Diagnosticati solo da neuropsichiatri infantili.","Considerati solo durante il ciclo della scuola primaria."],"correct":0,"topic":"Bisogni Educativi Speciali (BES) - Direttiva 27/12/2012"},
+            {"question":"Un esempio di BES transitorio è...","options":["Uno studente che vive un momento di fragilità emotiva.","Una disabilità sensoriale congenita.","Un disturbo specifico dell'apprendimento.","Una plusdotazione cognitiva."],"correct":0,"topic":"Bisogni Educativi Speciali (BES) - Direttiva 27/12/2012"},
+            {"question":"Cosa ha ampliato l'introduzione del concetto di BES?","options":["Il campo dell'inclusione scolastica, andando oltre gli studenti con disabilità certificata.","Il numero di insegnanti di sostegno nelle scuole italiane.","L'elenco delle malattie riconosciute dal Servizio Sanitario Nazionale.","Il carico burocratico per i docenti senza benefici pratici."],"correct":0,"topic":"Bisogni Educativi Speciali (BES) - Direttiva 27/12/2012"},
+            {"question":"Su cosa si sposta il focus con l'introduzione dei BES?","options":["Dal deficit clinico al bisogno educativo.","Dal bisogno educativo al deficit clinico.","Dalla didattica personalizzata a quella frontale.","Dall'insegnante di sostegno al docente curriculare."],"correct":0,"topic":"Bisogni Educativi Speciali (BES) - Direttiva 27/12/2012"},
+            {"question":"Quale categoria di BES dà diritto all'assegnazione dell'insegnante di sostegno?","options":["La disabilità certificata ai sensi della Legge 104/92.","I disturbi specifici dell'apprendimento (DSA).","Lo svantaggio socio-economico, linguistico e culturale.","Le plusdotazioni."],"correct":0,"topic":"Bisogni Educativi Speciali (BES) - Direttiva 27/12/2012"},
+            {"question":"Per quale categoria di BES si predispone un PEI?","options":["Per la disabilità certificata ai sensi della Legge 104/92.","Per i disturbi specifici dell'apprendimento (DSA).","Per lo svantaggio socio-economico, linguistico e culturale.","Per le plusdotazioni."],"correct":0,"topic":"Bisogni Educativi Speciali (BES) - Direttiva 27/12/2012"},
+            {"question":"Per quali categorie di BES si predispone un PDP?","options":["Per i DSA e per gli \"altri BES\" (svantaggio, plusdotazione).","Solo per la disabilità certificata.","Solo per i DSA.","Per tutti i BES, senza distinzione."],"correct":0,"topic":"Bisogni Educativi Speciali (BES) - Direttiva 27/12/2012"},
+            {"question":"Chi ha la responsabilità di individuare gli \"altri BES\" (svantaggio, plusdotazione)?","options":["I Consigli di Classe sulla base di considerazioni psico-pedagogiche.","Il Servizio Sanitario Nazionale tramite diagnosi.","La famiglia attraverso autocertificazione.","Gli uffici provinciali del Ministero."],"correct":0,"topic":"Bisogni Educativi Speciali (BES) - Direttiva 27/12/2012"},
+            {"question":"Cosa ha incoraggiato la nota ministeriale numero 1143/2018?","options":["Le scuole a superare le categorizzazioni e a muoversi verso una personalizzazione diffusa per tutti.","La creazione di classi speciali separate per studenti con BES complessi.","L'abolizione del PDP per gli alunni con svantaggio socio-economico.","La deroga all'obbligo di redigere il PEI per le disabilità lievi."],"correct":0,"topic":"Bisogni Educativi Speciali (BES) - Direttiva 27/12/2012"},
+            {"question":"Secondo il testo, qual è il nodo fondamentale di una didattica inclusiva?","options":["Essere centrata sui bisogni e sulle risorse personali.","Completare il programma ministeriale per tutti gli studenti.","Avere a disposizione le più avanzate tecnologie educative.","Seguire pedissequamente le indicazioni del libro di testo."],"correct":0,"topic":"Bisogni Educativi Speciali (BES) - Direttiva 27/12/2012"},
+            {"question":"Cosa deve favorire una didattica inclusiva?","options":["La costruzione attiva della conoscenza, attivando le personali strategie di approccio al sapere.","L'apprendimento mnemonico e ripetitivo dei contenuti fondamentali.","La standardizzazione dei metodi di valutazione per garantire l'equità.","La riduzione degli obiettivi di apprendimento per gli studenti con difficoltà."],"correct":0,"topic":"Bisogni Educativi Speciali (BES) - Direttiva 27/12/2012"},
+            {"question":"Come viene definita una classe che ha successo nell'inclusione?","options":["Una classe che sa accogliere tutte le diversità e incontrare i bisogni di ogni alunno.","Una classe in cui tutti gli alunni raggiungono la sufficienza in tutte le materie.","Una classe che non include alunni con disabilità o BES certificati.","Una classe i cui insegnanti hanno seguito corsi di specializzazione post-laurea."],"correct":0,"topic":"Bisogni Educativi Speciali (BES) - Direttiva 27/12/2012"},
+
+            // B8: Universal Design for Learning (UDL / PUA) (20 Domande)
+            {"question":"Cosa indica l'espressione Universal Design for Learning (UDL)?","options":["Una modalità di progettazione della pratica educativa per incontrare le diverse modalità di apprendimento.","Un metodo di insegnamento riservato agli studenti con disabilità sensoriali.","Una tecnica per progettare edifici scolastici accessibili a tutti.","Un software per la creazione di lezioni multimediali."],"correct":0,"topic":"Universal Design for Learning (UDL / PUA)"},
+            {"question":"Da dove affonda le sue radici l'UDL?","options":["Nei principi dell'Universal Design (UD) utilizzato in architettura.","Nella teoria psicoanalitica dell'apprendimento.","Nelle neuroscienze cognitive e negli studi sull'intelligenza artificiale.","Nella pedagogia tradizionale e nel metodo montessoriano."],"correct":0,"topic":"Universal Design for Learning (UDL / PUA)"},
+            {"question":"Qual è un esempio classico di progetto universale in architettura?","options":["Lo scivolo del marciapiede.","L'ascensore ad alta velocità.","La porta blindata di sicurezza.","La scala a chiocciola decorativa."],"correct":0,"topic":"Universal Design for Learning (UDL / PUA)"},
+            {"question":"Qual è l'obiettivo principale dell'UDL?","options":["Suggerire strumenti e strategie per creare un ambiente di apprendimento privo di barriere per tutti.","Offrire soluzioni preconfezionate per specifici disturbi dell'apprendimento.","Sostituire la didattica tradizionale con una esclusivamente digitale.","Ridurre il numero di studenti che necessitano di piani didattici personalizzati."],"correct":0,"topic":"Universal Design for Learning (UDL / PUA)"},
+            {"question":"Cosa avviene attraverso l'UDL?","options":["L'individuazione e la rimozione preventiva degli ostacoli all'apprendimento.","L'assegnazione di compiti diversi a studenti con capacità diverse.","La creazione di percorsi separati per gli studenti con BES.","La standardizzazione dei materiali didattici per tutti gli alunni."],"correct":0,"topic":"Universal Design for Learning (UDL / PUA)"},
+            {"question":"Come viene definito l'UDL nel Dizionario di pedagogia speciale (Demo, 2019)?","options":["Un approccio che riconosce le differenze individuali come la norma e pone flessibilità e molteplicità come base.","Una strategia compensativa per alunni con dislessia e discalculia.","Un modello di insegnamento diretto basato sulla ripetizione e sulla verifica.","Una metodologia per l'insegnamento delle discipline scientifiche."],"correct":0,"topic":"Universal Design for Learning (UDL / PUA)"},
+            {"question":"Cosa si intende per \"molteplici mezzi di rappresentazione\"?","options":["Fornire opzioni diverse per percepire e comprendere le informazioni.","Utilizzare più insegnanti per la stessa disciplina.","Offrire rappresentazioni politiche degli studenti in consiglio di istituto.","moltiplicare il numero di libri di testo in adozione."],"correct":0,"topic":"Universal Design for Learning (UDL / PUA)"},
+            {"question":"Cosa si intende per \"molteplici mezzi di azione ed espressione\"?","options":["Offrire diverse modalità per esprimere ciò che si è appreso.","Permettere agli studenti di scegliere se svolgere i compiti a casa.","Organizzare attività motorie durante le lezioni teoriche.","Assegnare voti utilizzando scale di valutazione diverse."],"correct":0,"topic":"Universal Design for Learning (UDL / PUA)"},
+            {"question":"Cosa si intende per \"molteplici mezzi di coinvolgimento\"?","options":["Promuovere la motivazione attraverso scelte individuali, collaborazione e feedback.","Fornire materiale didattico in formati digitali e cartacei.","Coinvolgere i genitori nella correzione dei compiti in classe.","Organizzare gite scolastiche in luoghi di interesse storico."],"correct":0,"topic":"Universal Design for Learning (UDL / PUA)"},
+            {"question":"Quale degli seguenti è un obiettivo dell'UDL?","options":["Formare studenti informati, strategici e motivati.","Selezionare gli studenti più meritevoli per corsi di eccellenza.","Uniformare i tempi di apprendimento di tutti gli studenti.","Sostituire la figura del docente con piattaforme di e-learning."],"correct":0,"topic":"Universal Design for Learning (UDL / PUA)"},
+            {"question":"Cosa si intende per \"speciale normalità\" (Ianes, 2006) nell'UDL?","options":["Ciò che è indispensabile per qualcuno diventa utile per tutti.","Gli studenti con disabilità devono seguire un curriculum speciale.","La normalità è data dall'assenza di qualsiasi differenza in classe.","È normale che alcuni studenti non raggiungano gli obiettivi minimi."],"correct":0,"topic":"Universal Design for Learning (UDL / PUA)"},
+            {"question":"Quale dei seguenti è un esempio di strumento compensativo?","options":["La sintesi vocale.","La dispensa dalla lettura ad alta voce.","La semplificazione di un testo.","L'interrogazione programmata."],"correct":0,"topic":"Universal Design for Learning (UDL / PUA)"},
+            {"question":"Quale dei seguenti è un esempio di misura dispensativa?","options":["Dispensare dalla memorizzazione di poesie.","L'uso di mappe concettuali.","L'utilizzo di un tablet per scrivere.","La presenza di un insegnante di sostegno."],"correct":0,"topic":"Universal Design for Learning (UDL / PUA)"},
+            {"question":"Quale dei seguenti è un esempio di adattamento didattico per studenti con DSA e BES?","options":["La semplificazione dei testi.","L'esonero dalla materia di studio.","La riduzione dell'orario scolastico.","L'assegnazione di voti più alti."],"correct":0,"topic":"Universal Design for Learning (UDL / PUA)"},
+            {"question":"L'UDL si inserisce nell'educazione inclusiva internazionale per la sua attenzione...","options":["Alle differenze di tutti gli alunni.","Esclusivamente agli alunni con disabilità certificate.","Agli alunni stranieri di prima generazione.","Agli alunni con un quoziente intellettivo superiore alla media."],"correct":0,"topic":"Universal Design for Learning (UDL / PUA)"},
+            {"question":"L'UDL promuove l'integrazione di strategie specifiche...","options":["All'interno di strategie didattiche per tutti.","In corsi pomeridiani separati dal contesto classe.","Solo se approvate da uno psicologo scolastico.","Solo per gli alunni che hanno una diagnosi formale."],"correct":0,"topic":"Universal Design for Learning (UDL / PUA)"},
+            {"question":"L'UDL attiva strategie individualizzate e personalizzate...","options":["All'interno della quotidianità didattica della propria classe.","In aule speciali attrezzate con tecnologie costose.","Dopo aver suddiviso la classe in gruppi di livello.","Solo su richiesta esplicita della famiglia."],"correct":0,"topic":"Universal Design for Learning (UDL / PUA)"},
+            {"question":"Cosa favorisce l'UDL attraverso la proposta di indicatori?","options":["La rendere flessibili e variegati i modi di presentare le informazioni, di coinvolgere i discenti e di far dimostrare l'apprendimento.","La creazione di un unico metodo di insegnamento valido per tutti i docenti.","L'acquisto obbligatorio di specifici sussidi didattici per ogni disciplina.","L'abolizione della lezione frontale in tutte le sue forme."],"correct":0,"topic":"Universal Design for Learning (UDL / PUA)"},
+            {"question":"Contro cosa agisce principalmente l'UDL?","options":["Contro le barriere all'apprendimento e alla partecipazione sociale.","Contro la mancanza di fondi per il sistema scolastico nazionale.","Contro la scarsa preparazione disciplinare dei docenti curriculari.","Contro l'eccessiva libertà didattica lasciata agli insegnanti."],"correct":0,"topic":"Universal Design for Learning (UDL / PUA)"},
+            {"question":"Quale principio dell'UDL mira a ottimizzare l'offerta didattica?","options":["La flessibilità e la molteplicità delle opzioni offerte.","La rigidità e la chiarezza dei contenuti da apprendere.","La velocità e l'efficienza nella trasmissione delle conoscenze.","La gratuità e l'accessibilità economica dei materiali."],"correct":0,"topic":"Universal Design for Learning (UDL / PUA)"},
+
+            // B9: Disturbi Specifici dell'Apprendimento (DSA) - Legge 170/2010 (18 Domande)
+            {"question":"Cosa indica l'acronimo DSA?","options":["Disturbi Specifici dell'Apprendimento.","Difficoltà Scolastiche Adolescenziali.","Disabilità Sensoriali Acquisite.","Disadattamento Sociale Acuto."],"correct":0,"topic":"Disturbi Specifici dell'Apprendimento (DSA) - Legge 170/2010"},
+            {"question":"Qual è l'origine dei DSA?","options":["Neurobiologica.","Psicologica.","Ambientale.","Culturale."],"correct":0,"topic":"Disturbi Specifici dell'Apprendimento (DSA) - Legge 170/2010"},
+            {"question":"In quale legge sono state introdotte le \"Nuove norme in materia di disturbi specifici di apprendimento in ambito scolastico\"?","options":["Legge 8 ottobre 2010, n. 170.","Legge 5 febbraio 1992, n. 104.","Direttiva Ministeriale 27 dicembre 2012.","Circolare Ministeriale n. 8 del 6 marzo 2013."],"correct":0,"topic":"Disturbi Specifici dell'Apprendimento (DSA) - Legge 170/2010"},
+            {"question":"Come si manifestano i DSA secondo l'Art. 1 della L. 170/2010?","options":["In presenza di capacità cognitive adeguate, in assenza di patologie neurologiche e di deficit sensoriali.","In presenza de deficit cognitivi lievi o moderati.","A causa di patologie neurologiche accertate.","Esclusivamente in comorbilità con disturbi dell'attenzione."],"correct":0,"topic":"Disturbi Specifici dell'Apprendimento (DSA) - Legge 170/2010"},
+            {"question":"Cosa si intende per dislessia ai fini della Legge 170/2010?","options":["Un disturbo specifico che si manifesta con difficoltà nell'imparare a leggere.","Un disturbo specifico di scrittura che si manifesta in difficoltà nella realizzazione grafica.","Un disturbo specifico di scrittura che si manifesta in difficoltà nei processi linguistici.","Un disturbo specifico che si manifesta con difficoltà negli automatismi del calcolo."],"correct":0,"topic":"Disturbi Specifici dell'Apprendimento (DSA) - Legge 170/2010"},
+            {"question":"Cosa si intende per disgrafia?","options":["Un disturbo specifico di scrittura che si manifesta in difficoltà nella realizzazione grafica.","Un disturbo specifico che si manifesta con difficoltà nell'imparare a leggere.","Un disturbo specifico di scrittura che si manifesta in difficoltà nei processi linguistici.","Un disturbo specifico che si manifesta con difficoltà negli automatismi del calcolo."],"correct":0,"topic":"Disturbi Specifici dell'Apprendimento (DSA) - Legge 170/2010"},
+            {"question":"Cosa si intende per disortografia?","options":["Un disturbo specifico di scrittura che si manifesta in difficoltà nei processi linguistici di transcodifica.","Un disturbo specifico che si manifesta con difficoltà nell'imparare a leggere.","Un disturbo specifico di scrittura che si manifesta in difficoltà nella realizzazione grafica.","Un disturbo specifico che si manifesta con difficoltà negli automatismi del calcolo."],"correct":0,"topic":"Disturbi Specifici dell'Apprendimento (DSA) - Legge 170/2010"},
+            {"question":"Cosa si intende per discalculia?","options":["Un disturbo specifico che si manifesta con difficoltà negli automatismi del calcolo e dell'elaborazione dei numeri.","Un disturbo specifico che si manifesta con difficoltà nell'imparare a leggere.","Un disturbo specifico di scrittura che si manifesta in difficoltà nella realizzazione grafica.","Un disturbo specifico di scrittura che si manifesta in difficoltà nei processi linguistici."],"correct":0,"topic":"Disturbi Specifici dell'Apprendimento (DSA) - Legge 170/2010"},
+            {"question":"I disturbi specifici dell'apprendimento...","options":["Possono sussistere separatamente o insieme.","Sono sempre presenti in comorbilità tra loro.","Escludono la presenza di qualsiasi altro disturbo evolutivo.","Si manifestano esclusivamente in età prescolare."],"correct":0,"topic":"Disturbi Specifici dell'Apprendimento (DSA) - Legge 170/2010"},
+            {"question":"Quale delle seguenti NON è una finalità della Legge 170/2010?","options":["Garantire l'accesso agli asili nido gratuiti.","Garantire il diritto all'istruzione.","Favorire il successo scolastico.","Ridurre i disagi relazionali ed emozionali."],"correct":0,"topic":"Disturbi Specifici dell'Apprendimento (DSA) - Legge 170/2010"},
+            {"question":"Chi effettua la diagnosi di DSA?","options":["Nell'ambito dei trattamenti specialistici del Servizio sanitario nazionale.","Il Consiglio di Classe della scuola di appartenenza.","La famiglia attraverso autocertificazione.","Il medico di base tramite certificazione."],"correct":0,"topic":"Disturbi Specifici dell'Apprendimento (DSA) - Legge 170/2010"},
+            {"question":"Cosa deve fare la scuola se uno studente presenta persistenti difficoltà nonostante attività di recupero?","options":["Trasmettere apposita comunicazione alla famiglia.","Effettuare direttamente una diagnosi di DSA.","Sospendere lo studente fino a nuova comunicazione.","Assegnare obbligatoriamente l'insegnante di sostegno."],"correct":0,"topic":"Disturbi Specifici dell'Apprendimento (DSA) - Legge 170/2010"},
+            {"question":"Cosa attivano le scuole di ogni ordine e grado, comprese le scuole dell'infanzia?","options":["Interventi tempestivi per individuare i casi sospetti di DSA.","Corsi di trattamento riabilitativo per i DSA.","Protocolli di esonero dalle verifiche scritte.","Colloqui psicologici obbligatori per tutti gli alunni."],"correct":0,"topic":"Disturbi Specifici dell'Apprendimento (DSA) - Legge 170/2010"},
+            {"question":"A cosa hanno diritto gli studenti con diagnosi di DSA?","options":["A fruire di appositi provvedimenti dispensativi e compensativi.","All'assegnazione automatica dell'insegnante di sostegno.","All'esonero dallo studio di alcune discipline.","Al prolungamento della durata del percorso di studi."],"correct":0,"topic":"Disturbi Specifici dell'Apprendimento (DSA) - Legge 170/2010"},
+            {"question":"Cosa garantiscono le istituzioni scolastiche agli studenti con DSA?","options":["L'uso di una didattica individualizzata e personalizzata.","La presenza costante di un educatore professionale.","La riduzione del monte ore annuale delle discipline.","L'assegnazione di voti più alti per equiparare il rendimento."],"correct":0,"topic":"Disturbi Specifici dell'Apprendimento (DSA) - Legge 170/2010"},
+
+            // B10: Codici Comunicativi, CAA e Educazione Linguistica Inclusiva (26 Domande)
+            {"question":"Da quale termine latino deriva la parola \"comunicare\" e cosa significa?","options":["Dal latino \"communis\", che significa mettere in comune, rendere partecipi.","Dal latino \"comunicare\", che significa trasmettere un ordine o un comando.","Dal latino \"communico\", che significa parlare in pubblico in modo efficace.","Dal latino \"comunis\", che significa obbligare o convincere qualcuno."],"correct":0,"topic":"Codici Comunicativi, CAA e Educazione Linguistica Inclusiva"},
+            {"question":"Quali sono i tre concetti fondamentali alla base della comunicazione?","options":["Capire, trasmettere, mettersi in relazione.","Parlare, ascoltare, obbedire.","Informare, persuadere, intrattenere.","Scrivere, leggere, interpretare."],"correct":0,"topic":"Codici Comunicativi, CAA e Educazione Linguistica Inclusiva"},
+            {"question":"Secondo il primo assioma di Watzlawick, cosa è impossibile non fare?","options":["Non si può non comunicare.","Non si può comprendere appieno il messaggio dell'altro.","Non si può evitare il rumore nella trasmissione di un messaggio.","Non si può nascondere le proprie vere emozioni."],"correct":0,"topic":"Codici Comunicativi, CAA e Educazione Linguistica Inclusiva"},
+            {"question":"Cosa studia la pragmatica della comunicazione?","options":["Gli effetti della comunicazione sul comportamento dei parlanti.","La codifica e decodifica delle informazioni e dei canali.","I segni e i significati per i comunicanti.","La struttura grammaticale e sintattica degli enunciati."],"correct":0,"topic":"Codici Comunicativi, CAA e Educazione Linguistica Inclusiva"},
+            {"question":"Cosa comprende la comunicazione non verbale?","options":["Gesti, postura, sguardo, mimica, abbigliamento.","Esclusivamente il tono e il volume della voce.","Solo il contenuto logico delle parole pronunciate.","La scelta del lessico e della punteggiatura nei testi scritti."],"correct":0,"topic":"Codici Comunicativi, CAA e Educazione Linguistica Inclusiva"},
+            {"question":"Quale funzione della comunicazione permette di esprimere dissenso o limiti?","options":["Dire sì e dire no.","Chiedere rinforzi.","Seguire indicazioni.","Gestire lo schema giornaliero."],"correct":0,"topic":"Codici Comunicativi, CAA e Educazione Linguistica Inclusiva"},
+            {"question":"Quale principio fondamentale dell'insegnamento delle abilità comunicative prevede di \"partire da bisogni reali e situazioni quotidiane\"?","options":["Concretezza.","Ripetizione variata.","Motivazione.","Gradualità."],"correct":0,"topic":"Codici Comunicativi, CAA e Educazione Linguistica Inclusiva"},
+            {"question":"Cosa si intende per \"prevenzione della comunicazione\" in un contesto educativo?","options":["Una situazione in cui un bambino incontra più ostacoli che opportunità per comunicare.","Una tecnica per insegnare a comunicare in modo sicuro e protetto.","Un metodo per evitare che gli studenti comunichino durante le lezioni.","Una strategia per prevenire conflitti nella comunicazione tra pari."],"correct":0,"topic":"Codici Comunicativi, CAA e Educazione Linguistica Inclusiva"},
+            {"question":"Cosa significa l'acronimo CAA?","options":["Comunicazione Aumentativa e Alternativa.","Comunicazione Avanzata e Assistita.","Codice Alternativo per l'Apprendimento.","Consulenza Audio Acustica."],"correct":0,"topic":"Codici Comunicativi, CAA e Educazione Linguistica Inclusiva"},
+            {"question":"Qual è l'obiettivo principale della CAA?","options":["Garantire una comunicazione efficace e dignitosa.","Sostituire completamente il linguaggio verbale con simboli.","Curare i disturbi primari del linguaggio.","Insegnare la lingua italiana standard a studenti stranieri."],"correct":0,"topic":"Codici Comunicativi, CAA e Educazione Linguistica Inclusiva"},
+            {"question":"Quale principio della CAA prevede l'uso integrato di più canali comunicativi (linguaggio, gesti, immagini)?","options":["Multimodalismo.","Nessun prerequisito richiesto.","Contesto di vita.","Insegnamento pragmatico."],"correct":0,"topic":"Codici Comunicativi, CAA e Educazione Linguistica Inclusiva"},
+            {"question":"Secondo i principi della CAA, quando è bene introdurre questo insieme di strategie?","options":["Precocemente, anche in assenza di abilità di base.","Solo dopo che il linguaggio verbale si è completamente sviluppato.","Esclusivamente in età adolescenziale.","Solo per gli studenti con disabilità motoria."],"correct":0,"topic":"Codici Comunicativi, CAA e Educazione Linguistica Inclusiva"},
+            {"question":"Quale di questi è uno strumento di CAA \"assistita low-tech\"?","options":["Tabelle dei simboli.","Dispositivi elettronici con sintesi vocale.","Gesti naturali e sguardi.","App dedicate su tablet."],"correct":0,"topic":"Codici Comunicativi, CAA e Educazione Linguistica Inclusiva"},
+            {"question":"Cosa si intende per CAA \"non assistita\"?","options":["Comunicazione tramite corpo, gesti naturali, sguardi.","Comunicazione con l'ausilio di dispositivi elettronici.","Comunicazione con tabelle di simbolos cartacee.","Comunicazione con l'assistenza fisica di un operatore."],"correct":0,"topic":"Codici Comunicativi, CAA e Educazione Linguistica Inclusiva"},
+            {"question":"Cosa può accadere quando una persona non ha strumenti comunicativi adeguati?","options":["Può usare comportamenti-problema come linguaggio sostitutivo.","Smette definitivamente di tentare di comunicare.","Sviluppa automaticamente il linguaggio verbale.","Inizia a comunicare esclusivamente per iscritto."],"correct":0,"topic":"Codici Comunicativi, CAA e Educazione Linguistica Inclusiva"},
+            {"question":"Quale dei seguenti è un compito fondamentale dell'insegnante riguardo alla CAA?","options":["Modellare l'uso di simboli, tabelle o dispositivi.","Sostituirsi allo studente nell'uso degli strumenti.","Utilizzare la CAA solo durante le lezioni di sostegno.","Limitare l'uso della CAA per non creare dipendenza."],"correct":0,"topic":"Codici Comunicativi, CAA e Educazione Linguistica Inclusiva"},
+            {"question":"Perché la collaborazione tra scuola, famiglia e specialisti è essenziale per la CAA?","options":["Per garantire continuità e generalizzazione negli ambienti di vita.","Per decidere quale strumento sia il più costoso ed efficace.","Per ridurre il carico di lavoro degli insegnanti di sostegno.","Per evitare che la famiglia interferisca nel lavoro scolastico."],"correct":0,"topic":"Codici Comunicativi, CAA e Educazione Linguistica Inclusiva"},
+            {"question":"Cosa si intende per \"codici comunicativi\" nel contesto educativo?","options":["Procedimenti generali condivisi per trasmettere intenzioni e significati attraverso diversi canali.","Le regole grammaticali della lingua italiana.","I linguaggi di programmazione informatica.","I segreti e i messaggi in codice usati dagli studenti."],"correct":0,"topic":"Codici Comunicativi, CAA e Educazione Linguistica Inclusiva"},
+            {"question":"Cosa significa \"scaffolding\" (impalcatura) in didattica?","options":["Un supporto temporaneo che guida lo studente verso l'autonomia.","Una struttura rigida e permanente per l'apprendimento.","Un tipo di valutazione sommativa finale.","Una barriera architettonica nell'aula scolastica."],"correct":0,"topic":"Codici Comunicativi, CAA e Educazione Linguistica Inclusiva"},
+            {"question":"Cosa favorisce il digital storytelling secondo il testo?","options":["Lo sviluppo di problem solving, cooperazione e metacognizione.","L'apprendimento mnemonico di date e eventi storici.","La competizione individuale per il miglior video.","L'isolamento dello studente nel processo creativo."],"correct":0,"topic":"Codici Comunicativi, CAA e Educazione Linguistica Inclusiva"},
+            {"question":"Cosa permette di sviluppare el role-playing e le simulazioni?","options":["Empatia, competenze sociali e capacità di negoziazione.","Esclusivamente la memorizzazione di copioni prestabiliti.","Abilità teatrali professionali.","La capacità di nascondere le proprie emozioni."],"correct":0,"topic":"Codici Comunicativi, CAA e Educazione Linguistica Inclusiva"},
+            {"question":"Cosa si intende per \"plurilinguismo\" nel testo?","options":["La capacità di usare repertori linguistici diversi in modo flessibile.","L'obbligo di parlare correttamente almeno tre lingue straniere.","La sostituzione della lingua madre con l'italiano a scuola.","Lo studio della grammatica comparata di lingue antiche."],"correct":0,"topic":"Codici Comunicativi, CAA e Educazione Linguistica Inclusiva"},
+            {"question":"Cosa dovrebbe evitare la scuola per valorizzare il plurilinguismo?","options":["Approcci monolingui.","La creazione di glossari multilingue.","La raccolta di racconti familiari.","Gli scambi linguistici tra pari."],"correct":0,"topic":"Codici Comunicativi, CAA e Educazione Linguistica Inclusiva"},
+            {"question":"Cosa descrive il \"translanguaging\"?","options":["L'uso dell'intero repertorio linguistico da parte dei parlanti plurilingui per apprendere e comunicare.","La traduzione simultanea durante le lezioni in lingua straniera.","L'errato mescolamento di lingue diverse in un unico discorso.","L'insegnamento della grammatica attraverso le lingue classiche."],"correct":0,"topic":"Codici Comunicativi, CAA e Educazione Linguistica Inclusiva"},
+            {"question":"Qual è l'obiettivo del progetto \"Sole che Sorge\" dell'Università di Catania?","options":["Creare uno spazio comunicativo accessibile dove LIS, lingue madri e lingua di scolarizzazione convivono.","Insegnare l'italiano standard a migranti sordi eliminando l'uso della LIS.","Sostituire le lingue madri degli studenti con l'italiano in tutti i contesti.","Formare esclusivamente interpreti di lingua dei segni professionisti."],"correct":0,"topic":"Codici Comunicativi, CAA e Educazione Linguistica Inclusiva"},
+            {"question":"Secondo il testo, cosa diventano la narrazione, la corporeità e i linguaggi visivi in un contesto inclusivo?","options":["Strumenti universali di riconoscimento reciproco e appartenenza.","Elementi di disturbo per l'apprendimento delle discipline curriculari.","Attività extrascolastiche facoltative e poco importanti.","Tecniche riservate agli studenti con talento artistico."],"correct":0,"topic":"Codici Comunicativi, CAA e Educazione Linguistica Inclusiva"}
+        ];
+
+        // Funzione per mescolare un array (Fisher-Yates)
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+
+        // Seleziona domande casuali (gestisce anche il caso count > pool.length)
+        function getRandomQuestions(questions, count) {
+            const pool = [...questions];
+            const desired = Math.min(count, pool.length);
+            const shuffled = shuffleArray(pool);
+            const selected = shuffled.slice(0, desired);
+            return selected.map(q => {
+                const correctAnswer = q.options[q.correct];
+                const shuffledOptions = shuffleArray(q.options);
+                const newCorrectIndex = shuffledOptions.indexOf(correctAnswer);
+                return { ...q, options: shuffledOptions, correct: newCorrectIndex };
+            });
+        }
+
+        // Render del quiz
+        function renderQuiz(questions) {
+            const quizContainer = document.getElementById('quiz-container');
+            quizContainer.innerHTML = '';
+            questions.forEach((question, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question';
+                questionDiv.innerHTML = `
+                    <div class="question-number">Domanda ${index + 1}</div>
+                    <div class="topic">Argomento: ${question.topic}</div>
+                    <p>${question.question}</p>
+                    <div class="options">
+                        ${question.options.map((option, i) => `
+                            <div class="option">
+                                <input type="radio" id="q${index}_o${i}" name="q${index}" value="${i}">
+                                <label for="q${index}_o${i}">${option}</label>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                quizContainer.appendChild(questionDiv);
+            });
+            document.getElementById('current-topic').textContent = `Argomento: ${questions[0].topic}`;
+        }
+
+        // Calcolo punteggio e visualizzazione risultati
+        function calculateScore(questions) {
+            let score = 0;
+            const resultsContainer = document.getElementById('results');
+            resultsContainer.innerHTML = '<h2>Risultati</h2>';
+            resultsContainer.style.display = 'block';
+            questions.forEach((question, index) => {
+                const selectedOption = document.querySelector(`input[name="q${index}"]:checked`);
+                const userAnswer = selectedOption ? parseInt(selectedOption.value) : -1;
+                const isCorrect = userAnswer === question.correct;
+                if (isCorrect) score++;
+                const resultDiv = document.createElement('div');
+                resultDiv.className = `question-result ${isCorrect ? 'correct' : 'incorrect'}`;
+                resultDiv.innerHTML = `
+                    <p><strong>Domanda ${index + 1}:</strong> ${question.question}</p>
+                    <p>La tua risposta: ${userAnswer !== -1 ? question.options[userAnswer] : 'Nessuna risposta'}</p>
+                    <p class="correct">Risposta corretta: ${question.options[question.correct]}</p>
+                    <div class="topic">Argomento: ${question.topic}</div>
+                `;
+                resultsContainer.appendChild(resultDiv);
+            });
+
+            const scoreDiv = document.createElement('div');
+            scoreDiv.className = 'score';
+            scoreDiv.innerHTML = `Hai totalizzato ${score} punti su ${questions.length}`;
+            resultsContainer.prepend(scoreDiv);
+
+            const retryDiv = document.createElement('div');
+            retryDiv.className = 'retry-btn';
+            retryDiv.innerHTML = '<button onclick="location.reload()">Ripeti il Quiz con altre 15 domande</button>';
+            resultsContainer.appendChild(retryDiv);
+
+            resultsContainer.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Inizializzazione
+        document.addEventListener('DOMContentLoaded', function() {
+            const selectedQuestions = getRandomQuestions(questionsPool, 15);
+            renderQuiz(selectedQuestions);
+            document.getElementById('total').textContent = '15';
+            document.getElementById('submit-btn').addEventListener('click', function() {
+                calculateScore(selectedQuestions);
+            });
+
+            // osservatore per aggiornare topic e progresso
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const topic = entry.target.querySelector('.topic').textContent.replace('Argomento: ', '');
+                        document.getElementById('current-topic').textContent = `Argomento: ${topic}`;
+                        const questionNumber = entry.target.querySelector('.question-number').textContent.replace('Domanda ', '');
+                        document.getElementById('current').textContent = questionNumber;
+                    }
+                });
+            }, { threshold: 0.6 });
+
+            // osserva le domande create
+            const questions = document.querySelectorAll('.question');
+            questions.forEach(q => observer.observe(q));
+        });
+    </script>
+</body>
+</html>
